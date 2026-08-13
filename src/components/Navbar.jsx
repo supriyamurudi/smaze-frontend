@@ -1,0 +1,568 @@
+import { useState, useEffect } from "react";
+import { Link, NavLink } from "react-router-dom";
+
+import {
+  HiBars3,
+  HiXMark,
+  HiOutlineMagnifyingGlass,
+  HiOutlineUserCircle,
+} from "react-icons/hi2";
+
+import { FaMapMarkerAlt } from "react-icons/fa";
+
+import { NAV_LINKS } from "../utils/constants";
+
+const Navbar = () => {
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <>
+      {/* Overlay */}
+
+      {mobileMenu && (
+        <div
+          className="
+          fixed
+          inset-0
+          bg-black/50
+          backdrop-blur-sm
+          z-40
+          lg:hidden
+          "
+          onClick={() => setMobileMenu(false)}
+        />
+      )}
+
+      {/* Navbar */}
+
+      <header
+        className={`
+          fixed
+          top-0
+          left-0
+          w-full
+          z-50
+          transition-all
+          duration-500
+
+          ${
+            scrolled
+              ? `
+                bg-white/90
+                backdrop-blur-xl
+                shadow-lg
+                border-b
+                border-gray-100
+              `
+              : `
+                bg-transparent
+              `
+          }
+        `}
+      >
+        <div
+          className="
+          max-w-7xl
+          mx-auto
+          px-6
+          lg:px-10
+          "
+        >
+          <div
+            className="
+            h-20
+            flex
+            items-center
+            justify-between
+            "
+          >
+            {/* Logo */}
+
+            <Link
+              to="/"
+              className="
+              flex
+              items-center
+              gap-3
+              group
+              "
+            >
+              <div
+                className="
+                h-12
+                w-12
+                rounded-2xl
+                bg-gradient-to-br
+                from-purple-600
+                via-fuchsia-500
+                to-pink-500
+                flex
+                items-center
+                justify-center
+                shadow-lg
+                shadow-purple-200
+                group-hover:rotate-12
+                transition-all
+                duration-500
+                "
+              >
+                <span
+                  className="
+                  text-white
+                  text-2xl
+                  font-black
+                  "
+                >
+                  S
+                </span>
+              </div>
+
+              <div>
+                <h1
+                  className="
+                  text-3xl
+                  font-black
+                  tracking-tight
+                  "
+                >
+                  <span className="text-purple-600">S</span>
+
+                  <span className="text-gray-900">maze</span>
+
+                  <span className="text-pink-500 text-sm align-top">™</span>
+                </h1>
+
+                <p
+                  className="
+                  text-[11px]
+                  text-gray-500
+                  -mt-1
+                  tracking-widest
+                  uppercase
+                  "
+                >
+                  Local Discovery
+                </p>
+              </div>
+            </Link>
+
+            {/* Desktop Links */}
+
+            <nav
+              className="
+              hidden
+              lg:flex
+              items-center
+              gap-10
+              "
+            >
+              {NAV_LINKS.map((item) => (
+                <NavLink
+                  key={item.title}
+                  to={item.path}
+                  className={({ isActive }) => `
+
+                    group
+                    relative
+                    font-semibold
+                    transition-all
+                    duration-300
+
+                    ${
+                      isActive
+                        ? "text-purple-600"
+                        : "text-gray-700 hover:text-purple-600"
+                    }
+
+                  `}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {item.title}
+
+                      <span
+                        className={`
+
+                        absolute
+                        left-0
+                        -bottom-2
+                        h-[3px]
+                        rounded-full
+                        bg-gradient-to-r
+                        from-purple-600
+                        to-pink-500
+                        transition-all
+                        duration-300
+
+                        ${isActive ? "w-full" : "w-0 group-hover:w-full"}
+
+                        `}
+                      />
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+            {/* Right Section */}
+
+            <div
+              className="
+              hidden
+              lg:flex
+              items-center
+              gap-4
+              "
+            >
+              {/* Location */}
+
+              <div
+                className="
+                flex
+                items-center
+                gap-2
+                px-4
+                py-2
+                rounded-2xl
+                bg-white
+                border
+                border-gray-200
+                shadow-sm
+                "
+              >
+                <FaMapMarkerAlt
+                  className="
+                  text-pink-500
+                  "
+                />
+
+                <span
+                  className="
+                  text-sm
+                  font-medium
+                  text-gray-700
+                  "
+                >
+                  Belagavi
+                </span>
+              </div>
+
+              {/* Search Button */}
+
+              <button
+                className="
+                w-11
+                h-11
+                rounded-xl
+                bg-gray-100
+                hover:bg-purple-600
+                hover:text-white
+                flex
+                items-center
+                justify-center
+                transition-all
+                duration-300
+                "
+              >
+                <HiOutlineMagnifyingGlass size={22} />
+              </button>
+
+              {/* Profile Button */}
+
+              <button
+                className="
+                w-11
+                h-11
+                rounded-xl
+                bg-gray-100
+                hover:bg-pink-500
+                hover:text-white
+                flex
+                items-center
+                justify-center
+                transition-all
+                duration-300
+                "
+              >
+                <HiOutlineUserCircle size={24} />
+              </button>
+
+              {/* Login */}
+
+              <Link
+                to="/login"
+                className="
+                px-6
+                py-3
+                rounded-xl
+                border
+                border-purple-600
+                text-purple-600
+                font-semibold
+                hover:bg-purple-50
+                transition-all
+                duration-300
+                "
+              >
+                Login
+              </Link>
+
+              {/* Get Started */}
+
+              <Link
+                to="/signup"
+                className="
+                px-6
+                py-3
+                rounded-xl
+                bg-gradient-to-r
+                from-purple-600
+                via-fuchsia-500
+                to-pink-500
+                text-white
+                font-semibold
+                shadow-lg
+                shadow-purple-200
+                hover:scale-105
+                transition-all
+                duration-300
+                "
+              >
+                Get Started
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+
+            <button
+              onClick={() => setMobileMenu(true)}
+              className="
+              lg:hidden
+              "
+            >
+              <HiBars3
+                size={34}
+                className="
+                text-gray-800
+                "
+              />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+
+      <div
+        className={`
+
+        fixed
+        top-0
+        right-0
+        h-full
+        w-[320px]
+        bg-white
+        z-50
+        shadow-2xl
+        transition-all
+        duration-500
+
+        ${mobileMenu ? "translate-x-0" : "translate-x-full"}
+
+        `}
+      >
+        {" "}
+        {/* Drawer Header */}
+        <div
+          className="
+          flex
+          items-center
+          justify-between
+          px-6
+          h-20
+          border-b
+          "
+        >
+          <Link
+            to="/"
+            onClick={() => setMobileMenu(false)}
+            className="
+            flex
+            items-center
+            gap-3
+            "
+          >
+            <div
+              className="
+              h-11
+              w-11
+              rounded-xl
+              bg-gradient-to-br
+              from-purple-600
+              via-fuchsia-500
+              to-pink-500
+              flex
+              items-center
+              justify-center
+              "
+            >
+              <span
+                className="
+                text-white
+                font-black
+                text-xl
+                "
+              >
+                S
+              </span>
+            </div>
+
+            <div>
+              <h2
+                className="
+                text-2xl
+                font-black
+                "
+              >
+                <span className="text-purple-600">S</span>
+                maze
+                <span className="text-pink-500 text-sm">™</span>
+              </h2>
+
+              <p className="text-xs text-gray-500">Local Discovery</p>
+            </div>
+          </Link>
+
+          <button
+            onClick={() => setMobileMenu(false)}
+            className="
+            rounded-xl
+            bg-gray-100
+            p-2
+            hover:bg-pink-500
+            hover:text-white
+            transition
+            "
+          >
+            <HiXMark size={28} />
+          </button>
+        </div>
+        {/* Mobile Links */}
+        <div
+          className="
+          flex
+          flex-col
+          px-6
+          py-8
+          gap-3
+          "
+        >
+          {NAV_LINKS.map((item) => (
+            <NavLink
+              key={item.title}
+              to={item.path}
+              onClick={() => setMobileMenu(false)}
+              className={({ isActive }) => `
+
+                rounded-xl
+                px-5
+                py-4
+                font-semibold
+                transition-all
+
+                ${
+                  isActive
+                    ? `
+                    bg-gradient-to-r
+                    from-purple-600
+                    via-fuchsia-500
+                    to-pink-500
+                    text-white
+                  `
+                    : `
+                    text-gray-700
+                    hover:bg-purple-50
+                    hover:text-purple-600
+                  `
+                }
+
+              `}
+            >
+              {item.title}
+            </NavLink>
+          ))}
+
+          <div className="border-t my-4"></div>
+
+          <div
+            className="
+            flex
+            items-center
+            gap-3
+            px-4
+            py-3
+            rounded-xl
+            bg-gray-100
+            "
+          >
+            <FaMapMarkerAlt className="text-pink-500" />
+
+            <span className="font-medium">Belagavi</span>
+          </div>
+
+          <Link
+            to="/login"
+            onClick={() => setMobileMenu(false)}
+            className="
+            text-center
+            rounded-xl
+            border
+            border-purple-600
+            text-purple-600
+            py-3
+            font-semibold
+            hover:bg-purple-50
+            "
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/signup"
+            onClick={() => setMobileMenu(false)}
+            className="
+            text-center
+            rounded-xl
+            py-3
+            text-white
+            font-semibold
+            bg-gradient-to-r
+            from-purple-600
+            via-fuchsia-500
+            to-pink-500
+            shadow-lg
+            "
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
+
+      {/* Spacer */}
+
+      <div className="h-20"></div>
+    </>
+  );
+};
+
+export default Navbar;

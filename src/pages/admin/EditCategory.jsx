@@ -1,0 +1,558 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+
+import {
+  HiOutlineArrowLeft,
+  HiOutlinePencil,
+  HiOutlineCheckCircle,
+  HiOutlineXCircle,
+  HiOutlinePhoto,
+  HiOutlineTag,
+  HiOutlineDocumentText,
+  HiOutlineFolder,
+} from "react-icons/hi2";
+
+import {
+  getCategoryById,
+  updateCategory,
+} from "../../services/categoryService";
+
+// ========== STATUS BADGE ==========
+const StatusBadge = ({ status }) => {
+  const statusLower = status?.toLowerCase() || "active";
+
+  const config = {
+    active: {
+      bg: "bg-emerald-100",
+      text: "text-emerald-700",
+      icon: <HiOutlineCheckCircle size={16} className="text-emerald-600" />,
+      label: "Active",
+    },
+    pending: {
+      bg: "bg-amber-100",
+      text: "text-amber-700",
+      icon: <HiOutlineCheckCircle size={16} className="text-amber-600" />,
+      label: "Pending",
+    },
+    inactive: {
+      bg: "bg-rose-100",
+      text: "text-rose-700",
+      icon: <HiOutlineXCircle size={16} className="text-rose-600" />,
+      label: "Inactive",
+    },
+  };
+
+  const { bg, text, icon, label } = config[statusLower] || config.active;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full ${bg} px-3 py-1 text-sm font-medium ${text}`}
+    >
+      {icon}
+      {label}
+    </span>
+  );
+};
+
+// ========== IMAGE UPLOAD ==========
+const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        e.target.value = "";
+        return;
+      }
+      setPreview(URL.createObjectURL(file));
+      setValue("image", file);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+      setPreview(URL.createObjectURL(file));
+      setValue("image", file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreview(null);
+    setValue("image", null);
+  };
+
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-slate-700">
+        Category Image
+      </label>
+      <div
+        className={`relative rounded-2xl border-2 border-dashed transition ${
+          isDragging
+            ? "border-violet-500 bg-violet-50"
+            : preview
+              ? "border-emerald-300 bg-emerald-50/30"
+              : "border-slate-300 hover:border-violet-400"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+      >
+        {preview ? (
+          <div className="relative p-4">
+            <div className="flex flex-col items-center gap-4 sm:flex-row">
+              <div className="relative">
+                <img
+                  src={preview}
+                  alt="Category preview"
+                  className="h-32 w-32 rounded-xl object-cover border-2 border-slate-200"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-white transition hover:scale-110"
+                  title="Remove image"
+                >
+                  <HiOutlineXCircle size={20} />
+                </button>
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <p className="text-sm font-medium text-slate-700">
+                  Image uploaded successfully!
+                </p>
+                <p className="text-xs text-slate-500">
+                  Click below to change or drag a new image
+                </p>
+                <div className="mt-3">
+                  <label className="cursor-pointer rounded-lg bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-200">
+                    Change Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <label className="flex cursor-pointer flex-col items-center justify-center px-6 py-12">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-violet-100">
+              <HiOutlinePhoto size={32} className="text-violet-600" />
+            </div>
+            <p className="mt-4 text-sm font-medium text-slate-600">
+              Click to upload or drag & drop
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              PNG, JPG, WEBP (Max 5MB)
+            </p>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              {...register("image")}
+              onChange={handleImageChange}
+            />
+          </label>
+        )}
+      </div>
+      {error && <p className="mt-1.5 text-sm text-rose-500">{error.message}</p>}
+    </div>
+  );
+};
+
+// ========== LOADING SKELETON ==========
+const LoadingSkeleton = () => (
+  <div className="space-y-6">
+    <div className="flex items-center gap-4 mb-8">
+      <div className="h-10 w-10 bg-slate-200 rounded-xl animate-pulse"></div>
+      <div>
+        <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-1 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+    <div className="rounded-2xl border bg-white p-8 shadow-sm space-y-8">
+      <div className="space-y-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i}>
+            <div className="h-5 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
+            <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
+          </div>
+        ))}
+        <div>
+          <div className="h-5 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
+          <div className="h-48 bg-slate-200 rounded-2xl animate-pulse"></div>
+        </div>
+      </div>
+      <div className="flex justify-end gap-4 border-t pt-8">
+        <div className="h-12 w-24 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-12 w-32 bg-slate-200 rounded-xl animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+);
+
+// ========== MAIN COMPONENT ==========
+export default function EditCategory() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  // ✅ Debug log
+  console.log("🔍 EditCategory - ID from URL:", id);
+  console.log("🔍 EditCategory - Full URL:", window.location.pathname);
+
+  const [category, setCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [error, setError] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm();
+
+  // ========== FETCH CATEGORY ==========
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log("📡 Fetching category with ID:", id);
+
+        // If no ID, show error
+        if (!id) {
+          console.error("❌ No ID provided in URL");
+          setError("No category ID provided");
+          setLoading(false);
+          return;
+        }
+
+        const response = await getCategoryById(id);
+
+        console.log("📦 API Response:", response);
+
+        // Handle different response structures
+        const data = response.category || response.data || response;
+
+        if (!data) {
+          throw new Error("Category not found");
+        }
+
+        console.log("✅ Category data:", data);
+
+        setCategory(data);
+        setPreview(data.image || null);
+
+        reset({
+          name: data.name || "",
+          status: data.status || "active",
+          description: data.description || "",
+        });
+      } catch (error) {
+        console.error("❌ Error fetching category:", error);
+        setError(error.message || "Failed to load category");
+        toast.error(error.response?.data?.message || "Failed to load category");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // ✅ Data fetching is a valid use case for useEffect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchCategory();
+  }, [id, reset]);
+
+  // ========== SUBMIT ==========
+  const onSubmit = async (data) => {
+    try {
+      setSubmitting(true);
+
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("status", data.status || "active");
+      formData.append("description", data.description || "");
+
+      if (data.image && data.image instanceof File) {
+        formData.append("image", data.image);
+      }
+
+      console.log("📦 Updating category:", Object.fromEntries(formData));
+
+      await updateCategory(id, formData);
+
+      toast.success("Category updated successfully! 🎉");
+      navigate("/admin/categories");
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error(error.response?.data?.message || "Failed to update category");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ========== LOADING ==========
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-4xl">
+          <LoadingSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  // ========== ERROR ==========
+  if (error || !category) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-12 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
+              <HiOutlineXCircle size={32} className="text-rose-600" />
+            </div>
+            <h2 className="text-xl font-bold text-rose-800">
+              Category Not Found
+            </h2>
+            <p className="mt-2 text-rose-600">
+              {error || "The category you're looking for doesn't exist."}
+            </p>
+            <Link
+              to="/admin/categories"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-rose-700"
+            >
+              <HiOutlineArrowLeft size={18} />
+              Back to Categories
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8"
+    >
+      <div className="mx-auto max-w-4xl">
+        {/* ========== HEADER ========== */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-center gap-4">
+            <Link to="/admin/categories">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="rounded-xl border-2 border-slate-200 bg-white p-2.5 text-slate-600 transition hover:bg-slate-50"
+              >
+                <HiOutlineArrowLeft size={20} />
+              </motion.button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-extrabold text-slate-900">
+                Edit Category
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Update category information and details
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {category.status && <StatusBadge status={category.status} />}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700">
+              <HiOutlinePencil size={16} />
+              Edit Mode
+            </span>
+          </div>
+        </motion.div>
+
+        {/* ========== FORM ========== */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="p-6 sm:p-8 space-y-8"
+          >
+            {/* Basic Information */}
+            <section>
+              <div className="mb-6 flex items-center gap-3">
+                <div className="rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 p-2.5 text-violet-700">
+                  <HiOutlineFolder size={20} />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800">
+                  Basic Information
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6">
+                {/* Category Name */}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Category Name <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      <HiOutlineTag size={18} />
+                    </div>
+                    <input
+                      {...register("name", {
+                        required: "Category name is required",
+                      })}
+                      className={`w-full rounded-xl border-0 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 transition placeholder:text-slate-400 focus:ring-2 ${
+                        errors.name
+                          ? "ring-rose-500 focus:ring-rose-500"
+                          : "ring-slate-200 focus:ring-violet-500"
+                      }`}
+                      placeholder="Enter category name"
+                    />
+                  </div>
+                  {errors.name && (
+                    <p className="mt-1.5 text-sm text-rose-500">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Status
+                  </label>
+                  <select
+                    {...register("status")}
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition appearance-none focus:ring-2 focus:ring-violet-500"
+                  >
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Description
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-4 text-slate-400">
+                      <HiOutlineDocumentText size={18} />
+                    </div>
+                    <textarea
+                      {...register("description")}
+                      rows="4"
+                      className="w-full rounded-xl border-0 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 resize-none focus:ring-2 focus:ring-violet-500"
+                      placeholder="Describe this category..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Image Upload */}
+            <section className="border-t border-slate-200 pt-8">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 p-2.5 text-pink-700">
+                  <HiOutlinePhoto size={20} />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800">
+                  Category Image
+                </h2>
+              </div>
+
+              <ImageUpload
+                preview={preview}
+                setPreview={setPreview}
+                register={register}
+                setValue={setValue}
+                error={errors.image}
+              />
+            </section>
+
+            {/* Actions */}
+            <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-8 sm:flex-row sm:justify-end sm:gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  reset({
+                    name: category.name || "",
+                    status: category.status || "active",
+                    description: category.description || "",
+                  });
+                  setPreview(category.image || null);
+                  setValue("image", null);
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
+              >
+                <HiOutlineXCircle size={18} />
+                Reset
+              </button>
+              <Link to="/admin/categories">
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
+                >
+                  <HiOutlineXCircle size={18} />
+                  Cancel
+                </button>
+              </Link>
+              <motion.button
+                type="submit"
+                disabled={submitting}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition sm:w-auto ${
+                  submitting
+                    ? "bg-slate-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-violet-200 hover:shadow-xl"
+                }`}
+              >
+                {submitting ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <HiOutlineCheckCircle size={18} />
+                    Update Category
+                  </>
+                )}
+              </motion.button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}

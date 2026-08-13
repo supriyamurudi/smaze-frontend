@@ -1,0 +1,48 @@
+const offers = [
+  {
+    id: 1,
+    title: "50% OFF on Pizza",
+    shop: "Pizza Hub",
+    category: "Food",
+    location: "Belagavi",
+    discount: "50% OFF",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600",
+    validTill: "31 Dec 2026",
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Buy 1 Get 1 Burger",
+    shop: "Burger House",
+    category: "Food",
+    location: "Belagavi",
+    discount: "BOGO",
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600",
+    validTill: "25 Dec 2026",
+    featured: true,
+  },
+  {
+    id: 3,
+    title: "Flat ₹300 OFF",
+    shop: "Fashion World",
+    category: "Fashion",
+    location: "Belagavi",
+    discount: "₹300 OFF",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600",
+    validTill: "15 Jan 2027",
+    featured: false,
+  },
+  {
+    id: 4,
+    title: "40% OFF on Shoes",
+    shop: "Nike Store",
+    category: "Fashion",
+    location: "Belagavi",
+    discount: "40% OFF",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+    validTill: "10 Jan 2027",
+    featured: true,
+  },
+];
+
+export default offers;
