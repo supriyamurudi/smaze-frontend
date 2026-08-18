@@ -74,3 +74,18 @@ export const getShopStatus = () => {
   }
   return null;
 };
+
+// ================= Reset Password (Simple - No Email) =================
+export const resetPassword = async (data) => {
+  try {
+    const response = await api.post("/auth/reset-password", data);
+    return response.data;
+  } catch (error) {
+    throw {
+      message:
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to reset password",
+    };
+  }
+};

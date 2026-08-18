@@ -2,13 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  FaHeart,
-  FaMapMarkerAlt,
-  FaClock,
-  FaArrowRight,
-  FaFire,
-} from "react-icons/fa";
+import { FaHeart, FaClock, FaArrowRight, FaFire } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 import { getOffers } from "../services/offerService";
@@ -170,23 +164,27 @@ const HomeOffers = () => {
 
                   {/* Content */}
                   <div className="p-4 flex-1 flex flex-col">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-violet-600 truncate">
+                    {/* REMOVED: Shop name display - public page */}
+                    {/* <p className="text-xs font-semibold uppercase tracking-wider text-violet-600 truncate">
                       {offer.shop?.name || "Local Shop"}
-                    </p>
+                    </p> */}
 
                     <h3 className="mt-1.5 text-sm font-bold text-slate-800 line-clamp-2 min-h-[44px]">
                       {offer.title}
                     </h3>
 
                     <div className="mt-2.5 flex items-center justify-between text-xs text-slate-500">
-                      <span className="flex items-center gap-1.5 truncate max-w-[140px]">
+                      {/* REMOVED: Location display - public page */}
+                      {/* <span className="flex items-center gap-1.5 truncate max-w-[140px]">
                         <FaMapMarkerAlt
                           className="text-violet-500 flex-shrink-0"
                           size={12}
                         />
                         {offer.shop?.address?.split(",")[0] || "Near You"}
-                      </span>
-                      <span className="flex items-center gap-1.5 flex-shrink-0">
+                      </span> */}
+
+                      {/* Only show expiry date */}
+                      <span className="flex items-center gap-1.5">
                         <FaClock className="text-amber-500" size={12} />
                         {formatExpiry(offer.endDate)}
                       </span>

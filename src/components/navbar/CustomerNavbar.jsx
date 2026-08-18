@@ -1,6 +1,9 @@
+// src/components/navbar/CustomerNavbar.jsx
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
+import smazeLogo from "../../assets/icons/smaze-icon.jpeg";
 
 import {
   HiBars3,
@@ -365,7 +368,7 @@ const CustomerNavbar = () => {
                       transition={{ type: "spring", damping: 25 }}
                       className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden"
                     >
-                      {/* Profile Header */}
+                      {/* Profile Header - REMOVED the "Customer" text */}
                       <div className="px-4 py-4 border-b border-slate-100 bg-gradient-to-r from-violet-50/50 to-purple-50/50">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
@@ -375,7 +378,7 @@ const CustomerNavbar = () => {
                             <p className="text-sm font-semibold text-slate-800 truncate">
                               {userName}
                             </p>
-                            <p className="text-xs text-slate-500">Customer</p>
+                            {/* REMOVED: <p className="text-xs text-slate-500">Customer</p> */}
                           </div>
                         </div>
                       </div>
@@ -435,8 +438,12 @@ const CustomerNavbar = () => {
           >
             <div className="flex h-16 items-center justify-between border-b border-slate-100 px-5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                  <HiOutlineSparkles size={16} className="text-white" />
+                <div className="w-8 h-8 flex items-center justify-center shadow-md shadow-violet-200/50 group-hover:shadow-violet-300 transition-shadow overflow-hidden">
+                  <img
+                    src={smazeLogo}
+                    alt="Smaze Logo"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="text-xl font-bold text-slate-800">Smaze</span>
               </div>
@@ -449,7 +456,7 @@ const CustomerNavbar = () => {
             </div>
 
             <div className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-64px)]">
-              {/* User Info */}
+              {/* User Info - REMOVED the "Customer" text */}
               <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-gradient-to-r from-violet-50/50 to-purple-50/50 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
                   {getInitials()}
@@ -458,7 +465,7 @@ const CustomerNavbar = () => {
                   <p className="text-sm font-semibold text-slate-800">
                     {userName}
                   </p>
-                  <p className="text-xs text-slate-500">Customer</p>
+                  {/* REMOVED: <p className="text-xs text-slate-500">Customer</p> */}
                 </div>
               </div>
 

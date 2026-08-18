@@ -24,6 +24,7 @@ import PublicOfferDetails from "../components/PublicOfferDetails";
 
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
+import ForgotPasswordRequest from "../pages/ForgotPasswordRequest";
 import ForgotPassword from "../pages/ForgotPassword";
 
 // ================= CUSTOMER =================
@@ -104,7 +105,8 @@ const AppRoutes = () => {
 
           <Route path="/signup" element={<Signup />} />
 
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgot-password" element={<ForgotPasswordRequest />} />
+          <Route path="/reset-password" element={<ForgotPassword />} />
         </Route>
 
         {/* ================= CUSTOMER ================= */}

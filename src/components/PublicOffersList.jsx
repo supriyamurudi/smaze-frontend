@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   HiOutlineStar,
   HiOutlineClock,
-  HiOutlineMapPin,
   HiOutlineMagnifyingGlass,
   HiOutlineXMark,
   HiOutlineArrowLeft,
@@ -74,10 +73,12 @@ const OfferCard = ({ offer }) => {
         <h4 className="font-semibold text-slate-800 line-clamp-1 group-hover:text-violet-600 transition-colors">
           {offer.title}
         </h4>
-        <p className="text-sm text-slate-500 mt-1 flex items-center gap-1">
+
+        {/* REMOVED: Shop name display - public page */}
+        {/* <p className="text-sm text-slate-500 mt-1 flex items-center gap-1">
           <HiOutlineMapPin size={14} />
           {offer.shop?.name || "Local Shop"}
-        </p>
+        </p> */}
 
         <div className="flex items-center gap-3 mt-2">
           <span className="flex items-center gap-1 text-sm text-slate-600">
@@ -290,7 +291,7 @@ const PublicOffersList = () => {
             />
             <input
               type="text"
-              placeholder="Search offers or shops..."
+              placeholder="Search offers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-xl border-0 bg-white py-3 pl-11 pr-4 text-sm text-slate-800 shadow-md outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"

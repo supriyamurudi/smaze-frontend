@@ -7,10 +7,8 @@ import {
   HiOutlineHeart,
   HiOutlineShare,
   HiOutlineClock,
-  HiOutlineMapPin,
   HiOutlineStar,
   HiOutlineTag,
-  HiOutlineBuildingStorefront,
   HiOutlineCalendar,
 } from "react-icons/hi2";
 import toast from "react-hot-toast";
@@ -188,10 +186,11 @@ const PublicOfferDetails = () => {
               <h1 className="text-3xl font-bold text-slate-900">
                 {offer.title}
               </h1>
-              <p className="text-slate-500 mt-1 flex items-center gap-1">
+              {/* REMOVED: Shop name display - this is public page */}
+              {/* <p className="text-slate-500 mt-1 flex items-center gap-1">
                 <HiOutlineBuildingStorefront size={18} />
                 {offer.shop?.name || "Local Shop"}
-              </p>
+              </p> */}
             </div>
 
             {/* Description */}
@@ -203,14 +202,17 @@ const PublicOfferDetails = () => {
 
             {/* Info Grid */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+              {/* REMOVED: Location display - this is public page */}
+              {/* <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
                 <p className="text-xs text-slate-400">Location</p>
                 <p className="font-medium text-slate-700 flex items-center gap-1 mt-1">
                   <HiOutlineMapPin size={16} className="text-violet-500" />
                   {offer.shop?.address || "Not specified"}
                 </p>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+              </div> */}
+
+              {/* REPLACED: Show only expiry date in a single column or full width */}
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 col-span-2">
                 <p className="text-xs text-slate-400">Valid Until</p>
                 <p className="font-medium text-slate-700 flex items-center gap-1 mt-1">
                   <HiOutlineCalendar size={16} className="text-violet-500" />

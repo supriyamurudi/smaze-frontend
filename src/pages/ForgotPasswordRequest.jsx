@@ -1,4 +1,4 @@
-// frontend/src/components/ForgotPassword.jsx
+// frontend/src/components/ForgotPasswordRequest.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -12,7 +12,7 @@ import {
 import toast from "react-hot-toast";
 import { resetPassword } from "../services/authService";
 
-const ForgotPassword = () => {
+const ForgotPasswordRequest = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -75,6 +75,7 @@ const ForgotPassword = () => {
       const response = await resetPassword({
         email,
         newPassword,
+        confirmPassword,
       });
 
       if (response.success) {
@@ -173,7 +174,11 @@ const ForgotPassword = () => {
                   </p>
                   <ul className="space-y-1">
                     <li
-                      className={`flex items-center gap-2 ${formData.newPassword.length >= 8 ? "text-green-500" : "text-slate-400"}`}
+                      className={`flex items-center gap-2 ${
+                        formData.newPassword.length >= 8
+                          ? "text-green-500"
+                          : "text-slate-400"
+                      }`}
                     >
                       <span>
                         {formData.newPassword.length >= 8 ? "✅" : "□"}
@@ -181,7 +186,11 @@ const ForgotPassword = () => {
                       At least 8 characters
                     </li>
                     <li
-                      className={`flex items-center gap-2 ${/[A-Z]/.test(formData.newPassword) ? "text-green-500" : "text-slate-400"}`}
+                      className={`flex items-center gap-2 ${
+                        /[A-Z]/.test(formData.newPassword)
+                          ? "text-green-500"
+                          : "text-slate-400"
+                      }`}
                     >
                       <span>
                         {/[A-Z]/.test(formData.newPassword) ? "✅" : "□"}
@@ -189,7 +198,11 @@ const ForgotPassword = () => {
                       One uppercase letter
                     </li>
                     <li
-                      className={`flex items-center gap-2 ${/[a-z]/.test(formData.newPassword) ? "text-green-500" : "text-slate-400"}`}
+                      className={`flex items-center gap-2 ${
+                        /[a-z]/.test(formData.newPassword)
+                          ? "text-green-500"
+                          : "text-slate-400"
+                      }`}
                     >
                       <span>
                         {/[a-z]/.test(formData.newPassword) ? "✅" : "□"}
@@ -197,7 +210,11 @@ const ForgotPassword = () => {
                       One lowercase letter
                     </li>
                     <li
-                      className={`flex items-center gap-2 ${/[0-9]/.test(formData.newPassword) ? "text-green-500" : "text-slate-400"}`}
+                      className={`flex items-center gap-2 ${
+                        /[0-9]/.test(formData.newPassword)
+                          ? "text-green-500"
+                          : "text-slate-400"
+                      }`}
                     >
                       <span>
                         {/[0-9]/.test(formData.newPassword) ? "✅" : "□"}
@@ -302,4 +319,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ForgotPasswordRequest;

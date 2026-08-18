@@ -1,11 +1,11 @@
+// src/pages/customer/Categories.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import {
   HiOutlineBuildingStorefront,
   HiOutlineArrowRight,
-  HiOutlineChevronRight,
   HiOutlineHeart,
   HiOutlineMapPin,
   HiOutlineStar,
@@ -72,7 +72,8 @@ const CustomerCategories = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryParam = params.get("category");
-    if (categoryParam) {
+
+    if (categoryParam && categories.length > 0) {
       const foundCategory = categories.find(
         (c) =>
           c.id === categoryParam ||
@@ -125,12 +126,8 @@ const CustomerCategories = () => {
   const fetchCategoryContent = async (categoryId) => {
     try {
       setLoadingContent(true);
-
-      // Fetch shops by category
       const shopsResponse = await getShopsByCategory(categoryId);
       setShops(shopsResponse.data || []);
-
-      // Fetch offers by category
       const offersResponse = await getOffersByCategory(categoryId);
       setOffers(offersResponse.data || []);
     } catch (error) {
@@ -144,7 +141,10 @@ const CustomerCategories = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setShowContent(true);
-    navigate(`/customer/categories?category=${category.id}`);
+    // Update URL with category
+    navigate(
+      `/customer/categories?category=${encodeURIComponent(category.name)}`,
+    );
     fetchCategoryContent(category.id);
   };
 
@@ -229,7 +229,7 @@ const CustomerCategories = () => {
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* ========== HEADER ========== */}
+        {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -270,7 +270,7 @@ const CustomerCategories = () => {
           </div>
         </motion.div>
 
-        {/* ========== STATS BANNER ========== */}
+        {/* Stats Banner */}
         {categories.length > 0 && !showContent && (
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -299,7 +299,7 @@ const CustomerCategories = () => {
           </motion.div>
         )}
 
-        {/* ========== SEARCH & VIEW CONTROLS ========== */}
+        {/* Search & View Controls */}
         {!showContent && (
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -372,7 +372,7 @@ const CustomerCategories = () => {
           </motion.div>
         )}
 
-        {/* ========== CATEGORIES CONTENT ========== */}
+        {/* Categories Content */}
         {showContent && selectedCategory ? (
           // Category Content View
           <motion.div
@@ -417,6 +417,7 @@ const CustomerCategories = () => {
                           onClick={() => navigate(`/customer/shops/${shop.id}`)}
                           className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer group overflow-hidden"
                         >
+                          {/* Shop card content */}
                           <div className="relative h-40 bg-gradient-to-br from-violet-100 to-purple-100">
                             {shop.image ? (
                               <img
@@ -494,6 +495,7 @@ const CustomerCategories = () => {
                           }
                           className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer group overflow-hidden"
                         >
+                          {/* Offer card content */}
                           <div className="relative h-40 bg-gradient-to-br from-violet-100 to-purple-100">
                             {offer.image ? (
                               <img
@@ -562,163 +564,45 @@ const CustomerCategories = () => {
           </motion.div>
         ) : (
           // Categories Grid View
-          <>
-            {categories.length === 0 ? (
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="rounded-3xl border-2 border-dashed border-slate-300 bg-white/50 py-32 text-center backdrop-blur-sm"
+          // ... (keep the existing grid view code)
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {filteredCategories.map((category, index) => (
+              <motion.button
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ y: -8 }}
+                onClick={() => handleCategoryClick(category)}
+                className="group relative block w-full overflow-hidden rounded-2xl bg-white p-6 text-center shadow-md transition-all duration-300 hover:shadow-xl"
               >
-                <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100">
-                  <HiOutlineBuildingStorefront
-                    size={48}
-                    className="text-slate-400"
-                  />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${getCategoryColor(
+                    index,
+                  )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
+                />
+
+                <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110">
+                  <span className="text-5xl transition-transform duration-300 group-hover:scale-110">
+                    {getCategoryEmoji(category.name)}
+                  </span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-700">
-                  No Categories Found
-                </h2>
-                <p className="mt-3 max-w-md mx-auto text-slate-500">
-                  Categories will appear here once the admin adds them. Stay
-                  tuned for amazing deals!
-                </p>
-                <Link
-                  to="/customer/offers"
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white transition hover:scale-105 hover:shadow-lg"
-                >
-                  Browse All Offers
-                  <HiOutlineArrowRight size={18} />
-                </Link>
-              </motion.div>
-            ) : filteredCategories.length === 0 ? (
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="rounded-3xl bg-white/50 py-20 text-center backdrop-blur-sm"
-              >
-                <div className="text-6xl mb-4">🔍</div>
-                <h2 className="text-2xl font-bold text-slate-700">
-                  No matching categories
-                </h2>
-                <p className="mt-2 text-slate-500">
-                  Try adjusting your search terms
-                </p>
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="mt-4 text-violet-600 font-semibold hover:text-violet-700"
-                >
-                  Clear search
-                </button>
-              </motion.div>
-            ) : (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-                    : "space-y-4"
-                }
-              >
-                <AnimatePresence>
-                  {filteredCategories.map((category, index) => (
-                    <motion.div
-                      key={category.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ delay: index * 0.05 }}
-                      whileHover={viewMode === "grid" ? { y: -8 } : { x: 4 }}
-                    >
-                      {viewMode === "grid" ? (
-                        <button
-                          onClick={() => handleCategoryClick(category)}
-                          className="group relative block w-full overflow-hidden rounded-2xl bg-white p-6 text-center shadow-md transition-all duration-300 hover:shadow-xl"
-                        >
-                          <div
-                            className={`absolute inset-0 bg-gradient-to-br ${getCategoryColor(
-                              index,
-                            )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
-                          ></div>
 
-                          <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110">
-                            {category.image ? (
-                              <img
-                                src={category.image}
-                                alt={category.name}
-                                className="h-20 w-20 rounded-lg object-contain transition-transform duration-300 group-hover:scale-110"
-                                onError={(e) => {
-                                  e.target.style.display = "none";
-                                  e.target.parentElement.innerHTML = `<span class="text-4xl">${getCategoryEmoji(
-                                    category.name,
-                                  )}</span>`;
-                                }}
-                              />
-                            ) : (
-                              <span className="text-5xl transition-transform duration-300 group-hover:scale-110">
-                                {getCategoryEmoji(category.name)}
-                              </span>
-                            )}
-                          </div>
+                <h3 className="relative mt-5 text-lg font-bold text-slate-800 transition-colors duration-300 group-hover:text-violet-600">
+                  {category.name}
+                </h3>
 
-                          <h3 className="relative mt-5 text-lg font-bold text-slate-800 transition-colors duration-300 group-hover:text-violet-600">
-                            {category.name}
-                          </h3>
-
-                          <div
-                            className={`mx-auto mt-3 h-1.5 w-8 rounded-full bg-gradient-to-r ${getCategoryColor(
-                              index,
-                            )} transition-all duration-300 group-hover:w-12`}
-                          ></div>
-
-                          <div className="absolute right-3 top-3 rounded-full bg-slate-100 p-1.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <HiOutlineChevronRight
-                              size={16}
-                              className="text-slate-600"
-                            />
-                          </div>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleCategoryClick(category)}
-                          className="group flex w-full items-center gap-4 rounded-2xl bg-white p-4 shadow-md transition-all duration-300 hover:shadow-lg"
-                        >
-                          <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 text-3xl transition-transform duration-300 group-hover:scale-110">
-                            {category.image ? (
-                              <img
-                                src={category.image}
-                                alt={category.name}
-                                className="h-12 w-12 rounded-lg object-contain"
-                                onError={(e) => {
-                                  e.target.style.display = "none";
-                                  e.target.parentElement.textContent =
-                                    getCategoryEmoji(category.name);
-                                }}
-                              />
-                            ) : (
-                              getCategoryEmoji(category.name)
-                            )}
-                          </div>
-                          <div className="flex-1 text-left">
-                            <h3 className="font-bold text-slate-800 group-hover:text-violet-600 transition-colors">
-                              {category.name}
-                            </h3>
-                            <p className="text-sm text-slate-500">
-                              Explore offers in this category
-                            </p>
-                          </div>
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 text-violet-600 transition-all duration-300 group-hover:bg-violet-600 group-hover:text-white">
-                            <HiOutlineChevronRight size={20} />
-                          </div>
-                        </button>
-                      )}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            )}
-          </>
+                <div
+                  className={`mx-auto mt-3 h-1.5 w-8 rounded-full bg-gradient-to-r ${getCategoryColor(
+                    index,
+                  )} transition-all duration-300 group-hover:w-12`}
+                />
+              </motion.button>
+            ))}
+          </div>
         )}
 
-        {/* ========== BOTTOM CTA ========== */}
+        {/* Bottom CTA */}
         {categories.length > 0 && !showContent && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

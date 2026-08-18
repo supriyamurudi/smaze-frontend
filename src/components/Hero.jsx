@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FaSearch,
-  FaMapMarkerAlt,
   FaArrowRight,
   FaStore,
   FaUsers,
@@ -22,8 +20,7 @@ export default function Hero() {
     totalCustomers: 0,
     totalOffers: 0,
   });
-  const [searchQuery, setSearchQuery] = useState("");
-  const [location, setLocation] = useState("Belagavi");
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,13 +48,6 @@ export default function Hero() {
 
     fetchStats();
   }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   const handleExplore = () => {
     navigate("/offers");
@@ -111,48 +101,6 @@ export default function Hero() {
               grocery shops and exclusive discounts from trusted local
               businesses in your city.
             </p>
-
-            {/* Search Box */}
-            <motion.form
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              viewport={{ once: true }}
-              onSubmit={handleSearch}
-              className="mt-8 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-2xl p-4"
-            >
-              <div className="grid lg:grid-cols-[1fr_1fr_auto] gap-4">
-                <div className="flex items-center gap-3 h-14 px-5 rounded-2xl border border-gray-200 focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-100 transition-all">
-                  <FaSearch className="text-violet-600 text-lg flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Search shops, offers..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full outline-none bg-transparent text-gray-700 placeholder:text-gray-400"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 h-14 px-5 rounded-2xl border border-gray-200 focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-100 transition-all">
-                  <FaMapMarkerAlt className="text-pink-500 text-lg flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Enter your city"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full outline-none bg-transparent text-gray-700 placeholder:text-gray-400"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="h-14 px-8 rounded-2xl bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white font-semibold flex items-center justify-center gap-3 shadow-xl hover:scale-105 transition-all duration-300"
-                >
-                  Explore
-                  <FaArrowRight />
-                </button>
-              </div>
-            </motion.form>
 
             {/* CTA */}
             <motion.div

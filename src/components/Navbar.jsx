@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import smazeIcon from "../assets/icons/smaze-icon.jpeg";
 
-import {
-  HiBars3,
-  HiXMark,
-  HiOutlineMagnifyingGlass,
-  HiOutlineUserCircle,
-} from "react-icons/hi2";
+import { HiBars3, HiXMark } from "react-icons/hi2";
 
 import { FaMapMarkerAlt } from "react-icons/fa";
 
@@ -92,40 +88,37 @@ const Navbar = () => {
             <Link
               to="/"
               className="
-              flex
-              items-center
-              gap-3
-              group
-              "
+    flex
+    items-center
+    gap-3
+    group
+  "
             >
               <div
                 className="
-                h-12
-                w-12
-                rounded-2xl
-                bg-gradient-to-br
-                from-purple-600
-                via-fuchsia-500
-                to-pink-500
-                flex
-                items-center
-                justify-center
-                shadow-lg
-                shadow-purple-200
-                group-hover:rotate-12
-                transition-all
-                duration-500
-                "
+      h-12
+      w-12
+      rounded-2xl
+      bg-gradient-to-br
+      from-purple-600
+      via-fuchsia-500
+      to-pink-500
+      flex
+      items-center
+      justify-center
+      shadow-lg
+      shadow-purple-200
+      group-hover:rotate-12
+      transition-all
+      duration-500
+      overflow-hidden
+    "
               >
-                <span
-                  className="
-                  text-white
-                  text-2xl
-                  font-black
-                  "
-                >
-                  S
-                </span>
+                <img
+                  src={smazeIcon}
+                  alt="Smaze"
+                  className="w-15 h-15 object-contain" // 10 = 40px
+                />
               </div>
 
               <div>
@@ -256,46 +249,6 @@ const Navbar = () => {
                   Belagavi
                 </span>
               </div>
-
-              {/* Search Button */}
-
-              <button
-                className="
-                w-11
-                h-11
-                rounded-xl
-                bg-gray-100
-                hover:bg-purple-600
-                hover:text-white
-                flex
-                items-center
-                justify-center
-                transition-all
-                duration-300
-                "
-              >
-                <HiOutlineMagnifyingGlass size={22} />
-              </button>
-
-              {/* Profile Button */}
-
-              <button
-                className="
-                w-11
-                h-11
-                rounded-xl
-                bg-gray-100
-                hover:bg-pink-500
-                hover:text-white
-                flex
-                items-center
-                justify-center
-                transition-all
-                duration-300
-                "
-              >
-                <HiOutlineUserCircle size={24} />
-              </button>
 
               {/* Login */}
 

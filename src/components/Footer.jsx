@@ -347,7 +347,7 @@ const Footer = () => {
                   "
                 />
 
-                <p>support@smaze.in</p>
+                <p>hellosmaze@gmail.com</p>
               </div>
             </div>
           </div>
