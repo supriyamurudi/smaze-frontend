@@ -1,6 +1,6 @@
 // frontend/src/pages/Login.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
 import {
@@ -21,8 +21,6 @@ const validateEmail = (email) => {
 };
 
 const Login = () => {
-  const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -84,49 +82,51 @@ const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // ✅ Redirect based on role and shop status
+      // ✅ FIX: Use window.location for reliable redirect
+      // Redirect based on role and shop status
       if (user.role === "ADMIN") {
-        navigate("/admin/dashboard");
+        window.location.href = "/admin/dashboard";
         return;
       }
 
       if (user.role === "CUSTOMER") {
-        navigate("/customer/dashboard");
+        window.location.href = "/customer/dashboard";
         return;
       }
 
       if (user.role === "SHOP_OWNER") {
-        // ✅ Use shop status from login response (no need to call getMyShop)
+        // Use shop status from login response
         if (!user.hasShop) {
           // No shop created yet
-          navigate("/shop/create-shop");
+          window.location.href = "/shop/create-shop";
           return;
         }
 
         if (user.shopStatus === "pending") {
           // Shop pending approval
-          navigate("/shop/pending-approval");
+          window.location.href = "/shop/pending-approval";
           return;
         }
 
         if (user.shopStatus === "approved") {
           // Shop approved - go to dashboard
-          navigate("/shop/dashboard");
+          window.location.href = "/shop/dashboard";
           return;
         }
 
         if (user.shopStatus === "rejected") {
           setError("Your shop has been rejected. Please contact support.");
-          navigate("/shop/create-shop");
+          window.location.href = "/shop/create-shop";
           return;
         }
 
         // Fallback - go to dashboard
-        navigate("/shop/dashboard");
+        window.location.href = "/shop/dashboard";
         return;
       }
 
-      navigate("/");
+      // Fallback redirect
+      window.location.href = "/";
     } catch (error) {
       const message =
         error.response?.data?.message ||
