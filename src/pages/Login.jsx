@@ -1,6 +1,6 @@
 // frontend/src/pages/Login.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Added useNavigate
 import { loginUser } from "../services/authService";
 
 import {
@@ -21,6 +21,8 @@ const validateEmail = (email) => {
 };
 
 const Login = () => {
+  const navigate = useNavigate(); // ✅ Added navigate
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -82,51 +84,53 @@ const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // ✅ FIX: Use window.location for reliable redirect
-      // Redirect based on role and shop status
-      if (user.role === "ADMIN") {
-        window.location.href = "/admin/dashboard";
-        return;
-      }
-
-      if (user.role === "CUSTOMER") {
-        window.location.href = "/customer/dashboard";
-        return;
-      }
-
-      if (user.role === "SHOP_OWNER") {
-        // Use shop status from login response
-        if (!user.hasShop) {
-          // No shop created yet
-          window.location.href = "/shop/create-shop";
+      // ✅ Use navigate with setTimeout to ensure state updates
+      setTimeout(() => {
+        // Redirect based on role and shop status
+        if (user.role === "ADMIN") {
+          navigate("/admin/dashboard");
           return;
         }
 
-        if (user.shopStatus === "pending") {
-          // Shop pending approval
-          window.location.href = "/shop/pending-approval";
+        if (user.role === "CUSTOMER") {
+          navigate("/customer/dashboard");
           return;
         }
 
-        if (user.shopStatus === "approved") {
-          // Shop approved - go to dashboard
-          window.location.href = "/shop/dashboard";
+        if (user.role === "SHOP_OWNER") {
+          // Use shop status from login response
+          if (!user.hasShop) {
+            // No shop created yet
+            navigate("/shop/create-shop");
+            return;
+          }
+
+          if (user.shopStatus === "pending") {
+            // Shop pending approval
+            navigate("/shop/pending-approval");
+            return;
+          }
+
+          if (user.shopStatus === "approved") {
+            // Shop approved - go to dashboard
+            navigate("/shop/dashboard");
+            return;
+          }
+
+          if (user.shopStatus === "rejected") {
+            setError("Your shop has been rejected. Please contact support.");
+            navigate("/shop/create-shop");
+            return;
+          }
+
+          // Fallback - go to dashboard
+          navigate("/shop/dashboard");
           return;
         }
 
-        if (user.shopStatus === "rejected") {
-          setError("Your shop has been rejected. Please contact support.");
-          window.location.href = "/shop/create-shop";
-          return;
-        }
-
-        // Fallback - go to dashboard
-        window.location.href = "/shop/dashboard";
-        return;
-      }
-
-      // Fallback redirect
-      window.location.href = "/";
+        // Fallback redirect
+        navigate("/");
+      }, 100);
     } catch (error) {
       const message =
         error.response?.data?.message ||
