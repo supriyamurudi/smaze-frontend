@@ -25,7 +25,6 @@ const Navbar = () => {
   return (
     <>
       {/* Overlay */}
-
       {mobileMenu && (
         <div
           className="
@@ -41,7 +40,6 @@ const Navbar = () => {
       )}
 
       {/* Navbar */}
-
       <header
         className={`
           fixed
@@ -71,7 +69,8 @@ const Navbar = () => {
           className="
           max-w-7xl
           mx-auto
-          px-6
+          px-4
+          sm:px-6
           lg:px-10
           "
         >
@@ -81,64 +80,65 @@ const Navbar = () => {
             flex
             items-center
             justify-between
+            gap-2
             "
           >
             {/* Logo */}
-
             <Link
               to="/"
               className="
-    flex
-    items-center
-    gap-3
-    group
-  "
+                flex
+                items-center
+                gap-3
+                group
+                flex-shrink-0
+              "
             >
               <div
                 className="
-      h-12
-      w-12
-      rounded-2xl
-      bg-gradient-to-br
-      from-purple-600
-      via-fuchsia-500
-      to-pink-500
-      flex
-      items-center
-      justify-center
-      shadow-lg
-      shadow-purple-200
-      group-hover:rotate-12
-      transition-all
-      duration-500
-      overflow-hidden
-    "
+                  h-12
+                  w-12
+                  rounded-2xl
+                  bg-gradient-to-br
+                  from-purple-600
+                  via-fuchsia-500
+                  to-pink-500
+                  flex
+                  items-center
+                  justify-center
+                  shadow-lg
+                  shadow-purple-200
+                  group-hover:rotate-12
+                  transition-all
+                  duration-500
+                  overflow-hidden
+                "
               >
                 <img
                   src={smazeIcon}
                   alt="Smaze"
-                  className="w-15 h-15 object-contain" // 10 = 40px
+                  className="w-15 h-15 object-contain"
                 />
               </div>
 
               <div>
                 <h1
                   className="
-                  text-3xl
+                  text-2xl
+                  sm:text-3xl
                   font-black
                   tracking-tight
                   "
                 >
                   <span className="text-purple-600">S</span>
-
                   <span className="text-gray-900">maze</span>
-
                   <span className="text-pink-500 text-sm align-top">™</span>
                 </h1>
 
                 <p
                   className="
-                  text-[11px]
+                  text-[10px]
+                  sm:text-[11px]
                   text-gray-500
                   -mt-1
                   tracking-widest
@@ -151,13 +151,13 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Links */}
-
             <nav
               className="
               hidden
               lg:flex
               items-center
-              gap-10
+              gap-8
+              xl:gap-10
               "
             >
               {NAV_LINKS.map((item) => (
@@ -165,7 +165,6 @@ const Navbar = () => {
                   key={item.title}
                   to={item.path}
                   className={({ isActive }) => `
-
                     group
                     relative
                     font-semibold
@@ -177,7 +176,6 @@ const Navbar = () => {
                         ? "text-purple-600"
                         : "text-gray-700 hover:text-purple-600"
                     }
-
                   `}
                 >
                   {({ isActive }) => (
@@ -186,20 +184,18 @@ const Navbar = () => {
 
                       <span
                         className={`
+                          absolute
+                          left-0
+                          -bottom-2
+                          h-[3px]
+                          rounded-full
+                          bg-gradient-to-r
+                          from-purple-600
+                          to-pink-500
+                          transition-all
+                          duration-300
 
-                        absolute
-                        left-0
-                        -bottom-2
-                        h-[3px]
-                        rounded-full
-                        bg-gradient-to-r
-                        from-purple-600
-                        to-pink-500
-                        transition-all
-                        duration-300
-
-                        ${isActive ? "w-full" : "w-0 group-hover:w-full"}
-
+                          ${isActive ? "w-full" : "w-0 group-hover:w-full"}
                         `}
                       />
                     </>
@@ -207,24 +203,24 @@ const Navbar = () => {
                 </NavLink>
               ))}
             </nav>
-            {/* Right Section */}
 
+            {/* Right Section - Desktop */}
             <div
               className="
               hidden
               lg:flex
               items-center
-              gap-4
+              gap-3
+              xl:gap-4
               "
             >
               {/* Location */}
-
               <div
                 className="
                 flex
                 items-center
                 gap-2
-                px-4
+                px-3
                 py-2
                 rounded-2xl
                 bg-white
@@ -236,9 +232,9 @@ const Navbar = () => {
                 <FaMapMarkerAlt
                   className="
                   text-pink-500
+                  text-sm
                   "
                 />
-
                 <span
                   className="
                   text-sm
@@ -251,12 +247,11 @@ const Navbar = () => {
               </div>
 
               {/* Login */}
-
               <Link
                 to="/login"
                 className="
-                px-6
-                py-3
+                px-5
+                py-2.5
                 rounded-xl
                 border
                 border-purple-600
@@ -265,18 +260,18 @@ const Navbar = () => {
                 hover:bg-purple-50
                 transition-all
                 duration-300
+                text-sm
                 "
               >
                 Login
               </Link>
 
               {/* Get Started */}
-
               <Link
                 to="/signup"
                 className="
-                px-6
-                py-3
+                px-5
+                py-2.5
                 rounded-xl
                 bg-gradient-to-r
                 from-purple-600
@@ -289,24 +284,38 @@ const Navbar = () => {
                 hover:scale-105
                 transition-all
                 duration-300
+                text-sm
                 "
               >
                 Get Started
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-
+            {/* ✅ FIXED: Mobile Menu Button */}
             <button
               onClick={() => setMobileMenu(true)}
               className="
-              lg:hidden
+                lg:hidden
+                flex
+                items-center
+                justify-center
+                w-12
+                h-12
+                rounded-xl
+                hover:bg-gray-100
+                active:bg-gray-200
+                transition-all
+                duration-200
+                active:scale-95
+                flex-shrink-0
+                ml-auto
               "
+              aria-label="Open menu"
             >
               <HiBars3
-                size={34}
+                size={32}
                 className="
-                text-gray-800
+                  text-gray-800
                 "
               />
             </button>
@@ -315,26 +324,23 @@ const Navbar = () => {
       </header>
 
       {/* Mobile Drawer */}
-
       <div
         className={`
+          fixed
+          top-0
+          right-0
+          h-full
+          w-[300px]
+          sm:w-[320px]
+          bg-white
+          z-50
+          shadow-2xl
+          transition-all
+          duration-500
 
-        fixed
-        top-0
-        right-0
-        h-full
-        w-[320px]
-        bg-white
-        z-50
-        shadow-2xl
-        transition-all
-        duration-500
-
-        ${mobileMenu ? "translate-x-0" : "translate-x-full"}
-
+          ${mobileMenu ? "translate-x-0" : "translate-x-full"}
         `}
       >
-        {" "}
         {/* Drawer Header */}
         <div
           className="
@@ -406,18 +412,20 @@ const Navbar = () => {
             hover:text-white
             transition
             "
+            aria-label="Close menu"
           >
             <HiXMark size={28} />
           </button>
         </div>
+
         {/* Mobile Links */}
         <div
           className="
           flex
           flex-col
           px-6
-          py-8
-          gap-3
+          py-6
+          gap-2
           "
         >
           {NAV_LINKS.map((item) => (
@@ -426,7 +434,6 @@ const Navbar = () => {
               to={item.path}
               onClick={() => setMobileMenu(false)}
               className={({ isActive }) => `
-
                 rounded-xl
                 px-5
                 py-4
@@ -448,7 +455,6 @@ const Navbar = () => {
                     hover:text-purple-600
                   `
                 }
-
               `}
             >
               {item.title}
@@ -469,7 +475,6 @@ const Navbar = () => {
             "
           >
             <FaMapMarkerAlt className="text-pink-500" />
-
             <span className="font-medium">Belagavi</span>
           </div>
 
@@ -482,9 +487,10 @@ const Navbar = () => {
             border
             border-purple-600
             text-purple-600
-            py-3
+            py-3.5
             font-semibold
             hover:bg-purple-50
+            transition
             "
           >
             Login
@@ -496,7 +502,7 @@ const Navbar = () => {
             className="
             text-center
             rounded-xl
-            py-3
+            py-3.5
             text-white
             font-semibold
             bg-gradient-to-r
@@ -504,6 +510,8 @@ const Navbar = () => {
             via-fuchsia-500
             to-pink-500
             shadow-lg
+            hover:shadow-xl
+            transition
             "
           >
             Get Started
@@ -512,7 +520,6 @@ const Navbar = () => {
       </div>
 
       {/* Spacer */}
-
       <div className="h-20"></div>
     </>
   );
