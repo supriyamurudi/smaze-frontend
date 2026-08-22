@@ -291,7 +291,7 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* ✅ FIXED: Mobile Menu Button */}
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenu(true)}
               className="
@@ -519,8 +519,8 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Spacer */}
-      <div className="h-20"></div>
+      {/* ✅ FIXED: Reduced Spacer */}
+      <div className="h-16 md:h-20"></div>
     </>
   );
 };
