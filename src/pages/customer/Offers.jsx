@@ -83,6 +83,13 @@ export default function Offers() {
   const [selectedCategoryName, setSelectedCategoryName] = useState("");
 
   // =========================
+  // Scroll to top when view mode changes
+  // =========================
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [viewMode]);
+
+  // =========================
   // Get category from URL params
   // =========================
   useEffect(() => {
@@ -461,6 +468,7 @@ export default function Offers() {
           </motion.div>
         ) : (
           <div
+            key={viewMode} // ADDED KEY FORCING REMOUNT
             className={
               viewMode === "grid"
                 ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
