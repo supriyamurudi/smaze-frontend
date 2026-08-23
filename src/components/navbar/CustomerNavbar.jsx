@@ -225,13 +225,18 @@ const CustomerNavbar = () => {
               to="/customer/dashboard"
               className="flex items-center gap-2 shrink-0"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md">
-                <img
-                  src={smazeLogo}
-                  alt="Smaze Logo"
-                  className="w-8 h-8 rounded-xl object-cover shadow-md"
-                />
-              </div>
+              {/* Clean, standalone image */}
+              <img
+                src={smazeLogo}
+                alt="Smaze Logo"
+                className="h-10 w-10 object-contain"
+              />
+
+              {/* Modern text with bold S and purple maze */}
+              <span className="text-2xl font-extrabold tracking-tight">
+                <span className="text-slate-900">S</span>
+                <span className="text-violet-600">maze</span>
+              </span>
 
               <span className="text-xl font-bold tracking-tight">
                 <span className="text-slate-800">Sm</span>
