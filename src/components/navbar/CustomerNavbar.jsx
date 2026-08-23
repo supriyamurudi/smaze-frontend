@@ -17,7 +17,6 @@ import {
   HiOutlineHome,
   HiOutlineTag,
   HiOutlineGift,
-  HiOutlineSparkles,
   HiOutlineXCircle,
   HiOutlineUser,
 } from "react-icons/hi2";
@@ -227,7 +226,11 @@ const CustomerNavbar = () => {
               className="flex items-center gap-2 shrink-0"
             >
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md">
-                <HiOutlineSparkles size={18} className="text-white" />
+                <img
+                  src={smazeLogo}
+                  alt="Smaze Logo"
+                  className="w-8 h-8 rounded-xl object-cover shadow-md"
+                />
               </div>
 
               <span className="text-xl font-bold tracking-tight">
