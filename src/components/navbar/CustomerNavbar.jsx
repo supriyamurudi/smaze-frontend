@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-import smazeLogo from "../../assets/icons/smaze-icon.jpeg";
+import smazeLogo from "../../assets/icons/smazeLogo.jpeg";
 
 import {
   HiBars3,
