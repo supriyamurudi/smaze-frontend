@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import smazeIcon from "../assets/icons/smaze-icon.jpeg";
+import smazeLogo from "../assets/icons/smaze-logo.jpeg";
 
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { FaMapMarkerAlt } from "react-icons/fa";
@@ -98,7 +98,7 @@ const Navbar = () => {
                 "
               >
                 <img
-                  src={smazeIcon}
+                  src={smazeLogo}
                   alt="Smaze"
                   className="w-full h-full object-contain"
                 />
@@ -108,9 +108,6 @@ const Navbar = () => {
                 <h1 className="text-xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
                   <span className="text-purple-600">S</span>
                   <span className="text-gray-900">maze</span>
-                  <span className="text-pink-500 text-xs sm:text-sm align-top">
-                    ™
-                  </span>
                 </h1>
 
                 <p className="hidden sm:block text-[10px] sm:text-[11px] text-gray-500 -mt-1 tracking-widest uppercase whitespace-nowrap">
@@ -243,7 +240,7 @@ const Navbar = () => {
           >
             <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-purple-600 via-fuchsia-500 to-pink-500">
               <img
-                src={smazeIcon}
+                src={smazeLogo}
                 alt="Smaze"
                 className="w-full h-full object-contain"
               />
