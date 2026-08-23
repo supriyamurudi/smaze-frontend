@@ -193,18 +193,13 @@ const CustomerCategories = () => {
 
   const categoryEmojis = {
     Food: "🍔",
-    Restaurant: "🍽️",
+
     Fashion: "👕",
     Beauty: "💄",
-    Grocery: "🛒",
+
     Electronics: "💻",
     Fitness: "🏋️",
-    Cafe: "☕",
-    Hotels: "🏨",
-    Travel: "✈️",
-    Entertainment: "🎬",
-    Health: "💊",
-    Education: "📚",
+
     Automotive: "🚗",
     Home: "🏠",
   };
