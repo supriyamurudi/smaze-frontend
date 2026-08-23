@@ -23,17 +23,17 @@ import { saveOffer } from "../../services/savedOfferService";
 // ========== SKELETON LOADER COMPONENT ==========
 const SkeletonLoader = () => (
   <div className="animate-pulse">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="rounded-2xl bg-slate-200 h-[500px]"></div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <div className="rounded-2xl bg-slate-200 h-[300px] lg:h-[500px]"></div>
       <div className="space-y-6">
-        <div className="h-10 bg-slate-200 rounded w-3/4"></div>
-        <div className="h-6 bg-slate-200 rounded w-1/2"></div>
-        <div className="h-32 bg-slate-200 rounded"></div>
-        <div className="h-40 bg-slate-200 rounded"></div>
-        <div className="h-32 bg-slate-200 rounded"></div>
-        <div className="flex gap-3">
+        <div className="h-8 lg:h-10 bg-slate-200 rounded w-3/4"></div>
+        <div className="h-5 lg:h-6 bg-slate-200 rounded w-1/2"></div>
+        <div className="h-24 lg:h-32 bg-slate-200 rounded"></div>
+        <div className="h-32 lg:h-40 bg-slate-200 rounded"></div>
+        <div className="h-24 lg:h-32 bg-slate-200 rounded"></div>
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="h-12 bg-slate-200 rounded flex-1"></div>
-          <div className="h-12 bg-slate-200 rounded w-32"></div>
+          <div className="h-12 bg-slate-200 rounded sm:w-32"></div>
         </div>
       </div>
     </div>
@@ -131,11 +131,11 @@ export default function OfferDetails() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <div className="mb-6">
             <div className="h-10 w-32 bg-slate-200 rounded animate-pulse"></div>
           </div>
-          <div className="overflow-hidden rounded-3xl bg-white shadow-xl p-6 lg:p-8">
+          <div className="overflow-hidden rounded-3xl bg-white shadow-xl p-4 sm:p-6 lg:p-8">
             <SkeletonLoader />
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function OfferDetails() {
   if (!offer) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
-        <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-lg">
+        <div className="text-center max-w-md p-6 sm:p-8 m-4 bg-white rounded-2xl shadow-lg">
           <div className="text-6xl mb-4">😕</div>
           <h2 className="text-2xl font-bold text-slate-700 mb-2">
             Offer Not Found
@@ -173,19 +173,20 @@ export default function OfferDetails() {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* ========== BACK BUTTON ========== */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        {/* ========== BACK BUTTON (Sticky on Mobile) ========== */}
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="mb-6"
+          className="sticky top-2 z-20 mb-6"
         >
           <Link
             to="/customer/offers"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-semibold text-slate-600 shadow-md transition hover:shadow-lg hover:text-violet-600"
+            className="inline-flex items-center gap-2 rounded-xl bg-white/90 backdrop-blur-sm px-4 sm:px-5 py-2.5 font-semibold text-slate-600 shadow-md transition hover:shadow-lg hover:text-violet-600"
           >
             <HiOutlineArrowLeft size={18} />
-            Back to Offers
+            <span className="hidden sm:inline">Back to Offers</span>
+            <span className="sm:hidden">Back</span>
           </Link>
         </motion.div>
 
@@ -196,7 +197,7 @@ export default function OfferDetails() {
           transition={{ delay: 0.1 }}
           className="overflow-hidden rounded-3xl bg-white shadow-xl"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8">
             {/* ========== LEFT SIDE - IMAGE ========== */}
             <motion.div
               initial={{ x: -20, opacity: 0 }}
@@ -208,7 +209,7 @@ export default function OfferDetails() {
                 <img
                   src={offer.image || "https://via.placeholder.com/800x600"}
                   alt={offer.title}
-                  className="w-full max-h-[500px] object-contain transition-transform duration-500 hover:scale-105"
+                  className="w-full h-[250px] sm:h-[350px] lg:max-h-[500px] object-contain transition-transform duration-500 hover:scale-105"
                   onError={(e) => {
                     e.target.src = "https://via.placeholder.com/800x600";
                   }}
@@ -216,14 +217,14 @@ export default function OfferDetails() {
 
                 {/* Discount Badge */}
                 {offer.discount && (
-                  <div className="absolute left-4 top-4 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 px-4 py-2 font-bold text-white shadow-lg">
+                  <div className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 px-3 py-1.5 sm:px-4 sm:py-2 font-bold text-white shadow-lg text-sm sm:text-base">
                     {offer.discount}% OFF
                   </div>
                 )}
 
                 {/* Time Remaining */}
                 {offer.endDate && (
-                  <div className="absolute bottom-4 left-4 rounded-lg bg-black/60 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 rounded-lg bg-black/60 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-white backdrop-blur-sm">
                     ⏰ {getTimeRemaining(offer.endDate)}
                   </div>
                 )}
@@ -231,22 +232,22 @@ export default function OfferDetails() {
                 {/* Share Button */}
                 <button
                   onClick={handleShare}
-                  className="absolute right-4 top-4 rounded-full bg-white/90 p-3 text-slate-600 shadow-lg transition hover:scale-110 hover:bg-white hover:shadow-xl backdrop-blur-sm"
+                  className="absolute right-3 top-3 sm:right-4 sm:top-4 rounded-full bg-white/90 p-2.5 sm:p-3 text-slate-600 shadow-lg transition hover:scale-110 hover:bg-white hover:shadow-xl backdrop-blur-sm"
                 >
-                  <HiOutlineShare size={22} />
+                  <HiOutlineShare size={20} />
                 </button>
               </div>
 
               {/* Quick Stats */}
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-violet-50 p-3 text-center">
-                  <div className="text-2xl font-black text-violet-600">
+                  <div className="text-xl sm:text-2xl font-black text-violet-600">
                     {offer.discount}%
                   </div>
                   <div className="text-xs text-slate-500">Discount</div>
                 </div>
                 <div className="rounded-xl bg-emerald-50 p-3 text-center">
-                  <div className="text-2xl font-black text-emerald-600">
+                  <div className="text-xl sm:text-2xl font-black text-emerald-600">
                     ⭐ {offer.rating || "4.5"}
                   </div>
                   <div className="text-xs text-slate-500">Rating</div>
@@ -259,20 +260,20 @@ export default function OfferDetails() {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="space-y-6"
+              className="space-y-5 lg:space-y-6"
             >
               {/* Title & Shop */}
               <div>
                 <div className="flex items-start justify-between gap-4">
-                  <h1 className="text-3xl font-extrabold text-slate-800 lg:text-4xl">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800">
                     {offer.title}
                   </h1>
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-2 rounded-full bg-violet-50 px-4 py-2 text-violet-700">
+                <div className="mt-3 flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1.5 sm:px-4 sm:py-2 text-violet-700">
                     <HiOutlineBuildingStorefront size={18} />
-                    <span className="font-semibold">
+                    <span className="font-semibold text-sm sm:text-base">
                       {offer.shop?.name || "Local Shop"}
                     </span>
                   </div>
@@ -284,20 +285,20 @@ export default function OfferDetails() {
               </div>
 
               {/* Description */}
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-800">
+              <div className="rounded-2xl bg-slate-50 p-4 sm:p-5">
+                <h2 className="mb-3 flex items-center gap-2 text-base sm:text-lg font-bold text-slate-800">
                   <HiOutlineSparkles className="text-violet-600" size={20} />
                   About This Offer
                 </h2>
-                <p className="leading-relaxed text-slate-600">
+                <p className="leading-relaxed text-slate-600 text-sm sm:text-base">
                   {offer.description ||
                     "Enjoy this amazing offer from our shop. Don't miss out on this exclusive deal!"}
                 </p>
               </div>
 
               {/* Offer Period */}
-              <div className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-5">
-                <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
+              <div className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 sm:p-5">
+                <h2 className="mb-4 flex items-center gap-2 text-base sm:text-lg font-bold text-slate-800">
                   <HiOutlineCalendarDays
                     className="text-orange-500"
                     size={20}
@@ -307,18 +308,18 @@ export default function OfferDetails() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between border-b border-orange-200/50 pb-2">
                     <span className="text-slate-600">📅 Starts</span>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-slate-800 text-sm sm:text-base">
                       {formatDate(offer.startDate)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600">⏰ Ends</span>
-                    <span className="font-semibold text-rose-600">
+                    <span className="font-semibold text-rose-600 text-sm sm:text-base">
                       {formatDate(offer.endDate)}
                     </span>
                   </div>
                   {offer.endDate && (
-                    <div className="mt-2 rounded-lg bg-orange-200/50 p-2 text-center text-sm font-semibold text-orange-700">
+                    <div className="mt-2 rounded-lg bg-orange-200/50 p-2 text-center text-xs sm:text-sm font-semibold text-orange-700">
                       {getTimeRemaining(offer.endDate)}
                     </div>
                   )}
@@ -326,8 +327,8 @@ export default function OfferDetails() {
               </div>
 
               {/* Location */}
-              <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-violet-50 p-5">
-                <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
+              <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-violet-50 p-4 sm:p-5">
+                <h2 className="mb-4 flex items-center gap-2 text-base sm:text-lg font-bold text-slate-800">
                   <HiOutlineMapPin className="text-violet-600" size={20} />
                   Shop Location
                 </h2>
@@ -340,7 +341,7 @@ export default function OfferDetails() {
                       />
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-slate-800 text-sm sm:text-base">
                         {offer.shop?.name || "Local Shop"}
                       </p>
                       <p className="text-sm text-slate-600">
@@ -350,12 +351,12 @@ export default function OfferDetails() {
                   </div>
 
                   {offer.shop?.latitude && offer.shop?.longitude && (
-                    <div className="flex flex-wrap gap-3 pt-2">
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
                       <a
                         href={`https://www.google.com/maps?q=${offer.shop.latitude},${offer.shop.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-2.5 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-2.5 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg text-sm sm:text-base"
                       >
                         📍 View on Maps
                       </a>
@@ -363,7 +364,7 @@ export default function OfferDetails() {
                         href={`https://www.google.com/maps/dir/?api=1&destination=${offer.shop.latitude},${offer.shop.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-xl border-2 border-violet-600 px-5 py-2.5 font-semibold text-violet-600 transition hover:bg-violet-50 hover:scale-[1.02]"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-violet-600 px-5 py-2.5 font-semibold text-violet-600 transition hover:bg-violet-50 hover:scale-[1.02] text-sm sm:text-base"
                       >
                         🧭 Get Directions
                       </a>
@@ -372,8 +373,8 @@ export default function OfferDetails() {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-200">
+              {/* Actions - Stacks on Mobile, Horizontal on Desktop */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-200">
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
@@ -445,30 +446,30 @@ export default function OfferDetails() {
           transition={{ delay: 0.5 }}
           className="mt-8"
         >
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-700 via-purple-700 to-fuchsia-700 p-8 text-center text-white shadow-xl">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-700 via-purple-700 to-fuchsia-700 p-6 sm:p-8 text-center text-white shadow-xl">
             <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
             <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
             <div className="relative">
               <div className="inline-block rounded-full bg-white/20 px-4 py-2 text-sm font-medium mb-4">
                 🎯 Don't Miss Out!
               </div>
-              <h2 className="text-3xl font-black">
+              <h2 className="text-2xl sm:text-3xl font-black">
                 Ready to Save on Your Next Purchase?
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-violet-100">
+              <p className="mx-auto mt-3 max-w-2xl text-violet-100 text-sm sm:text-base">
                 Explore more amazing offers and start saving today
               </p>
-              <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <div className="mt-6 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
                 <Link
                   to="/customer/offers"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3 font-bold text-violet-700 transition hover:scale-105 hover:shadow-lg"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3 font-bold text-violet-700 transition hover:scale-105 hover:shadow-lg"
                 >
                   Browse All Offers
                   <HiOutlineArrowLeft size={18} />
                 </Link>
                 <Link
                   to="/customer/saved-offers"
-                  className="rounded-xl border border-white/30 px-8 py-3 font-semibold transition hover:bg-white/10"
+                  className="inline-flex items-center justify-center rounded-xl border border-white/30 px-8 py-3 font-semibold transition hover:bg-white/10"
                 >
                   View Saved Offers
                 </Link>
