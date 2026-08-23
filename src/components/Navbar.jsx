@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import smazeLogo from "../assets/icons/smaze-logo.jpeg";
+import smazeLogo from "../assets/icons/smazeLogo.jpeg";
 
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { FaMapMarkerAlt } from "react-icons/fa";
