@@ -558,8 +558,8 @@ const CustomerCategories = () => {
               </>
             )}
           </motion.div>
-        ) : (
-          // Categories Grid View - Mobile Responsive
+        ) : // Categories View (Grid or List based on viewMode)
+        viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {filteredCategories.map((category, index) => (
               <motion.button
@@ -592,6 +592,44 @@ const CustomerCategories = () => {
                     index,
                   )} transition-all duration-300 group-hover:w-8 sm:group-hover:w-12`}
                 />
+              </motion.button>
+            ))}
+          </div>
+        ) : (
+          // LIST VIEW
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {filteredCategories.map((category, index) => (
+              <motion.button
+                key={category.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => handleCategoryClick(category)}
+                className="group flex w-full items-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 text-left shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <div
+                  className={`relative flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110`}
+                >
+                  <span className="text-2xl sm:text-3xl md:text-4xl">
+                    {getCategoryEmoji(category.name)}
+                  </span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-800 group-hover:text-violet-600 transition-colors truncate">
+                    {category.name}
+                  </h3>
+                  <div className="mt-0.5 sm:mt-1 flex items-center gap-2">
+                    <div className="h-1 w-6 sm:w-10 rounded-full bg-gradient-to-r from-violet-500 to-purple-600" />
+                    <span className="text-[10px] sm:text-xs text-slate-400 truncate">
+                      View Offers & Shops
+                    </span>
+                  </div>
+                </div>
+
+                <span className="text-slate-300 group-hover:text-violet-600 transition-colors">
+                  <HiOutlineArrowRight className="w-4 h-4 sm:w-6 sm:h-6" />
+                </span>
               </motion.button>
             ))}
           </div>
