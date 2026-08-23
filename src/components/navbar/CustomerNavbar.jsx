@@ -415,11 +415,27 @@ const CustomerNavbar = () => {
               </div>
 
               {/* Mobile Menu Button */}
+              {/* Mobile Menu Button - Right aligned with negative margin */}
               <button
                 onClick={() => setMobileMenu(true)}
-                className="lg:hidden p-2.5 rounded-xl hover:bg-slate-100 text-slate-600 transition-all duration-200"
+                className="
+                  lg:hidden 
+                  flex 
+                  items-center 
+                  justify-center
+                  w-11 
+                  h-11 
+                  -mr-2  // Pulls it closer to edge
+                  rounded-xl 
+                  hover:bg-slate-100 
+                  text-slate-600 
+                  transition-all 
+                  duration-200
+                  active:scale-95
+                "
+                aria-label="Open menu"
               >
-                <HiBars3 size={22} />
+                <HiBars3 size={24} />
               </button>
             </div>
           </div>
