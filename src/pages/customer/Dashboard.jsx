@@ -309,16 +309,16 @@ const PremiumOfferCard = ({ offer, featured = false }) => (
 );
 
 // Minimal Compact Offer
-// Minimal Compact Offer (PERFECTLY FIXED - No extra space, text truncated, button always visible)
+// Minimal Compact Offer (FIXED - Buttons always visible on mobile)
 const MinimalCompactOffer = ({ offer, type }) => {
   const isEnding = type === "ending";
   return (
     <motion.div
       whileHover={{ x: 4, scale: 1.01 }}
-      className="group flex items-center gap-3 rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl w-full"
+      className="group flex w-full min-w-0 items-center gap-3 rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl"
     >
-      {/* Image - Small, fixed, never shrinks */}
-      <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl">
+      {/* Image - Fixed size, NEVER shrinks */}
+      <div className="relative h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 overflow-hidden rounded-xl">
         <img
           src={
             offer.image ||
@@ -338,7 +338,7 @@ const MinimalCompactOffer = ({ offer, type }) => {
         )}
       </div>
 
-      {/* Text - min-w-0 ensures it shrinks perfectly */}
+      {/* Text - min-w-0 is ESSENTIAL to allow it to shrink */}
       <div className="flex-1 min-w-0">
         <h4 className="font-semibold text-slate-800 truncate text-sm sm:text-base">
           {offer.title || "Special Offer"}
@@ -357,10 +357,10 @@ const MinimalCompactOffer = ({ offer, type }) => {
         </p>
       </div>
 
-      {/* Button - Always pinned to right, never pushed off */}
+      {/* Button - flex-shrink-0 ensures it is NEVER pushed off screen */}
       <Link
         to={`/customer/offers/${offer.id}`}
-        className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
+        className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
       >
         {isEnding ? "Grab" : "View"}
       </Link>
