@@ -518,9 +518,6 @@ const Navbar = () => {
           </Link>
         </div>
       </div>
-
-      {/* ✅ FIXED: Reduced Spacer */}
-      <div className="h-16 md:h-20"></div>
     </>
   );
 };
