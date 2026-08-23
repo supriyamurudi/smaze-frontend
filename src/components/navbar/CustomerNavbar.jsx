@@ -233,10 +233,10 @@ const CustomerNavbar = () => {
               />
 
               {/* Modern text with bold S and purple maze */}
-              <span className="text-2xl font-extrabold tracking-tight">
-                <span className="text-slate-900">S</span>
-                <span className="text-violet-600">maze</span>
-              </span>
+              <h1 className="text-xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
+                <span className="text-purple-600">S</span>
+                <span className="text-gray-900">maze</span>
+              </h1>
 
               <span className="hidden sm:block text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                 Customer
