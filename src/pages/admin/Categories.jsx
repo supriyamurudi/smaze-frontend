@@ -1,345 +1,226 @@
-import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+// src/pages/customer/Categories.jsx
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 
 import {
-  HiOutlinePlus,
-  HiOutlineTag,
-  HiOutlineMagnifyingGlass,
-  HiOutlineAdjustmentsHorizontal,
-  HiOutlineArrowPath,
-  HiOutlineFolder,
-  HiOutlineCheckCircle,
+  HiOutlineBuildingStorefront,
+  HiOutlineArrowRight,
+  HiOutlineHeart,
+  HiOutlineMapPin,
+  HiOutlineStar,
   HiOutlineClock,
-  HiOutlineXCircle,
-  HiOutlinePencil,
-  HiOutlineTrash,
+  HiOutlineTag,
+  HiOutlineXMark,
 } from "react-icons/hi2";
 
-import { getCategories, deleteCategory } from "../../services/categoryService";
+import toast from "react-hot-toast";
+
+import { getCategories } from "../../services/categoryService";
+import { getShopsByCategory } from "../../services/shopService";
+import { getOffersByCategory } from "../../services/offerService";
 
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
-  <div className="space-y-6">
-    <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-      <div className="flex items-center gap-3">
-        <div className="h-14 w-14 bg-slate-200 rounded-xl animate-pulse"></div>
-        <div>
-          <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
-          <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
-        </div>
+  <div className="space-y-8">
+    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <div className="h-8 sm:h-10 w-48 sm:w-64 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-2 h-5 sm:h-6 w-56 sm:w-80 bg-slate-200 rounded animate-pulse"></div>
       </div>
-      <div className="h-12 w-36 bg-slate-200 rounded-xl animate-pulse"></div>
+      <div className="h-10 sm:h-12 w-36 sm:w-48 bg-slate-200 rounded-xl animate-pulse"></div>
     </div>
 
-    <div className="grid gap-4 md:grid-cols-3">
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="rounded-2xl bg-white p-5 shadow-sm">
-          <div className="h-5 w-32 bg-slate-200 rounded animate-pulse"></div>
-          <div className="mt-2 h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+      {[...Array(4)].map((_, i) => (
+        <div
+          key={i}
+          className="rounded-xl sm:rounded-2xl bg-slate-200 p-4 sm:p-6 animate-pulse"
+        >
+          <div className="h-6 sm:h-8 w-10 sm:w-12 bg-slate-300 rounded mx-auto"></div>
+          <div className="mt-1 sm:mt-2 h-3 sm:h-4 w-16 sm:w-24 bg-slate-300 rounded mx-auto"></div>
         </div>
       ))}
     </div>
 
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-    </div>
-
-    <div className="rounded-2xl bg-white shadow-sm">
-      <div className="p-6">
-        <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="h-16 bg-slate-100 rounded-xl animate-pulse"
-            ></div>
-          ))}
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {[...Array(10)].map((_, i) => (
+        <div
+          key={i}
+          className="rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-md"
+        >
+          <div className="mx-auto h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 rounded-xl sm:rounded-2xl bg-slate-200 animate-pulse"></div>
+          <div className="mt-3 sm:mt-5 h-5 sm:h-6 w-16 sm:w-20 bg-slate-200 rounded mx-auto animate-pulse"></div>
+          <div className="mt-2 sm:mt-3 h-1 sm:h-1.5 w-6 sm:w-8 bg-slate-200 rounded mx-auto animate-pulse"></div>
         </div>
-      </div>
+      ))}
     </div>
   </div>
 );
 
-// ========== STATS CARD ==========
-const StatsCard = ({ icon: Icon, label, value, color, subtitle }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
-  >
-    <div className="flex items-start justify-between">
-      <div>
-        <p className="text-sm font-medium text-slate-500">{label}</p>
-        <p className={`mt-2 text-3xl font-bold ${color}`}>{value}</p>
-        {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
-      </div>
-      <div
-        className={`rounded-xl ${color.replace("text", "bg").replace("font-bold", "")} bg-opacity-10 p-3`}
-      >
-        <Icon className={`h-5 w-5 ${color}`} />
-      </div>
-    </div>
-  </motion.div>
-);
-
-// ========== CATEGORY TABLE ==========
-const CategoryTable = ({ categories, setCategories }) => {
-  const [isDeleting, setIsDeleting] = useState(null);
-
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
-
-    setIsDeleting(id);
-    try {
-      await deleteCategory(id);
-      const updatedCategories = categories.filter((cat) => cat.id !== id);
-      setCategories(updatedCategories);
-      toast.success("Category deleted successfully!");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete category");
-    } finally {
-      setIsDeleting(null);
-    }
-  };
-
-  if (categories.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="rounded-full bg-slate-100 p-4">
-          <HiOutlineFolder size={40} className="text-slate-400" />
-        </div>
-        <h3 className="mt-4 text-lg font-semibold text-slate-800">
-          No categories found
-        </h3>
-        <p className="mt-2 text-sm text-slate-500">
-          Get started by creating your first category
-        </p>
-        <Link
-          to="/admin/categories/add"
-          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-violet-700"
-        >
-          <HiOutlinePlus size={16} />
-          Add Category
-        </Link>
-      </div>
-    );
-  }
-
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-slate-200 bg-slate-50/50">
-            <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Category
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Status
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Created
-            </th>
-            <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200">
-          {categories.map((category) => (
-            <motion.tr
-              key={category.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="group hover:bg-slate-50/50 transition"
-            >
-              <td className="px-6 py-4">
-                <div className="flex items-center gap-3">
-                  {category.image ? (
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="h-10 w-10 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700">
-                      <HiOutlineTag size={18} />
-                    </div>
-                  )}
-                  <span className="font-medium text-slate-800">
-                    {category.name}
-                  </span>
-                </div>
-              </td>
-
-              <td className="px-6 py-4">
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
-                    category.status === "active"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : category.status === "pending"
-                        ? "bg-amber-100 text-amber-700"
-                        : "bg-rose-100 text-rose-700"
-                  }`}
-                >
-                  {category.status === "active" && (
-                    <HiOutlineCheckCircle size={12} />
-                  )}
-                  {category.status === "pending" && (
-                    <HiOutlineClock size={12} />
-                  )}
-                  {category.status === "inactive" && (
-                    <HiOutlineXCircle size={12} />
-                  )}
-                  {category.status || "Active"}
-                </span>
-              </td>
-              <td className="px-6 py-4 text-sm text-slate-500">
-                {category.createdAt
-                  ? new Date(category.createdAt).toLocaleDateString()
-                  : "—"}
-              </td>
-              <td className="px-6 py-4 text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <Link
-                    to={`/admin/categories/edit/${category.id}`}
-                    className="rounded-lg p-2 text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
-                    title="Edit Category"
-                  >
-                    <HiOutlinePencil size={18} />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(category.id, category.name)}
-                    disabled={isDeleting === category.id}
-                    className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
-                    title="Delete Category"
-                  >
-                    {isDeleting === category.id ? (
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-rose-600 border-t-transparent"></div>
-                    ) : (
-                      <HiOutlineTrash size={18} />
-                    )}
-                  </button>
-                </div>
-              </td>
-            </motion.tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
 // ========== MAIN COMPONENT ==========
-export default function Categories() {
+const CustomerCategories = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState("grid");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // ========== FETCH CATEGORIES ==========
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getCategories();
+  // Category content state
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [shops, setShops] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [loadingContent, setLoadingContent] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
-      // Handle different response structures
-      const categoriesData =
-        response.categories || response.data || response || [];
-      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      setError(error.message || "Failed to load categories");
-      toast.error(error.response?.data?.message || "Failed to load categories");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Get category from URL params
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    const params = new URLSearchParams(location.search);
+    const categoryParam = params.get("category");
+
+    if (categoryParam && categories.length > 0) {
+      const foundCategory = categories.find(
+        (c) =>
+          c.id === categoryParam ||
+          c.slug === categoryParam ||
+          c.name.toLowerCase() === categoryParam.toLowerCase(),
+      );
+      if (foundCategory) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelectedCategory(foundCategory);
+        setShowContent(true);
+        // eslint-disable-next-line react-hooks/immutability
+        fetchCategoryContent(foundCategory.id);
+      }
+    } else {
+      setShowContent(false);
+      setSelectedCategory(null);
+    }
+  }, [location.search, categories]);
+
+  // Fetch categories
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        if (!ignore) {
+          setCategories(response.categories || []);
+        }
+      } catch (error) {
+        console.error(error);
+        if (!ignore) {
+          toast.error("Failed to load categories");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchCategories();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
-  // ========== FILTER CATEGORIES ==========
-  const filteredCategories = useMemo(() => {
-    let filtered = [...categories];
-
-    // Filter by search query - ✅ Removed slug reference
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter((category) =>
-        category.name?.toLowerCase().includes(query),
-      );
+  // Fetch category content
+  const fetchCategoryContent = async (categoryId) => {
+    try {
+      setLoadingContent(true);
+      const shopsResponse = await getShopsByCategory(categoryId);
+      setShops(shopsResponse.data || []);
+      const offersResponse = await getOffersByCategory(categoryId);
+      setOffers(offersResponse.data || []);
+    } catch (error) {
+      console.error("Error fetching category content:", error);
+      toast.error("Failed to load category content");
+    } finally {
+      setLoadingContent(false);
     }
-
-    // Filter by status
-    if (filterStatus !== "all") {
-      const statusLower = filterStatus.toLowerCase();
-      filtered = filtered.filter((category) => {
-        const categoryStatus = (category.status || "active").toLowerCase();
-        return categoryStatus === statusLower;
-      });
-    }
-
-    console.log(
-      "🔍 Filtered categories:",
-      filtered.length,
-      "Status filter:",
-      filterStatus,
-    );
-    return filtered;
-  }, [categories, searchQuery, filterStatus]);
-
-  // ========== HANDLER FUNCTIONS ==========
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchCategories();
-    setIsRefreshing(false);
-    toast.success("Categories refreshed!");
   };
 
-  // Status counts
-  const statusCounts = categories.reduce((acc, category) => {
-    const status = category.status?.toLowerCase() || "active";
-    acc[status] = (acc[status] || 0) + 1;
-    return acc;
-  }, {});
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setShowContent(true);
+    navigate(
+      `/customer/categories?category=${encodeURIComponent(category.name)}`,
+    );
+    fetchCategoryContent(category.id);
+  };
+
+  const handleCloseContent = () => {
+    setShowContent(false);
+    setSelectedCategory(null);
+    setShops([]);
+    setOffers([]);
+    navigate("/customer/categories");
+  };
+
+  const handleViewAll = () => {
+    if (selectedCategory) {
+      navigate(`/customer/offers?category=${selectedCategory.id}`);
+    }
+  };
+
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  // Category color mapping
+  const categoryColors = [
+    "from-violet-500 to-purple-600",
+    "from-rose-500 to-pink-600",
+    "from-amber-500 to-orange-600",
+    "from-emerald-500 to-teal-600",
+    "from-blue-500 to-indigo-600",
+    "from-cyan-500 to-blue-600",
+    "from-fuchsia-500 to-pink-600",
+    "from-lime-500 to-green-600",
+    "from-red-500 to-rose-600",
+    "from-purple-500 to-violet-600",
+  ];
+
+  const getCategoryColor = (index) => {
+    return categoryColors[index % categoryColors.length];
+  };
+
+  const categoryEmojis = {
+    Food: "🍔",
+    Restaurant: "🍽️",
+    Fashion: "👕",
+    Beauty: "💄",
+    Grocery: "🛒",
+    Electronics: "💻",
+    Fitness: "🏋️",
+    Cafe: "☕",
+    Hotels: "🏨",
+    Travel: "✈️",
+    Entertainment: "🎬",
+    Health: "💊",
+    Education: "📚",
+    Automotive: "🚗",
+    Home: "🏠",
+  };
+
+  const getCategoryEmoji = (name) => {
+    for (const [key, emoji] of Object.entries(categoryEmojis)) {
+      if (name.toLowerCase().includes(key.toLowerCase())) {
+        return emoji;
+      }
+    }
+    return "🏷️";
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-7xl">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <SkeletonLoader />
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-12 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-              <HiOutlineXCircle size={32} className="text-rose-600" />
-            </div>
-            <h2 className="text-xl font-bold text-rose-800">
-              Failed to Load Categories
-            </h2>
-            <p className="mt-2 text-rose-600">{error}</p>
-            <button
-              onClick={handleRefresh}
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-rose-700"
-            >
-              <HiOutlineArrowPath className="text-lg" />
-              Try Again
-            </button>
-          </div>
         </div>
       </div>
     );
@@ -350,158 +231,448 @@ export default function Categories() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-7xl">
-        {/* ========== HEADER ========== */}
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between"
+          className="mb-4 sm:mb-8"
         >
-          <div className="flex items-center gap-4">
-            <div className="rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 p-3 text-violet-700">
-              <HiOutlineFolder size={24} />
-            </div>
+          <div className="flex flex-col gap-2 sm:gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-extrabold text-slate-900">
-                Category Management
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900">
+                {showContent && selectedCategory ? (
+                  <span className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-xl sm:text-2xl md:text-4xl">
+                      {selectedCategory.name}
+                    </span>
+                    <button
+                      onClick={handleCloseContent}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <HiOutlineXMark size={20} className="sm:w-6 sm:h-6" />
+                    </button>
+                  </span>
+                ) : (
+                  "Explore Categories"
+                )}
               </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Manage categories used across Smaze marketplace
+              <p className="mt-1 sm:mt-2 text-sm sm:text-base md:text-lg text-slate-500">
+                {showContent && selectedCategory
+                  ? `Discover shops and offers in ${selectedCategory.name}`
+                  : "Discover amazing offers from your favourite categories"}
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-3 font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
-            >
-              <HiOutlineArrowPath
-                className={`text-lg ${isRefreshing ? "animate-spin" : ""}`}
-              />
-              Refresh
-            </button>
-            <Link
-              to="/admin/categories/add"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg shadow-violet-200 transition hover:shadow-xl"
-            >
-              <HiOutlinePlus className="text-lg" />
-              Add Category
-            </Link>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link
+                to="/customer/offers"
+                className="inline-flex items-center gap-1 sm:gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white transition hover:scale-105 hover:shadow-lg"
+              >
+                Browse All Offers
+                <HiOutlineArrowRight size={16} className="sm:w-5 sm:h-5" />
+              </Link>
+            </div>
           </div>
         </motion.div>
 
-        {/* ========== STATS CARDS ========== */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.05 }}
-          className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          <StatsCard
-            icon={HiOutlineFolder}
-            label="Total Categories"
-            value={categories.length}
-            color="text-violet-600"
-          />
-          <StatsCard
-            icon={HiOutlineCheckCircle}
-            label="Active"
-            value={statusCounts.active || 0}
-            color="text-emerald-600"
-          />
-          <StatsCard
-            icon={HiOutlineClock}
-            label="Pending"
-            value={statusCounts.pending || 0}
-            color="text-amber-600"
-          />
-          <StatsCard
-            icon={HiOutlineXCircle}
-            label="Inactive"
-            value={statusCounts.inactive || 0}
-            color="text-rose-600"
-          />
-        </motion.div>
-
-        {/* ========== SEARCH & FILTER ========== */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                  <HiOutlineMagnifyingGlass size={18} />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search categories by name..."
-                  className="w-full rounded-xl border-0 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
-                />
+        {/* Stats Banner */}
+        {categories.length > 0 && !showContent && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="mb-4 sm:mb-8 grid grid-cols-2 gap-2 sm:gap-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-4 sm:p-6 text-white"
+          >
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-black">
+                {categories.length}
+              </div>
+              <div className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-violet-100">
+                Total Categories
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <HiOutlineAdjustmentsHorizontal
-                className="text-slate-400"
-                size={18}
-              />
-              <select
-                value={filterStatus}
-                onChange={(e) => {
-                  console.log("📊 Status filter changed to:", e.target.value);
-                  setFilterStatus(e.target.value);
-                }}
-                className="rounded-xl border-0 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition focus:ring-2 focus:ring-violet-500"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="pending">Pending</option>
-                <option value="inactive">Inactive</option>
-              </select>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-black">🎉</div>
+              <div className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-violet-100">
+                Great Deals
+              </div>
             </div>
-          </div>
-        </motion.div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-black">⭐</div>
+              <div className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-violet-100">
+                Top Rated
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-black">🔥</div>
+              <div className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-violet-100">
+                Trending
+              </div>
+            </div>
+          </motion.div>
+        )}
 
-        {/* ========== CATEGORIES TABLE ========== */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-        >
-          <div className="flex flex-col gap-4 border-b border-slate-200 px-6 py-5 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-800">
-                All Categories
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {filteredCategories.length} category
-                {filteredCategories.length !== 1 ? "s" : ""} found
-              </p>
-            </div>
-            <div className="rounded-lg bg-violet-50 px-4 py-2">
-              <span className="text-sm font-medium text-violet-700">
-                Total: {categories.length} categories
+        {/* Search & View Controls */}
+        {!showContent && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mb-4 sm:mb-8 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="relative flex-1 max-w-full sm:max-w-md">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search categories..."
+                className="w-full rounded-xl border-0 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-4 text-sm sm:text-base text-slate-800 shadow-md outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
+              />
+              <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base sm:text-lg">
+                🔍
               </span>
             </div>
-          </div>
 
-          <div className="p-4 sm:p-6">
-            <CategoryTable
-              categories={filteredCategories}
-              setCategories={setCategories}
-            />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm text-slate-500 mr-1 sm:mr-2">
+                View:
+              </span>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`rounded-lg p-1.5 sm:p-2 transition ${
+                  viewMode === "grid"
+                    ? "bg-violet-100 text-violet-600"
+                    : "bg-white text-slate-400 hover:bg-slate-100"
+                }`}
+                aria-label="Grid view"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`rounded-lg p-1.5 sm:p-2 transition ${
+                  viewMode === "list"
+                    ? "bg-violet-100 text-violet-600"
+                    : "bg-white text-slate-400 hover:bg-slate-100"
+                }`}
+                aria-label="List view"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Categories Content */}
+        {showContent && selectedCategory ? (
+          // Category Content View
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6 sm:space-y-8"
+          >
+            {/* View All Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleViewAll}
+                className="flex items-center gap-1 sm:gap-2 text-violet-600 hover:text-violet-700 font-medium transition-colors group text-sm sm:text-base"
+              >
+                View All Offers
+                <HiOutlineArrowRight
+                  className="group-hover:translate-x-1 transition-transform"
+                  size={16}
+                />
+              </button>
+            </div>
+
+            {loadingContent ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <>
+                {/* Shops Section */}
+                {shops.length > 0 && (
+                  <div>
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-700 mb-3 sm:mb-4 flex items-center gap-2">
+                      <HiOutlineBuildingStorefront className="text-violet-600" />
+                      Shops
+                      <span className="text-sm font-normal text-slate-400">
+                        ({shops.length})
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                      {shops.map((shop, index) => (
+                        <motion.div
+                          key={shop.id || index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          onClick={() => navigate(`/customer/shops/${shop.id}`)}
+                          className="bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer group overflow-hidden"
+                        >
+                          <div className="relative h-32 sm:h-40 bg-gradient-to-br from-violet-100 to-purple-100">
+                            {shop.image ? (
+                              <img
+                                src={shop.image}
+                                alt={shop.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full">
+                                <span className="text-3xl sm:text-5xl">🏪</span>
+                              </div>
+                            )}
+                            <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+                              <button
+                                className="p-1.5 sm:p-2 bg-white/90 backdrop-blur rounded-full hover:bg-white transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toast.success("Added to favorites!");
+                                }}
+                              >
+                                <HiOutlineHeart className="text-slate-600 hover:text-rose-500 text-sm sm:text-base" />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="p-3 sm:p-4">
+                            <h4 className="font-semibold text-slate-800 group-hover:text-violet-600 transition-colors text-sm sm:text-base line-clamp-1">
+                              {shop.name}
+                            </h4>
+                            <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-slate-500">
+                              <span className="flex items-center gap-0.5 sm:gap-1">
+                                <HiOutlineStar className="text-amber-400 text-xs sm:text-sm" />
+                                {shop.rating || "4.5"}
+                              </span>
+                              <span className="flex items-center gap-0.5 sm:gap-1">
+                                <HiOutlineMapPin
+                                  size={12}
+                                  className="sm:text-sm"
+                                />
+                                <span className="truncate max-w-[50px] sm:max-w-full">
+                                  {shop.location || "Nearby"}
+                                </span>
+                              </span>
+                            </div>
+                            <div className="mt-2 sm:mt-3 flex flex-wrap gap-1">
+                              {shop.tags?.slice(0, 2).map((tag, i) => (
+                                <span
+                                  key={i}
+                                  className="px-1.5 sm:px-2 py-0.5 bg-slate-100 text-[10px] sm:text-xs text-slate-600 rounded-full"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Offers Section */}
+                {offers.length > 0 && (
+                  <div>
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-700 mb-3 sm:mb-4 flex items-center gap-2">
+                      <HiOutlineTag className="text-violet-600" />
+                      Offers
+                      <span className="text-sm font-normal text-slate-400">
+                        ({offers.length})
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                      {offers.map((offer, index) => (
+                        <motion.div
+                          key={offer.id || index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          onClick={() =>
+                            navigate(`/customer/offers/${offer.id}`)
+                          }
+                          className="bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer group overflow-hidden"
+                        >
+                          <div className="relative h-32 sm:h-40 bg-gradient-to-br from-violet-100 to-purple-100">
+                            {offer.image ? (
+                              <img
+                                src={offer.image}
+                                alt={offer.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full">
+                                <span className="text-3xl sm:text-5xl">🎉</span>
+                              </div>
+                            )}
+                            <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                              <span className="px-1.5 sm:px-3 py-0.5 sm:py-1 bg-rose-500 text-white text-[10px] sm:text-xs font-bold rounded-full">
+                                {offer.discount || "20% OFF"}
+                              </span>
+                            </div>
+                            <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+                              <button
+                                className="p-1.5 sm:p-2 bg-white/90 backdrop-blur rounded-full hover:bg-white transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toast.success("Added to favorites!");
+                                }}
+                              >
+                                <HiOutlineHeart className="text-slate-600 hover:text-rose-500 text-sm sm:text-base" />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="p-3 sm:p-4">
+                            <h4 className="font-semibold text-slate-800 group-hover:text-violet-600 transition-colors text-sm sm:text-base line-clamp-1">
+                              {offer.title}
+                            </h4>
+                            <p className="text-xs sm:text-sm text-slate-500 mt-1 line-clamp-2">
+                              {offer.description}
+                            </p>
+                            <div className="flex items-center justify-between mt-2 sm:mt-3">
+                              <span className="text-xs sm:text-sm text-slate-500 flex items-center gap-0.5 sm:gap-1">
+                                <HiOutlineClock
+                                  size={12}
+                                  className="sm:text-sm"
+                                />
+                                {offer.expiresAt || "Expires soon"}
+                              </span>
+                              <span className="text-violet-600 font-medium text-xs sm:text-sm">
+                                {offer.shopName || "View Details"}
+                              </span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {shops.length === 0 && offers.length === 0 && (
+                  <div className="text-center py-8 sm:py-12 bg-white rounded-xl sm:rounded-2xl">
+                    <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">🔍</div>
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-800">
+                      No results found
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-500 mt-1">
+                      No shops or offers available in this category yet
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </motion.div>
+        ) : (
+          // Categories Grid View - Mobile Responsive
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {filteredCategories.map((category, index) => (
+              <motion.button
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ y: -4 }}
+                onClick={() => handleCategoryClick(category)}
+                className="group relative block w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 md:p-6 text-center shadow-md transition-all duration-300 hover:shadow-xl"
+              >
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${getCategoryColor(
+                    index,
+                  )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
+                />
+
+                <div className="relative mx-auto flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110">
+                  <span className="text-3xl sm:text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
+                    {getCategoryEmoji(category.name)}
+                  </span>
+                </div>
+
+                <h3 className="relative mt-2 sm:mt-3 md:mt-5 text-xs sm:text-sm md:text-base lg:text-lg font-bold text-slate-800 transition-colors duration-300 group-hover:text-violet-600 line-clamp-1">
+                  {category.name}
+                </h3>
+
+                <div
+                  className={`mx-auto mt-1.5 sm:mt-2 md:mt-3 h-1 w-6 sm:w-8 rounded-full bg-gradient-to-r ${getCategoryColor(
+                    index,
+                  )} transition-all duration-300 group-hover:w-8 sm:group-hover:w-12`}
+                />
+              </motion.button>
+            ))}
           </div>
-        </motion.div>
+        )}
+
+        {/* Bottom CTA */}
+        {categories.length > 0 && !showContent && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 sm:mt-12"
+          >
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-violet-700 via-purple-700 to-fuchsia-700 p-6 sm:p-8 text-center text-white shadow-xl">
+              <div className="absolute -left-20 -top-20 h-48 sm:h-64 w-48 sm:w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute -right-20 -bottom-20 h-48 sm:h-64 w-48 sm:w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="relative">
+                <div className="inline-block rounded-full bg-white/20 px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-medium mb-3 sm:mb-4">
+                  🎯 Ready to Save?
+                </div>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black">
+                  Find Amazing Deals in Any Category
+                </h2>
+                <p className="mx-auto mt-2 sm:mt-3 max-w-2xl text-violet-100 text-sm sm:text-base">
+                  Browse through {categories.length} categories and discover
+                  exclusive discounts from your favorite shops
+                </p>
+                <div className="mt-4 sm:mt-6 flex flex-wrap justify-center gap-2 sm:gap-3">
+                  <Link
+                    to="/customer/offers"
+                    className="inline-flex items-center gap-1 sm:gap-2 rounded-xl bg-white px-4 sm:px-8 py-2 sm:py-3 font-bold text-violet-700 transition hover:scale-105 hover:shadow-lg text-sm sm:text-base"
+                  >
+                    Explore Offers
+                    <HiOutlineArrowRight size={16} className="sm:w-5 sm:h-5" />
+                  </Link>
+                  <Link
+                    to="/customer/saved-offers"
+                    className="rounded-xl border border-white/30 px-4 sm:px-8 py-2 sm:py-3 font-semibold transition hover:bg-white/10 text-sm sm:text-base"
+                  >
+                    My Favorites
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
-}
+};
+
+export default CustomerCategories;
