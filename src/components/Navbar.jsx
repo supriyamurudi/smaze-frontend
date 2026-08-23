@@ -194,20 +194,19 @@ const Navbar = () => {
             <button
               onClick={() => setMobileMenu(true)}
               className="
-                lg:hidden
-                w-11
-                h-11
-                self-center
-                justify-self-end
-                flex
-                items-center
-                justify-center
-                flex-shrink-0
-                rounded-xl
-                hover:bg-gray-100
-                active:bg-gray-200
-                transition-all
-              "
+              lg:hidden
+              w-11
+              h-11
+              flex
+              items-center
+              justify-center
+              flex-shrink-0
+              rounded-xl
+              hover:bg-gray-100
+              active:bg-gray-200
+              transition-all
+              ml-2  // Reduce this or use -mr-1
+            "
               aria-label="Open menu"
             >
               <HiBars3 size={30} className="text-gray-900" />
@@ -254,7 +253,6 @@ const Navbar = () => {
               <h2 className="text-xl font-black">
                 <span className="text-purple-600">S</span>
                 <span className="text-gray-900">maze</span>
-                <span className="text-pink-500 text-xs">™</span>
               </h2>
 
               <p className="text-[10px] text-gray-500">Local Discovery</p>
