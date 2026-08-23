@@ -210,13 +210,6 @@ const Profile = () => {
       bg: "hover:bg-amber-50/50",
     },
     {
-      icon: <HiOutlineMapPin size={20} />,
-      label: "Saved Addresses",
-      path: "/customer/address",
-      color: "text-emerald-500 bg-emerald-50",
-      bg: "hover:bg-emerald-50/50",
-    },
-    {
       icon: <HiOutlineShieldCheck size={20} />,
       label: "Privacy & Security",
       path: "/customer/privacy",
