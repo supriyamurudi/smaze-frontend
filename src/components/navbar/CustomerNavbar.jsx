@@ -238,11 +238,6 @@ const CustomerNavbar = () => {
                 <span className="text-violet-600">maze</span>
               </span>
 
-              <span className="text-xl font-bold tracking-tight">
-                <span className="text-slate-800">Sm</span>
-                <span className="text-violet-600">aze</span>
-              </span>
-
               <span className="hidden sm:block text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                 Customer
               </span>
