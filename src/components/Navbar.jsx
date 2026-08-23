@@ -83,7 +83,7 @@ const Navbar = () => {
             gap-2
             "
           >
-            {/* Logo */}
+            {/* Logo - Left */}
             <Link
               to="/"
               className="
@@ -150,7 +150,7 @@ const Navbar = () => {
               </div>
             </Link>
 
-            {/* Desktop Links */}
+            {/* Desktop Links - Center */}
             <nav
               className="
               hidden
@@ -212,6 +212,7 @@ const Navbar = () => {
               items-center
               gap-3
               xl:gap-4
+              flex-shrink-0
               "
             >
               {/* Location */}
@@ -291,7 +292,7 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Right */}
             <button
               onClick={() => setMobileMenu(true)}
               className="
@@ -308,7 +309,6 @@ const Navbar = () => {
                 duration-200
                 active:scale-95
                 flex-shrink-0
-                ml-auto
               "
               aria-label="Open menu"
             >
