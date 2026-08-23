@@ -12,8 +12,8 @@ import {
   HiOutlineClock,
   HiOutlineTag,
   HiOutlineXMark,
-  HiOutlineViewGrid,
-  HiOutlineViewList,
+  HiOutlineSquares2X2,
+  HiOutlineBars3,
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -193,13 +193,10 @@ const CustomerCategories = () => {
 
   const categoryEmojis = {
     Food: "🍔",
-
     Fashion: "👕",
     Beauty: "💄",
-
     Electronics: "💻",
     Fitness: "🏋️",
-
     Automotive: "🚗",
     Home: "🏠",
   };
@@ -345,7 +342,7 @@ const CustomerCategories = () => {
                 }`}
                 aria-label="Grid view"
               >
-                <HiOutlineViewGrid size={18} className="sm:w-5 sm:h-5" />
+                <HiOutlineSquares2X2 size={18} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
@@ -356,7 +353,7 @@ const CustomerCategories = () => {
                 }`}
                 aria-label="List view"
               >
-                <HiOutlineViewList size={18} className="sm:w-5 sm:h-5" />
+                <HiOutlineBars3 size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
           </motion.div>
