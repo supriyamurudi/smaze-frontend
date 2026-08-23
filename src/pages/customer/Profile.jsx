@@ -27,22 +27,21 @@ import { logoutUser } from "../../services/authService";
 const SkeletonLoader = () => (
   <div className="animate-pulse space-y-6">
     <div className="h-8 bg-slate-200 rounded w-48"></div>
-    <div className="bg-slate-100 rounded-3xl p-6 flex items-center justify-between">
-      <div className="flex items-center gap-5">
-        <div className="w-24 h-24 rounded-full bg-slate-200"></div>
-        <div className="space-y-3">
-          <div className="h-6 bg-slate-200 rounded w-32"></div>
-          <div className="h-4 bg-slate-200 rounded w-48"></div>
-          <div className="h-4 bg-slate-200 rounded w-32"></div>
-        </div>
+    <div className="bg-slate-100 rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-200"></div>
+      <div className="flex-1 w-full space-y-3">
+        <div className="h-6 bg-slate-200 rounded w-32 mx-auto sm:mx-0"></div>
+        <div className="h-4 bg-slate-200 rounded w-48 mx-auto sm:mx-0"></div>
+        <div className="h-4 bg-slate-200 rounded w-32 mx-auto sm:mx-0"></div>
+        <div className="h-4 bg-slate-200 rounded w-24 mx-auto sm:mx-0"></div>
       </div>
-      <div className="h-8 bg-slate-200 rounded w-16"></div>
+      <div className="h-10 w-full sm:w-32 bg-slate-200 rounded-xl"></div>
     </div>
     <div className="rounded-2xl overflow-hidden border bg-white">
       {[...Array(6)].map((_, i) => (
         <div
           key={i}
-          className="flex items-center justify-between px-6 py-5 border-t"
+          className="flex items-center justify-between px-4 sm:px-6 py-5 border-t"
         >
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 bg-slate-200 rounded"></div>
@@ -57,15 +56,15 @@ const SkeletonLoader = () => (
 
 // Menu Item Component
 const MenuItem = ({ icon, label, path, color, bg, onClick, isLast }) => {
-  const className = `group flex items-center justify-between px-6 py-4 transition ${
-    !isLast ? "border-t border-slate-100" : ""
+  const className = `group flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 transition ${
+    !isLast ? "border-t border-slate-100" : "border-t border-slate-100"
   } ${bg || ""}`;
 
   const content = (
     <>
       <div className="flex items-center gap-3">
         <div className={color || "text-slate-500"}>{icon}</div>
-        <span className="font-medium text-slate-700 group-hover:text-slate-900">
+        <span className="font-medium text-slate-700 group-hover:text-slate-900 text-sm sm:text-base">
           {label}
         </span>
       </div>
@@ -110,20 +109,20 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
         className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+        <div className="p-5 sm:p-6">
+          <div className="mx-auto mb-4 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-red-100">
             <HiOutlineArrowRightOnRectangle
-              size={32}
+              size={28}
               className="text-red-500"
             />
           </div>
-          <h3 className="text-center text-2xl font-bold text-slate-800">
+          <h3 className="text-center text-xl sm:text-2xl font-bold text-slate-800">
             Logout Confirmation
           </h3>
-          <p className="mt-2 text-center text-slate-500">
+          <p className="mt-2 text-center text-slate-500 text-sm sm:text-base">
             Are you sure you want to logout? You can always log back in.
           </p>
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
             <button
               onClick={onClose}
               className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 font-semibold text-slate-600 transition hover:bg-slate-50"
@@ -244,7 +243,7 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -258,20 +257,24 @@ const Profile = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8 flex items-center justify-between"
+          className="mb-6 sm:mb-8 flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-black text-slate-900">My Account</h1>
-            <p className="mt-1 text-slate-500">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+              My Account
+            </h1>
+            <p className="mt-1 text-sm sm:text-base text-slate-500">
               Manage your profile and preferences
             </p>
           </div>
-          <StatusBadge />
+          <div className="hidden sm:block">
+            <StatusBadge />
+          </div>
         </motion.div>
 
         {/* Profile Card */}
@@ -281,14 +284,14 @@ const Profile = () => {
           transition={{ delay: 0.1 }}
           className="group relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 p-1"
         >
-          <div className="relative rounded-3xl bg-white/95 backdrop-blur-sm p-6 transition group-hover:bg-white">
-            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-5">
-                <div className="relative">
+          <div className="relative rounded-3xl bg-white/95 backdrop-blur-sm p-5 sm:p-6 transition group-hover:bg-white">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col items-center sm:flex-row gap-4 sm:gap-5 w-full">
+                <div className="relative flex-shrink-0">
                   <img
                     src={user.image}
                     alt={user.name}
-                    className="h-24 w-24 rounded-full object-cover border-4 border-violet-100 shadow-lg"
+                    className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-violet-100 shadow-lg"
                     onError={(e) => {
                       e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=7c3aed&color=fff&size=256&bold=true`;
                     }}
@@ -298,23 +301,25 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">
+                <div className="text-center sm:text-left">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
                     {user.name}
                   </h2>
                   <div className="mt-1.5 space-y-1">
-                    <p className="flex items-center gap-2 text-sm text-slate-500">
+                    <p className="flex items-center justify-center sm:justify-start gap-2 text-sm text-slate-500">
                       <HiOutlineEnvelope size={15} />
-                      {user.email}
+                      <span className="truncate max-w-[220px] sm:max-w-none">
+                        {user.email}
+                      </span>
                     </p>
                     {user.phone && (
-                      <p className="flex items-center gap-2 text-sm text-slate-500">
+                      <p className="flex items-center justify-center sm:justify-start gap-2 text-sm text-slate-500">
                         <HiOutlinePhone size={15} />
                         {user.phone}
                       </p>
                     )}
                     {user.city && (
-                      <p className="flex items-center gap-2 text-sm text-slate-500">
+                      <p className="flex items-center justify-center sm:justify-start gap-2 text-sm text-slate-500">
                         <HiOutlineMapPin size={15} />
                         {user.city}
                       </p>
@@ -325,7 +330,7 @@ const Profile = () => {
 
               <button
                 onClick={() => navigate("/customer/edit-profile")}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-2.5 font-semibold text-white shadow-md transition hover:scale-105 hover:shadow-lg"
+                className="mt-2 sm:mt-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-2.5 font-semibold text-white shadow-md transition hover:scale-105 hover:shadow-lg"
               >
                 <HiOutlinePencilSquare size={18} />
                 Edit Profile
@@ -339,7 +344,7 @@ const Profile = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+          className="mt-6 sm:mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
           {menuItems.map((item, index) => (
             <MenuItem
