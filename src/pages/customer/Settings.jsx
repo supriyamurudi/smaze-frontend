@@ -9,33 +9,27 @@ import {
   HiOutlineTag,
   HiOutlineCheck,
   HiOutlineCog6Tooth,
+  HiOutlineSparkles,
 } from "react-icons/hi2";
 
 import { getSettings, updateSettings } from "../../services/settingsService";
 
 const categories = ["Food", "Fashion", "Electronics", "Salon", "Fitness"];
 
-// ========== SKELETON LOADER ==========
+// ========== SKELETON LOADER (Mobile-Optimized) ==========
 const SkeletonLoader = () => (
-  <div className="space-y-8">
-    {/* Header Skeleton */}
-    <div>
-      <div className="h-10 w-32 bg-slate-200 rounded animate-pulse"></div>
-      <div className="mt-2 h-6 w-64 bg-slate-200 rounded animate-pulse"></div>
-    </div>
+  <div className="space-y-6">
+    <div className="h-8 w-40 bg-slate-200 rounded animate-pulse"></div>
+    <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
 
-    {/* Settings Card Skeleton */}
-    <div className="bg-white rounded-3xl shadow-sm border p-8 space-y-8">
-      {/* Location Section */}
+    <div className="bg-white rounded-2xl shadow-sm border p-5 sm:p-8 space-y-8">
       <div>
-        <div className="h-6 w-24 bg-slate-200 rounded animate-pulse"></div>
-        <div className="mt-4 h-12 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-5 w-24 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-4 h-11 bg-slate-200 rounded-xl animate-pulse"></div>
         <div className="mt-4 h-24 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
-
-      {/* Categories Section */}
       <div>
-        <div className="h-6 w-48 bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-5 w-48 bg-slate-200 rounded animate-pulse"></div>
         <div className="flex flex-wrap gap-3 mt-4">
           {[...Array(5)].map((_, i) => (
             <div
@@ -45,26 +39,37 @@ const SkeletonLoader = () => (
           ))}
         </div>
       </div>
-
-      {/* Notifications Section */}
       <div>
-        <div className="h-6 w-32 bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-5 w-32 bg-slate-200 rounded animate-pulse"></div>
         <div className="mt-4 space-y-4">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="h-5 w-5 bg-slate-200 rounded animate-pulse"></div>
+              <div className="h-6 w-11 bg-slate-200 rounded-full animate-pulse"></div>
               <div className="h-5 w-40 bg-slate-200 rounded animate-pulse"></div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Save Button Skeleton */}
-      <div className="border-t pt-6 flex justify-end">
-        <div className="h-12 w-36 bg-slate-200 rounded-xl animate-pulse"></div>
-      </div>
     </div>
   </div>
+);
+
+// ========== CUSTOM TOGGLE SWITCH (Better Mobile UX) ==========
+const ToggleSwitch = ({ checked, onChange }) => (
+  <button
+    type="button"
+    onClick={onChange}
+    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 ${
+      checked ? "bg-violet-600" : "bg-slate-300"
+    }`}
+  >
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+        checked ? "translate-x-6" : "translate-x-1"
+      }`}
+    />
+  </button>
 );
 
 // ========== MAIN COMPONENT ==========
@@ -80,10 +85,6 @@ const Settings = () => {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  // =========================
-  // Load Settings - Now defined INSIDE the effect
-  // =========================
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -101,20 +102,12 @@ const Settings = () => {
     loadSettings();
   }, []);
 
-  // =========================
-  // Input Change
-  // =========================
-
   const handleChange = (e) => {
     setSettings((previous) => ({
       ...previous,
       [e.target.name]: e.target.value,
     }));
   };
-
-  // =========================
-  // Category Select
-  // =========================
 
   const toggleCategory = (category) => {
     setSettings((previous) => ({
@@ -124,10 +117,6 @@ const Settings = () => {
         : [...previous.preferredCategories, category],
     }));
   };
-
-  // =========================
-  // Save Settings
-  // =========================
 
   const handleSave = async () => {
     try {
@@ -145,7 +134,7 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -159,21 +148,23 @@ const Settings = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* ========== HEADER ========== */}
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* ========== HEADER (Mobile-first, less bulky) ========== */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-black text-slate-900">Settings</h1>
-              <p className="mt-1 text-slate-500">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+                Settings
+              </h1>
+              <p className="mt-1 text-sm sm:text-base text-slate-500">
                 Manage your preferences and notifications
               </p>
             </div>
-            <div className="rounded-full bg-violet-100 px-4 py-2 text-sm font-semibold text-violet-700">
+            <div className="hidden sm:flex rounded-full bg-violet-100 px-4 py-2 text-sm font-semibold text-violet-700">
               <HiOutlineCog6Tooth className="inline mr-1" size={16} />
               Preferences
             </div>
@@ -185,14 +176,16 @@ const Settings = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="overflow-hidden rounded-3xl bg-white shadow-xl border border-slate-100"
+          className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-xl border border-slate-100"
         >
-          <div className="p-6 sm:p-8 space-y-8">
+          <div className="p-4 sm:p-8 space-y-8">
             {/* ===== LOCATION SECTION ===== */}
             <section>
               <div className="flex items-center gap-2 mb-4">
                 <HiOutlineMapPin className="text-violet-600" size={22} />
-                <h2 className="text-xl font-bold text-slate-800">Location</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Location
+                </h2>
               </div>
               <div className="space-y-4">
                 <div>
@@ -205,7 +198,7 @@ const Settings = () => {
                     value={settings.city || ""}
                     onChange={handleChange}
                     placeholder="Enter your city"
-                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
                 <div>
@@ -218,7 +211,7 @@ const Settings = () => {
                     onChange={handleChange}
                     rows="3"
                     placeholder="Enter your full address"
-                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500 resize-none"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500 resize-none"
                   />
                 </div>
               </div>
@@ -228,14 +221,14 @@ const Settings = () => {
             <section className="pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 mb-4">
                 <HiOutlineTag className="text-violet-600" size={22} />
-                <h2 className="text-xl font-bold text-slate-800">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
                   Preferred Categories
                 </h2>
               </div>
               <p className="text-sm text-slate-500 mb-4">
                 Select categories you're interested in
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {categories.map((category) => {
                   const isSelected =
                     settings.preferredCategories.includes(category);
@@ -244,13 +237,13 @@ const Settings = () => {
                       key={category}
                       type="button"
                       onClick={() => toggleCategory(category)}
-                      className={`group relative px-5 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                      className={`group relative px-4 py-2 rounded-full font-medium transition-all duration-300 ${
                         isSelected
                           ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md hover:shadow-lg"
                           : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                       }`}
                     >
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-2 text-sm">
                         {category}
                         {isSelected && (
                           <HiOutlineCheck size={16} className="text-white" />
@@ -262,15 +255,15 @@ const Settings = () => {
               </div>
             </section>
 
-            {/* ===== NOTIFICATIONS SECTION ===== */}
+            {/* ===== NOTIFICATIONS SECTION (With Custom Toggles) ===== */}
             <section className="pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 mb-4">
                 <HiOutlineBell className="text-violet-600" size={22} />
-                <h2 className="text-xl font-bold text-slate-800">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
                   Notifications
                 </h2>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {[
                   {
                     id: "notifyOffers",
@@ -288,35 +281,33 @@ const Settings = () => {
                     checked: settings.notifyShopUpdates,
                   },
                 ].map((item) => (
-                  <label
+                  <div
                     key={item.id}
-                    className="flex cursor-pointer items-center gap-4 rounded-xl p-3 transition hover:bg-slate-50"
+                    className="flex items-center justify-between gap-4 rounded-xl p-3 transition hover:bg-slate-50"
                   >
-                    <input
-                      type="checkbox"
-                      checked={item.checked}
-                      onChange={(e) =>
-                        setSettings({
-                          ...settings,
-                          [item.id]: e.target.checked,
-                        })
-                      }
-                      className="h-5 w-5 rounded border-slate-300 text-violet-600 focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-                    />
-                    <span className="text-slate-700 font-medium">
+                    <span className="text-sm sm:text-base text-slate-700 font-medium">
                       {item.label}
                     </span>
-                  </label>
+                    <ToggleSwitch
+                      checked={item.checked}
+                      onChange={() =>
+                        setSettings({
+                          ...settings,
+                          [item.id]: !item.checked,
+                        })
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             </section>
 
             {/* ===== SAVE BUTTON ===== */}
-            <div className="border-t border-slate-100 pt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:justify-end">
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-8 py-3.5 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-8 py-3.5 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <>
@@ -341,14 +332,16 @@ const Settings = () => {
           transition={{ delay: 0.3 }}
           className="mt-6"
         >
-          <div className="rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 p-5 border border-violet-100">
+          <div className="rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 p-4 sm:p-5 border border-violet-100">
             <div className="flex items-start gap-3">
               <div className="rounded-full bg-violet-200 p-2 text-violet-600">
-                <HiOutlineBell size={18} />
+                <HiOutlineSparkles size={18} />
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800">Settings Tips</h3>
-                <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                <h3 className="font-semibold text-slate-800 text-sm sm:text-base">
+                  Settings Tips
+                </h3>
+                <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-slate-600">
                   <li>• Update your location for personalized offers</li>
                   <li>• Choose categories you're interested in</li>
                   <li>• Manage notification preferences</li>
