@@ -129,33 +129,40 @@ const ErrorState = ({ message, onRetry }) => (
   </div>
 );
 
-// ========== MERCHANT HEADER (Mobile-Optimized) ==========
+// ========== MERCHANT HEADER (PERFECT MOBILE FIX) ==========
 const MerchantHeader = ({ shopName }) => (
   <motion.div
     initial={{ y: -20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-6 sm:p-8 text-white shadow-xl"
   >
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    {/* Stack on Mobile, Horizontal on Desktop */}
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      {/* Left: Icon & Text */}
       <div className="flex items-center gap-4">
         <div className="rounded-full bg-white/20 p-3 sm:p-4 flex-shrink-0">
           <HiOutlineBuildingStorefront size={28} className="text-white" />
         </div>
+
+        {/* min-w-0 + break-words allows the text to wrap naturally */}
         <div className="min-w-0">
-          <h1 className="text-2xl sm:text-3xl font-black truncate">
+          <h1 className="text-2xl sm:text-3xl font-black text-white break-words leading-tight">
             {shopName || "Pizza Hut"}
           </h1>
-          <p className="text-sm text-violet-200 truncate">
+          <p className="text-sm text-violet-200 mt-0.5">
             Welcome to the Smaze Merchant Portal
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+
+      {/* Right: Badges (Stacked on Mobile) */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <span className="inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-sm">
           🏪 Merchant
         </span>
-        <span className="rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
-          ● Active
+        <span className="inline-flex items-center rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span>
+          Active
         </span>
       </div>
     </div>
@@ -229,20 +236,15 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Dashboard loading error:", error);
 
-        // ✅ Handle 403 - Shop pending/rejected
         if (error.response?.status === 403) {
           setPending(true);
           setError(
             error.response?.data?.message || "Your shop is pending approval",
           );
-        }
-        // ✅ Handle 404 - No shop found
-        else if (error.response?.status === 404) {
+        } else if (error.response?.status === 404) {
           toast.error("Shop not found. Please create a shop first.");
           navigate("/shop/create-shop", { replace: true });
-        }
-        // ✅ Handle other errors
-        else {
+        } else {
           setError(
             error.response?.data?.message || "Failed to load dashboard data.",
           );
@@ -254,7 +256,6 @@ export default function Dashboard() {
     fetchDashboard();
   }, [navigate]);
 
-  // ✅ Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
@@ -265,19 +266,16 @@ export default function Dashboard() {
     );
   }
 
-  // ✅ Show pending approval state
   if (pending) {
     return <PendingApproval message={error} />;
   }
 
-  // ✅ Show error state
   if (error) {
     return (
       <ErrorState message={error} onRetry={() => window.location.reload()} />
     );
   }
 
-  // ✅ No data - show error
   if (!dashboardData) {
     return (
       <ErrorState
@@ -356,17 +354,17 @@ export default function Dashboard() {
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Merchant Header */}
+        {/* Merchant Header - Perfectly responsive */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
 
-        {/* Stats (2 on mobile, 4 on desktop) */}
+        {/* Stats: 2 columns on mobile, 4 on desktop */}
         <div className="mb-6 grid gap-4 grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
             <StatCard key={stat.title} {...stat} />
           ))}
         </div>
 
-        {/* Quick Actions (Stack on mobile) */}
+        {/* Quick Actions */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -467,7 +465,7 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Account & Settings (Stack on mobile) */}
+        {/* Account & Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
