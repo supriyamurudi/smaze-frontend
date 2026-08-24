@@ -18,10 +18,10 @@ import {
   HiArrowRightOnRectangle,
 } from "react-icons/hi2";
 
-import { getMyShop } from "../services/shopService";
-import { getUnreadCount } from "../services/notificationService";
+import { getMyShop } from "../../services/shopService";
+import { getUnreadCount } from "../../services/notificationService";
 import toast from "react-hot-toast";
-import { logoutUser } from "../services/authService";
+import { logoutUser } from "../../services/authService";
 
 // ========== NAV LINKS ==========
 const navLinks = [
