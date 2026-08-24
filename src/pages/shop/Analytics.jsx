@@ -17,7 +17,7 @@ import { getShopAnalytics } from "../../services/shopService";
 
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
-  <div className="space-y-6">
+  <div className="w-full max-w-full space-y-6 overflow-hidden">
     <div>
       <div className="h-8 w-32 bg-slate-200 rounded animate-pulse"></div>
       <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
@@ -45,12 +45,12 @@ const StatCard = ({ title, value, icon: Icon, color, delay }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay }}
     whileHover={{ y: -4 }}
-    className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-xl"
+    className="w-full min-w-0 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-xl"
   >
     <div className={`inline-flex rounded-xl ${color} p-2.5 text-white`}>
       <Icon size={20} />
     </div>
-    <p className="mt-4 text-xs font-medium text-slate-500">{title}</p>
+    <p className="mt-4 truncate text-xs font-medium text-slate-500">{title}</p>
     <h2 className="mt-1 text-2xl font-black text-slate-800">
       {value.toLocaleString()}
     </h2>
@@ -80,8 +80,8 @@ export default function Analytics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -119,10 +119,10 @@ export default function Analytics() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
+      className="w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      {/* NO EXTRA PADDING HERE - Layout handles it! */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      {/* w-full max-w-full ensures perfect fit inside ShopLayout */}
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -138,7 +138,7 @@ export default function Analytics() {
           </span>
         </div>
 
-        {/* Stats Cards: Always 2x2 on mobile, 4 on desktop */}
+        {/* Stats Cards */}
         <div className="mb-8 grid grid-cols-2 gap-4 xl:grid-cols-4">
           {stats.map((stat, i) => (
             <StatCard key={stat.title} {...stat} delay={i * 0.1} />
@@ -146,7 +146,7 @@ export default function Analytics() {
         </div>
 
         {/* Chart Section */}
-        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="w-full max-w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-bold text-slate-800 sm:text-xl">
               Monthly Performance
@@ -164,15 +164,17 @@ export default function Analytics() {
           </div>
         </div>
 
-        {/* Top Offers Table */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        {/* Top Offers Table (Bulletproof Mobile Scroll) */}
+        <div className="mb-8 w-full max-w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b px-6 py-5">
             <h2 className="text-lg font-bold text-slate-800 sm:text-xl">
               🏆 Top Performing Offers
             </h2>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px]">
+
+          {/* overflow-x-auto on a fixed-width parent to allow horizontal scrolling WITHOUT stretching the page */}
+          <div className="w-full max-w-full overflow-x-auto">
+            <table className="w-full table-auto whitespace-nowrap">
               <thead className="bg-violet-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm">Offer</th>
@@ -218,7 +220,7 @@ export default function Analytics() {
 
         {/* Quick Insights */}
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-6 text-white">
+          <div className="w-full max-w-full overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-6 text-white">
             <div className="flex items-center gap-3">
               <HiOutlineUsers size={24} />
               <div>
@@ -229,7 +231,7 @@ export default function Analytics() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 p-6 text-white">
+          <div className="w-full max-w-full overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 p-6 text-white">
             <div className="flex items-center gap-3">
               <HiOutlineHeart size={24} />
               <div>
@@ -240,7 +242,7 @@ export default function Analytics() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
+          <div className="w-full max-w-full overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
             <div className="flex items-center gap-3">
               <HiOutlineChartBar size={24} />
               <div>
