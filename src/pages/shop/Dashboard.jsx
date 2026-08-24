@@ -32,13 +32,16 @@ const SkeletonLoader = () => (
     </div>
     <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="rounded-2xl bg-white border p-5 shadow-sm">
+        <div
+          key={i}
+          className="rounded-2xl bg-white border p-4 sm:p-5 shadow-sm"
+        >
           <div className="flex justify-between items-start">
-            <div className="h-12 w-12 bg-slate-200 rounded-xl animate-pulse"></div>
-            <div className="h-5 w-12 bg-slate-200 rounded animate-pulse"></div>
+            <div className="h-10 w-10 bg-slate-200 rounded-xl animate-pulse"></div>
+            <div className="h-4 w-12 bg-slate-200 rounded animate-pulse"></div>
           </div>
-          <div className="mt-4 h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
-          <div className="mt-1 h-7 w-14 bg-slate-200 rounded animate-pulse"></div>
+          <div className="mt-3 h-3 w-20 bg-slate-200 rounded animate-pulse"></div>
+          <div className="mt-1 h-6 w-14 bg-slate-200 rounded animate-pulse"></div>
         </div>
       ))}
     </div>
@@ -46,7 +49,7 @@ const SkeletonLoader = () => (
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
-          className="h-16 md:h-20 bg-slate-200 rounded-xl animate-pulse"
+          className="h-14 md:h-20 bg-slate-200 rounded-xl animate-pulse"
         ></div>
       ))}
     </div>
@@ -129,35 +132,35 @@ const ErrorState = ({ message, onRetry }) => (
   </div>
 );
 
-// ========== MERCHANT HEADER (PERFECT MOBILE FIX) ==========
+// ========== MERCHANT HEADER (PERFECT MOBILE FIX - Shorter, Aligned) ==========
 const MerchantHeader = ({ shopName }) => (
   <motion.div
     initial={{ y: -20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
-    className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-6 sm:p-8 text-white shadow-xl"
+    className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-5 sm:p-8 text-white shadow-xl"
   >
-    {/* Stack on Mobile, Horizontal on Desktop */}
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-      {/* Left: Icon & Text */}
-      <div className="flex items-center gap-4">
-        <div className="rounded-full bg-white/20 p-3 sm:p-4 flex-shrink-0">
-          <HiOutlineBuildingStorefront size={28} className="text-white" />
+    {/* Always flex-row (No vertical stacking on mobile) */}
+    <div className="flex flex-row items-center justify-between gap-4">
+      {/* Left: Icon & Text (Always horizontal) */}
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <div className="rounded-full bg-white/20 p-3 flex-shrink-0">
+          <HiOutlineBuildingStorefront size={24} className="text-white" />
         </div>
 
-        {/* min-w-0 + break-words allows the text to wrap naturally */}
+        {/* Text container wraps naturally, never overflows */}
         <div className="min-w-0">
-          <h1 className="text-2xl sm:text-3xl font-black text-white break-words leading-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-white break-words leading-tight">
             {shopName || "Pizza Hut"}
           </h1>
-          <p className="text-sm text-violet-200 mt-0.5">
-            Welcome to the Smaze Merchant Portal
+          <p className="text-xs sm:text-sm text-violet-200 mt-0.5 truncate">
+            Welcome to the Smaze Portal
           </p>
         </div>
       </div>
 
-      {/* Right: Badges (Stacked on Mobile) */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <span className="inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+      {/* Right: Badges (Side-by-side on mobile) */}
+      <div className="flex flex-row items-center gap-2 flex-shrink-0">
+        <span className="hidden sm:inline-flex items-center rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-sm">
           🏪 Merchant
         </span>
         <span className="inline-flex items-center rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
@@ -169,29 +172,27 @@ const MerchantHeader = ({ shopName }) => (
   </motion.div>
 );
 
-// ========== STAT CARD (Mobile-Optimized) ==========
+// ========== STAT CARD (PERFECT FIT ON MOBILE) ==========
 const StatCard = ({ title, value, icon: Icon, color, growth }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     whileHover={{ y: -4 }}
-    className="rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-sm transition-all hover:shadow-xl"
+    className="rounded-2xl bg-white border border-slate-200 p-4 shadow-sm transition-all hover:shadow-xl"
   >
     <div className="flex items-start justify-between">
-      <div className={`rounded-xl ${color} p-2.5 sm:p-3`}>
-        <Icon size={20} className="text-white" />
+      <div className={`rounded-lg ${color} p-2.5`}>
+        <Icon size={18} className="text-white" />
       </div>
       {growth && (
-        <span className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-emerald-600">
+        <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
           <HiOutlineArrowTrendingUp size={12} />
           {growth}
         </span>
       )}
     </div>
-    <p className="mt-4 text-xs sm:text-sm text-slate-500">{title}</p>
-    <h2 className="mt-1 text-2xl sm:text-3xl font-black text-slate-800">
-      {value}
-    </h2>
+    <p className="mt-3 text-xs text-slate-500 truncate">{title}</p>
+    <h2 className="mt-0.5 text-2xl font-black text-slate-800">{value}</h2>
   </motion.div>
 );
 
@@ -357,8 +358,8 @@ export default function Dashboard() {
         {/* Merchant Header - Perfectly responsive */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
 
-        {/* Stats: 2 columns on mobile, 4 on desktop */}
-        <div className="mb-6 grid gap-4 grid-cols-2 xl:grid-cols-4">
+        {/* Stats: Perfect 2x2 Grid on Mobile, 4x1 on Desktop */}
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {stats.map((stat) => (
             <StatCard key={stat.title} {...stat} />
           ))}
