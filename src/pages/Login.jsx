@@ -336,28 +336,6 @@ const Login = () => {
               </Link>
             </p>
           </form>
-
-          {/* Mobile Features - Show on small screens */}
-          <div className="lg:hidden mt-6 pt-6 border-t border-gray-200">
-            <div className="grid grid-cols-2 gap-2 text-center">
-              <div className="text-xs text-gray-600">
-                <span className="block text-lg mb-1">🛍️</span>
-                Exclusive Offers
-              </div>
-              <div className="text-xs text-gray-600">
-                <span className="block text-lg mb-1">✅</span>
-                Verified Shops
-              </div>
-              <div className="text-xs text-gray-600">
-                <span className="block text-lg mb-1">🔔</span>
-                Instant Updates
-              </div>
-              <div className="text-xs text-gray-600">
-                <span className="block text-lg mb-1">💰</span>
-                Save Money
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
