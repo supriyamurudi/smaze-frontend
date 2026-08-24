@@ -10,8 +10,6 @@ import {
   HiOutlineEyeSlash,
 } from "react-icons/hi2";
 
-import { FcGoogle } from "react-icons/fc";
-
 // ===============================
 // EMAIL VALIDATION FUNCTION
 // ===============================
@@ -276,20 +274,6 @@ const Login = () => {
               className="w-full py-4 rounded-2xl text-white font-bold bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 disabled:opacity-50"
             >
               {loading ? "Signing In..." : "Sign In"}
-            </button>
-
-            <div className="flex items-center gap-4">
-              <div className="flex-1 border-t" />
-              <span className="text-gray-400">OR</span>
-              <div className="flex-1 border-t" />
-            </div>
-
-            <button
-              type="button"
-              className="w-full py-4 rounded-2xl border flex justify-center items-center gap-3 font-semibold"
-            >
-              <FcGoogle size={24} />
-              Continue with Google
             </button>
 
             <p className="text-center text-gray-600">
