@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { getMyShop } from "../../services/shopService";
 import { getUnreadCount } from "../../services/notificationService";
 import toast from "react-hot-toast";
-import { logoutUser } from "../../services/authService";
+import { logoutUser } from "../services/authService";
 
 import {
   HiOutlineHome,
