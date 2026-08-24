@@ -20,6 +20,7 @@ import {
 } from "react-icons/hi2";
 
 import { getShopDashboard } from "../../services/shopService";
+import ShopSettings from "../shop/Settings";
 
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
@@ -564,7 +565,7 @@ export default function Dashboard() {
               </div>
 
               <Link
-                to="/shop/settings"
+                to={ShopSettings ? "/shop/settings" : "/shop/profile"}
                 className="flex w-full flex-shrink-0 items-center justify-center rounded-lg bg-slate-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 active:scale-[0.98] min-[480px]:w-auto"
               >
                 Manage
