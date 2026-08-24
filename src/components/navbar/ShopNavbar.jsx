@@ -114,10 +114,11 @@ const ShopNavbar = () => {
         )}
       </AnimatePresence>
 
+      {/* ✅ FIXED: Changed from sticky to fixed */}
       <nav
-        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-xl shadow-lg border-b border-slate-100"
+            ? "bg-white/95 backdrop-blur-xl shadow-xl border-b border-slate-100"
             : "bg-white/90 backdrop-blur-sm border-b border-slate-100"
         }`}
       >
@@ -128,7 +129,6 @@ const ShopNavbar = () => {
               to="/shop/dashboard"
               className="flex items-center gap-2 shrink-0"
             >
-              {/* ✅ Change the styling: rounded-full + object-cover makes the JPEG look perfect! */}
               <img
                 src={smazeLogo}
                 alt="Smaze Logo"
@@ -280,7 +280,6 @@ const ShopNavbar = () => {
             {/* Menu Header */}
             <div className="h-16 flex items-center justify-between border-b border-slate-100 px-5">
               <div className="flex items-center gap-2">
-                {/* ✅ Make the JPEG look great on mobile too by making it round */}
                 <img
                   src={smazeLogo}
                   alt="Smaze Logo"
@@ -369,7 +368,7 @@ const ShopNavbar = () => {
         )}
       </AnimatePresence>
 
-      {/* Navbar Spacer */}
+      {/* ✅ NAVBAR SPACER - This prevents content from hiding behind the fixed navbar */}
       <div className="h-16" />
     </>
   );
