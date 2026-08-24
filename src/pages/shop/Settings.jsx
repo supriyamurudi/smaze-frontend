@@ -13,8 +13,8 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineShieldCheck,
   HiOutlineBell,
-  HiOutlineSave,
-  HiOutlinePaintBrush, // ✅ Use HiOutlinePaintBrush instead
+  HiOutlinePaintBrush,
+  HiOutlineCheckCircle,
 } from "react-icons/hi2";
 
 const Settings = () => {
@@ -448,7 +448,7 @@ const Settings = () => {
               </>
             ) : (
               <>
-                <HiOutlineSave size={18} />
+                <HiOutlineCheckCircle size={18} />
                 Save Settings
               </>
             )}
