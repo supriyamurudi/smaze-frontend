@@ -1,3 +1,4 @@
+// frontend/src/pages/shop/Profile.jsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -12,33 +13,33 @@ import toast from "react-hot-toast";
 
 import { getMyShop, updateShop } from "../../services/shopService";
 
-// ========== SKELETON LOADER ==========
+// ========== SKELETON LOADER (Mobile optimized) ==========
 const SkeletonLoader = () => (
-  <div className="space-y-8">
+  <div className="space-y-6">
     <div>
-      <div className="h-10 w-48 bg-slate-200 rounded animate-pulse"></div>
-      <div className="mt-2 h-6 w-64 bg-slate-200 rounded animate-pulse"></div>
+      <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
+      <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
     </div>
-    <div className="rounded-3xl border bg-white p-8 shadow-sm space-y-8">
+    <div className="rounded-3xl border bg-white p-6 sm:p-8 shadow-sm space-y-6">
       <div className="flex flex-col items-center">
-        <div className="h-32 w-32 rounded-full bg-slate-200 animate-pulse"></div>
-        <div className="mt-4 h-6 w-40 bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-28 w-28 rounded-full bg-slate-200 animate-pulse"></div>
+        <div className="mt-4 h-5 w-40 bg-slate-200 rounded animate-pulse"></div>
         <div className="mt-2 h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-5 md:grid-cols-2">
         {[...Array(4)].map((_, i) => (
           <div key={i}>
             <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2"></div>
-            <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
+            <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
           </div>
         ))}
         <div className="md:col-span-2">
           <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
-          <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
+          <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
         </div>
       </div>
       <div className="flex justify-end border-t pt-6">
-        <div className="h-12 w-36 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-11 w-36 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
     </div>
   </div>
@@ -241,23 +242,24 @@ export default function Profile() {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
+      {/* Removed mx-auto, max-w-5xl, p-8 - ShopLayout handles spacing! */}
+      <div className="w-full">
         {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-4xl font-black text-slate-900">
+              <h1 className="text-2xl font-black text-slate-900 sm:text-4xl">
                 Shop Profile
               </h1>
-              <p className="mt-1 text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 sm:text-base">
                 Manage your shop details and public information
               </p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <span className="self-start rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700 sm:self-center">
               <HiOutlineCheckBadge className="inline mr-1" size={16} />
               Verified
             </span>
@@ -272,14 +274,14 @@ export default function Profile() {
           onSubmit={handleSubmit}
           className="overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm"
         >
-          <div className="p-6 sm:p-8 space-y-8">
+          <div className="p-4 sm:p-8 space-y-8">
             {/* Profile Image */}
             <div className="flex flex-col items-center">
               <div className="relative group">
                 <img
                   src={preview || "https://via.placeholder.com/128"}
                   alt="Shop"
-                  className="h-32 w-32 rounded-full object-cover border-4 border-violet-100 shadow-lg transition group-hover:border-violet-300"
+                  className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover border-4 border-violet-100 shadow-lg transition group-hover:border-violet-300"
                   onError={(e) => {
                     e.target.src = "https://via.placeholder.com/128";
                   }}
@@ -346,7 +348,8 @@ export default function Profile() {
 
               <div className="md:col-span-2">
                 <FormField label="Shop Address">
-                  <div className="flex gap-3">
+                  {/* Stack on Mobile, Side-by-side on Desktop */}
+                  <div className="flex flex-col gap-3 sm:flex-row">
                     <Input
                       type="text"
                       name="address"
@@ -359,7 +362,7 @@ export default function Profile() {
                       type="button"
                       onClick={handleCurrentLocation}
                       disabled={gettingLocation}
-                      className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-medium text-white transition hover:scale-105 hover:shadow-lg disabled:opacity-50"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-medium text-white transition hover:scale-105 hover:shadow-lg disabled:opacity-50 sm:w-auto"
                     >
                       {gettingLocation ? (
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
@@ -401,14 +404,14 @@ export default function Profile() {
                 <iframe
                   title="Shop Location"
                   src={`https://maps.google.com/maps?q=${formData.latitude},${formData.longitude}&z=16&output=embed`}
-                  className="h-72 w-full rounded-2xl border border-slate-200"
+                  className="h-64 w-full rounded-2xl border border-slate-200 sm:h-72"
                   loading="lazy"
                 />
                 <a
                   href={`https://www.google.com/maps?q=${formData.latitude},${formData.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-medium text-white transition hover:scale-105 hover:shadow-lg"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-medium text-white transition hover:scale-105 hover:shadow-lg sm:w-auto"
                 >
                   <HiOutlineArrowTopRightOnSquare size={18} />
                   Open in Google Maps
@@ -421,7 +424,7 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={saving}
-                className={`flex items-center gap-2 rounded-xl px-8 py-3 font-semibold text-white transition ${
+                className={`flex w-full items-center justify-center gap-2 rounded-xl px-8 py-3 font-semibold text-white transition sm:w-auto ${
                   saving
                     ? "bg-slate-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-violet-200 hover:scale-105 hover:shadow-xl"
