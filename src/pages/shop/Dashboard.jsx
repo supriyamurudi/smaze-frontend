@@ -469,6 +469,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Account & Settings (FIXED - Wraps on mobile, no truncate!) */}
+        {/* Account & Settings (PERFECT - Fixed text overlap) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -482,28 +483,20 @@ export default function Dashboard() {
                 <HiOutlineUser size={22} />
               </div>
 
-              {/* Text container: allows wrapping on mobile */}
-              <div className="flex-1">
+              {/* Added min-w-0 flex-1 so text NEVER overlaps */}
+              <div className="flex-1 min-w-0">
                 <h4 className="font-medium text-slate-800">Account</h4>
                 <p className="text-xs text-slate-500">Manage profile</p>
               </div>
 
-              {/* Button: hidden on very small screens, visible on sm+ */}
+              {/* Button stays on the right without overlap */}
               <Link
                 to="/shop/profile"
-                className="hidden sm:inline-flex rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 flex-shrink-0"
+                className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 flex-shrink-0"
               >
                 Manage
               </Link>
             </div>
-
-            {/* Button for Mobile - Full width below */}
-            <Link
-              to="/shop/profile"
-              className="mt-4 flex sm:hidden w-full rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
-            >
-              Manage Account
-            </Link>
           </div>
 
           <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 p-5">
@@ -513,28 +506,20 @@ export default function Dashboard() {
                 <HiOutlineCog6Tooth size={22} />
               </div>
 
-              {/* Text container: allows wrapping on mobile */}
-              <div className="flex-1">
+              {/* Added min-w-0 flex-1 so text NEVER overlaps */}
+              <div className="flex-1 min-w-0">
                 <h4 className="font-medium text-slate-800">Settings</h4>
                 <p className="text-xs text-slate-500">Preferences</p>
               </div>
 
-              {/* Button: hidden on very small screens, visible on sm+ */}
+              {/* Button stays on the right without overlap */}
               <Link
                 to="/shop/settings"
-                className="hidden sm:inline-flex rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 flex-shrink-0"
+                className="rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 flex-shrink-0"
               >
                 Manage
               </Link>
             </div>
-
-            {/* Button for Mobile - Full width below */}
-            <Link
-              to="/shop/settings"
-              className="mt-4 flex sm:hidden w-full rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-            >
-              Manage Settings
-            </Link>
           </div>
         </motion.div>
       </div>
