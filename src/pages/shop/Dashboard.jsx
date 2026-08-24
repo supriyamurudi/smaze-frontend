@@ -13,7 +13,6 @@ import {
   HiOutlineChartBar,
   HiOutlineClipboardDocumentList,
   HiOutlineArrowTrendingUp,
-  HiOutlineBuildingStorefront,
   HiOutlineChevronRight,
   HiOutlineUser,
   HiOutlineCog6Tooth,
@@ -24,17 +23,6 @@ import { getShopDashboard } from "../../services/shopService";
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
   <div className="space-y-5 sm:space-y-6">
-    {/* Header Skeleton */}
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
-        <div className="h-7 w-44 rounded bg-slate-200 animate-pulse sm:h-8 sm:w-48" />
-        <div className="mt-2 h-4 w-52 rounded bg-slate-200 animate-pulse sm:h-5 sm:w-64" />
-      </div>
-
-      <div className="h-10 w-full rounded-xl bg-slate-200 animate-pulse sm:w-40" />
-    </div>
-
-    {/* Stats Skeleton */}
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {[...Array(4)].map((_, i) => (
         <div
@@ -48,7 +36,6 @@ const SkeletonLoader = () => (
       ))}
     </div>
 
-    {/* Quick Actions Skeleton */}
     <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
       {[...Array(3)].map((_, i) => (
         <div
@@ -58,7 +45,6 @@ const SkeletonLoader = () => (
       ))}
     </div>
 
-    {/* Recent Offers Skeleton */}
     <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
       <div className="border-b px-4 py-4 sm:px-5">
         <div className="h-5 w-32 rounded bg-slate-200 animate-pulse" />
@@ -150,44 +136,6 @@ const ErrorState = ({ message, onRetry }) => (
       </button>
     </div>
   </div>
-);
-
-// ========== MERCHANT HEADER ==========
-const MerchantHeader = ({ shopName }) => (
-  <motion.div
-    initial={{ y: -20, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    className="mb-5 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-4 text-white shadow-xl sm:mb-6 sm:p-6"
-  >
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-        <div className="flex-shrink-0 rounded-2xl bg-white/20 p-3 sm:p-4">
-          <HiOutlineBuildingStorefront size={24} className="text-white" />
-        </div>
-
-        <div className="min-w-0">
-          <h1 className="break-words text-xl font-black leading-tight text-white sm:text-3xl">
-            {shopName || "Pizza Hut"}
-          </h1>
-
-          <p className="mt-1 text-xs text-violet-200 sm:text-sm">
-            Welcome to the Smaze Portal
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
-        <span className="hidden items-center rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium backdrop-blur-sm sm:inline-flex">
-          🏪 Merchant
-        </span>
-
-        <span className="inline-flex items-center rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
-          <span className="mr-2 h-2 w-2 rounded-full bg-emerald-400" />
-          Active
-        </span>
-      </div>
-    </div>
-  </motion.div>
 );
 
 // ========== STAT CARD ==========
@@ -305,7 +253,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20">
-        <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:ml-72 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -340,7 +288,6 @@ export default function Dashboard() {
     (offer) => offer.status === "active" || offer.isActive === true,
   ).length;
 
-  // ========== STATS ==========
   const stats = [
     {
       title: "Total Offers",
@@ -372,7 +319,6 @@ export default function Dashboard() {
     },
   ];
 
-  // ========== QUICK ACTIONS ==========
   const quickActions = [
     {
       title: "Add New Offer",
@@ -404,11 +350,8 @@ export default function Dashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20"
     >
-      {/* Sidebar offset: lg:ml-72 (W-72 = 18rem) */}
-      <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:ml-72 lg:px-8">
-        {/* ========== MERCHANT HEADER ========== */}
-        <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
-
+      {/* NO ml-72 added here, your Layout handles that automatically! */}
+      <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
         {/* ========== STATS ========== */}
         <div className="mb-5 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
           {stats.map((stat) => (
