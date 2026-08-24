@@ -2,8 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ⚠️ Use your actual logo file. Usually a .png with transparent background.
-import smazeLogo from "../../assets/icons/smazeLogo.jpeg"; // Change .jpeg to .png if that's what you have!
+// ✅ Using your actual file: smazeLogo.jpeg
+import smazeLogo from "../assets/icons/smazeLogo.jpeg";
 
 import {
   HiOutlineHome,
@@ -128,10 +128,11 @@ const ShopNavbar = () => {
               to="/shop/dashboard"
               className="flex items-center gap-2 shrink-0"
             >
+              {/* ✅ Change the styling: rounded-full + object-cover makes the JPEG look perfect! */}
               <img
                 src={smazeLogo}
                 alt="Smaze Logo"
-                className="h-10 w-10 object-contain"
+                className="h-10 w-10 rounded-full object-cover border border-violet-200 shadow-sm"
               />
 
               <span className="text-xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
@@ -279,10 +280,11 @@ const ShopNavbar = () => {
             {/* Menu Header */}
             <div className="h-16 flex items-center justify-between border-b border-slate-100 px-5">
               <div className="flex items-center gap-2">
+                {/* ✅ Make the JPEG look great on mobile too by making it round */}
                 <img
                   src={smazeLogo}
                   alt="Smaze Logo"
-                  className="w-8 h-8 rounded-lg object-cover"
+                  className="h-8 w-8 rounded-full object-cover border border-violet-200"
                 />
                 <span className="text-xl font-bold text-slate-800">Smaze</span>
               </div>
