@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import {
-  HiOutlineSave,
   HiOutlineXMark,
   HiOutlineBuildingStorefront,
   HiOutlinePhone,
@@ -14,8 +13,8 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineShieldCheck,
   HiOutlineBell,
-  HiOutlinePalette,
 } from "react-icons/hi2";
+import { HiOutlineSave, HiOutlinePalette } from "react-icons/hi"; // ✅ Import from hi instead
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
