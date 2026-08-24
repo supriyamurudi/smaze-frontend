@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+// ✅ CORRECT PATH FOR YOUR PROJECT STRUCTURE!
 import ShopNavbar from "../components/navbar/ShopNavbar";
 import { getMyShop } from "../services/shopService";
 import toast from "react-hot-toast";
@@ -79,7 +80,7 @@ const ShopLayout = () => {
     const loadShop = async () => {
       try {
         setLoading(true);
-        await getMyShop(); // We don't need to store it, just check if it exists
+        await getMyShop();
       } catch (error) {
         if (error.response?.status === 404 || error.response?.status === 400) {
           const currentPath = window.location.pathname;
@@ -100,7 +101,7 @@ const ShopLayout = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
-      {/* Top Navbar (Contains Smaze Logo) */}
+      {/* ✅ Navbar with the Smaze Logo */}
       <ShopNavbar />
 
       {/* Main Content Area */}
