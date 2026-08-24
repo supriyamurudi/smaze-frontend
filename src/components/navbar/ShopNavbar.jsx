@@ -27,7 +27,7 @@ import toast from "react-hot-toast";
 import { logoutUser } from "../../services/authService";
 
 // ✅ IMPORT THE SHOP SIDEBAR
-import ShopSidebar from "../shop/ShopSidebar";
+import ShopSidebar from "../ShopSidebar";
 
 // ========== MAIN COMPONENT ==========
 const ShopNavbar = () => {
