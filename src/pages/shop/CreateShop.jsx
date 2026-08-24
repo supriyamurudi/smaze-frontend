@@ -152,7 +152,7 @@ const ImageUpload = ({ preview, onImageChange }) => {
   );
 };
 
-// ========== PENDING APPROVAL COMPONENT (Mobile optimized) ==========
+// ========== PENDING APPROVAL COMPONENT (PERFECT MOBILE FIX) ==========
 const PendingApproval = ({ shopName }) => {
   const navigate = useNavigate();
 
@@ -182,38 +182,42 @@ const PendingApproval = ({ shopName }) => {
 
           {/* Status Timeline */}
           <div className="bg-slate-50 rounded-2xl p-4 sm:p-6 mb-6 text-left">
-            <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-              <HiOutlineShieldCheck className="text-violet-600" />
-              Verification Status
+            {/* Heading shortened to fit on one line! */}
+            <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2 flex-shrink-0">
+              <HiOutlineShieldCheck className="text-violet-600 flex-shrink-0" />
+              Status
             </h4>
+
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
                   <HiOutlineCheckCircle size={18} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="font-medium text-slate-800">Shop Created</p>
                   <p className="text-sm text-slate-500">
                     Your shop has been registered
                   </p>
                 </div>
               </div>
+
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
                   <HiOutlineClock size={18} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="font-medium text-slate-800">Pending Review</p>
                   <p className="text-sm text-slate-500">
                     Admin is reviewing your shop
                   </p>
                 </div>
               </div>
+
               <div className="flex items-center gap-3 opacity-50">
-                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400">
+                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0">
                   <HiOutlineCheckCircle size={18} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="font-medium text-slate-500">Approved</p>
                   <p className="text-sm text-slate-400">
                     Your shop will be active
@@ -226,7 +230,7 @@ const PendingApproval = ({ shopName }) => {
           {/* Info Banner */}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-left">
             <div className="flex items-start gap-3">
-              <HiOutlineInformationCircle className="text-blue-500 text-xl flex-shrink-0 mt-0.5" />
+              <HiOutlineInformationCircle className="text-blue-500 text-lg flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">
                   What happens next?
