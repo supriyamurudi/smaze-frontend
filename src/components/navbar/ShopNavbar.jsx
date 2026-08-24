@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ✅ Using your actual file: smazeLogo.jpeg
-import smazeLogo from "../assets/icons/smazeLogo.jpeg";
+import smazeLogo from "../../assets/icons/smazeLogo.jpeg";
 
 import {
   HiOutlineHome,
