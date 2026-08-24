@@ -3,8 +3,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getMyShop } from "../../services/shopService";
-import { getUnreadCount } from "../../services/notificationService";
+import { getMyShop } from "../services/shopService";
+import { getUnreadCount } from "../services/notificationService";
 import toast from "react-hot-toast";
 import { logoutUser } from "../services/authService";
 
