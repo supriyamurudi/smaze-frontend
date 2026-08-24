@@ -322,7 +322,7 @@ export default function Settings() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-black text-slate-900 sm:text-4xl">
-                  Shop Settings
+                  Settings
                 </h1>
                 <p className="mt-1 text-sm text-slate-500 sm:text-base">
                   Manage your account security and preferences
