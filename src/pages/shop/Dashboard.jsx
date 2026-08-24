@@ -20,7 +20,7 @@ import {
 
 import { getShopDashboard } from "../../services/shopService";
 
-// ========== SKELETON LOADER (Matched to Customer Dashboard style) ==========
+// ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
   <div className="space-y-6">
     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -129,32 +129,34 @@ const ErrorState = ({ message, onRetry }) => (
   </div>
 );
 
-// ========== MERCHANT HEADER (MATCHED TO CUSTOMER STYLE) ==========
+// ========== MERCHANT HEADER (PERFECT TEXT DISPLAY FIX) ==========
 const MerchantHeader = ({ shopName }) => (
   <motion.div
     initial={{ y: -20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-5 sm:p-6 text-white shadow-xl"
   >
-    <div className="flex flex-row items-center justify-between gap-4">
-      {/* Left: Icon & Text */}
+    {/* Stack on Mobile, Horizontal on Desktop */}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Left: Icon & Text (Flex-row inside so text doesn't split into vertical letters!) */}
       <div className="flex items-center gap-3 sm:gap-4 min-w-0">
         <div className="rounded-2xl bg-white/20 p-3 sm:p-4 flex-shrink-0">
           <HiOutlineBuildingStorefront size={24} className="text-white" />
         </div>
 
-        <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-black text-white break-words leading-tight">
+        {/* Remove break-words! Use whitespace-normal so words wrap naturally */}
+        <div className="min-w-0 whitespace-normal">
+          <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
             {shopName || "Pizza Hut"}
           </h1>
-          <p className="text-xs sm:text-sm text-violet-200 mt-0.5 truncate">
+          <p className="text-xs sm:text-sm text-violet-200 mt-0.5">
             Welcome to the Smaze Portal
           </p>
         </div>
       </div>
 
       {/* Right: Badges */}
-      <div className="flex flex-row items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 sm:flex-shrink-0">
         <span className="hidden sm:inline-flex items-center rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium backdrop-blur-sm">
           🏪 Merchant
         </span>
@@ -167,7 +169,7 @@ const MerchantHeader = ({ shopName }) => (
   </motion.div>
 );
 
-// ========== STAT CARD (MATCHED TO CUSTOMER DASHBOARD) ==========
+// ========== STAT CARD (PERFECT TITLE DISPLAY FIX) ==========
 const StatCard = ({ title, value, icon: Icon, color, growth }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -178,10 +180,9 @@ const StatCard = ({ title, value, icon: Icon, color, growth }) => (
     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
     <div className="relative flex items-start justify-between">
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-slate-500 truncate">{title}</p>
-        <p className="mt-1 text-2xl font-bold text-slate-900 truncate">
-          {value}
-        </p>
+        {/* Removed truncate so title is always fully visible! */}
+        <p className="text-xs font-medium text-slate-500">{title}</p>
+        <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
       </div>
       <div
         className={`rounded-xl ${color} p-2.5 text-white shadow-lg flex-shrink-0`}
@@ -200,7 +201,7 @@ const StatCard = ({ title, value, icon: Icon, color, growth }) => (
   </motion.div>
 );
 
-// ========== QUICK ACTION (MATCHED TO CUSTOMER DASHBOARD) ==========
+// ========== QUICK ACTION ==========
 const QuickAction = ({ title, path, icon: Icon }) => (
   <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
     <Link
@@ -362,8 +363,8 @@ export default function Dashboard() {
         {/* Merchant Header */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
 
-        {/* Stats: Perfect 2x2 Grid (Matches Customer Dashboard) */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        {/* Stats: Always fit properly - 1 col on tiny screens, 2 col on mobile, 4 on desktop */}
+        <div className="mb-6 grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((stat) => (
             <StatCard key={stat.title} {...stat} />
           ))}
