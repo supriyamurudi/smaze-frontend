@@ -1,10 +1,12 @@
+// frontend/src/components/shop/ShopSidebar.jsx
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getMyShop } from "../services/shopService";
-import { getUnreadCount } from "../services/notificationService";
+import { getMyShop } from "../../services/shopService";
+import { getUnreadCount } from "../../services/notificationService";
 import toast from "react-hot-toast";
-import { logoutUser } from "../services/authService";
+import { logoutUser } from "../../services/authService";
 
 import {
   HiOutlineHome,
@@ -28,7 +30,7 @@ const getMenuItems = (hasShop) => {
     { name: "Analytics", path: "/shop/analytics", icon: HiOutlineChartBar },
     { name: "Notifications", path: "/shop/notifications", icon: HiOutlineBell },
     { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
-    { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth },
+    { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth }, // ✅ Settings is here
   ];
 
   const createShopItems = [
