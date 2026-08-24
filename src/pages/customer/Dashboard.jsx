@@ -310,64 +310,59 @@ const PremiumOfferCard = ({ offer, featured = false }) => (
 
 // Minimal Compact Offer
 // Minimal Compact Offer (FIXED - Buttons always visible on mobile)
-// Minimal Compact Offer (FINAL FIX - Button always 100% visible)
+// Minimal Compact Offer (DEFINITIVE FIX - Compact button, no width overflow)
 const MinimalCompactOffer = ({ offer, type }) => {
   const isEnding = type === "ending";
   return (
-    <motion.div
-      whileHover={{ x: 4, scale: 1.01 }}
-      className="group flex flex-col sm:flex-row w-full items-start sm:items-center gap-3 rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl"
-    >
-      <div className="flex w-full sm:w-auto items-center gap-3 min-w-0">
-        {/* Image - NEVER shrinks */}
-        <div className="relative h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 overflow-hidden rounded-xl">
-          <img
-            src={
-              offer.image ||
-              "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=200"
-            }
-            alt={offer.title || "Offer"}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) =>
-              (e.target.src =
-                "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=200")
-            }
-          />
-          {isEnding && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/50 via-transparent to-transparent">
-              <span className="text-xs font-bold text-white">⚡</span>
-            </div>
-          )}
-        </div>
-
-        {/* Text - Truncates correctly */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-slate-800 truncate text-sm sm:text-base">
-            {offer.title || "Special Offer"}
-          </h4>
-          <p
-            className={`text-xs truncate ${isEnding ? "text-rose-500 font-medium" : "text-slate-500"}`}
-          >
-            {isEnding ? (
-              <span className="flex items-center gap-1">
-                <HiOutlineClock size={12} />
-                {getTimeRemaining(offer.endDate)} left
-              </span>
-            ) : (
-              offer.shop?.name || "Local Shop"
-            )}
-          </p>
-        </div>
+    <div className="group flex w-full items-center gap-3 rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl overflow-hidden">
+      {/* Image - Small, fixed size */}
+      <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl">
+        <img
+          src={
+            offer.image ||
+            "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=200"
+          }
+          alt={offer.title || "Offer"}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={(e) =>
+            (e.target.src =
+              "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=200")
+          }
+        />
+        {isEnding && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/50 via-transparent to-transparent">
+            <span className="text-xs font-bold text-white">⚡</span>
+          </div>
+        )}
       </div>
 
-      {/* Button - Always at the bottom on mobile, right side on desktop */}
+      {/* Text - Shrinks to fit */}
+      <div className="flex-1 min-w-0 overflow-hidden">
+        <h4 className="font-semibold text-slate-800 truncate text-sm sm:text-base">
+          {offer.title || "Special Offer"}
+        </h4>
+        <p
+          className={`text-xs truncate ${isEnding ? "text-rose-500 font-medium" : "text-slate-500"}`}
+        >
+          {isEnding ? (
+            <span className="flex items-center gap-1">
+              <HiOutlineClock size={12} />
+              {getTimeRemaining(offer.endDate)} left
+            </span>
+          ) : (
+            offer.shop?.name || "Local Shop"
+          )}
+        </p>
+      </div>
+
+      {/* Button - Compact, always visible on right */}
       <Link
         to={`/customer/offers/${offer.id}`}
-        className={`w-full sm:w-auto flex-shrink-0 rounded-xl px-3 py-2 text-center text-xs font-semibold text-white transition-all duration-300 hover:scale-105 ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
+        className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
       >
         {isEnding ? "Grab" : "View"}
       </Link>
-    </motion.div>
+    </div>
   );
 };
 
