@@ -13,6 +13,7 @@ import {
   HiOutlineChartBar,
   HiOutlineClipboardDocumentList,
   HiOutlineArrowTrendingUp,
+  HiOutlineBuildingStorefront,
   HiOutlineChevronRight,
   HiOutlineUser,
   HiOutlineCog6Tooth,
@@ -136,6 +137,39 @@ const ErrorState = ({ message, onRetry }) => (
       </button>
     </div>
   </div>
+);
+
+// ========== MERCHANT HEADER (The Purple Welcome Banner) ==========
+const MerchantHeader = ({ shopName }) => (
+  <motion.div
+    initial={{ y: -20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-6 text-white shadow-xl sm:p-8"
+  >
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="flex-shrink-0 rounded-2xl bg-white/20 p-3 sm:p-4">
+          <HiOutlineBuildingStorefront size={28} className="text-white" />
+        </div>
+
+        <div className="min-w-0">
+          <h1 className="text-2xl font-black leading-tight text-white sm:text-3xl">
+            {shopName || "Pizza Hut"}
+          </h1>
+          <p className="mt-1 text-sm text-violet-200">
+            Welcome to the Smaze Merchant Portal 👋
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-shrink-0">
+        <span className="inline-flex items-center rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
+          <span className="mr-2 h-2 w-2 rounded-full bg-emerald-400" />
+          Active
+        </span>
+      </div>
+    </div>
+  </motion.div>
 );
 
 // ========== STAT CARD ==========
@@ -348,10 +382,12 @@ export default function Dashboard() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20"
+      className="min-h-screen overflow-x-hidden pb-16 sm:pb-20"
     >
-      {/* No mL added here - your Layout handles the sidebar margin! */}
       <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+        {/* ========== MERCHANT HEADER (Purple Banner Added) ========== */}
+        <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
+
         {/* ========== STATS ========== */}
         <div className="mb-5 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
           {stats.map((stat) => (
@@ -487,7 +523,6 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
 
             <div className="relative flex flex-col gap-4 min-[480px]:flex-row min-[480px]:items-center">
-              {/* Icon and Text */}
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="flex-shrink-0 rounded-xl bg-violet-50 p-3 text-violet-600">
                   <HiOutlineUser size={22} />
@@ -495,14 +530,12 @@ export default function Dashboard() {
 
                 <div className="min-w-0">
                   <h4 className="font-semibold text-slate-800">Account</h4>
-
                   <p className="text-xs text-slate-500 sm:text-sm">
                     Manage your profile
                   </p>
                 </div>
               </div>
 
-              {/* Button */}
               <Link
                 to="/shop/profile"
                 className="flex w-full flex-shrink-0 items-center justify-center rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700 active:scale-[0.98] min-[480px]:w-auto"
@@ -517,7 +550,6 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
 
             <div className="relative flex flex-col gap-4 min-[480px]:flex-row min-[480px]:items-center">
-              {/* Icon and Text */}
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="flex-shrink-0 rounded-xl bg-slate-100 p-3 text-slate-600">
                   <HiOutlineCog6Tooth size={22} />
@@ -525,14 +557,12 @@ export default function Dashboard() {
 
                 <div className="min-w-0">
                   <h4 className="font-semibold text-slate-800">Settings</h4>
-
                   <p className="text-xs text-slate-500 sm:text-sm">
                     Manage your preferences
                   </p>
                 </div>
               </div>
 
-              {/* Button */}
               <Link
                 to="/shop/settings"
                 className="flex w-full flex-shrink-0 items-center justify-center rounded-lg bg-slate-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 active:scale-[0.98] min-[480px]:w-auto"
