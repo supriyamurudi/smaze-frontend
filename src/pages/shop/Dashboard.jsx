@@ -13,6 +13,7 @@ import {
   HiOutlineChartBar,
   HiOutlineClipboardDocumentList,
   HiOutlineArrowTrendingUp,
+  HiOutlineBuildingStorefront,
   HiOutlineChevronRight,
   HiOutlineUser,
   HiOutlineCog6Tooth,
@@ -136,6 +137,39 @@ const ErrorState = ({ message, onRetry }) => (
       </button>
     </div>
   </div>
+);
+
+// ========== MERCHANT HEADER (The Welcome Part is back!) ==========
+const MerchantHeader = ({ shopName }) => (
+  <motion.div
+    initial={{ y: -20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    className="mb-5 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-5 text-white shadow-xl sm:mb-6 sm:p-6"
+  >
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+        <div className="flex-shrink-0 rounded-2xl bg-white/20 p-3 sm:p-4">
+          <HiOutlineBuildingStorefront size={24} className="text-white" />
+        </div>
+
+        <div className="min-w-0">
+          <h1 className="text-xl font-black leading-tight text-white sm:text-2xl">
+            {shopName || "Pizza Hut"}
+          </h1>
+          <p className="mt-1 text-xs text-violet-200 sm:text-sm">
+            Welcome to the Smaze Portal 👋
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-shrink-0">
+        <span className="inline-flex items-center rounded-full bg-emerald-400/30 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
+          <span className="mr-2 h-2 w-2 rounded-full bg-emerald-400" />
+          Active
+        </span>
+      </div>
+    </div>
+  </motion.div>
 );
 
 // ========== STAT CARD ==========
@@ -350,8 +384,10 @@ export default function Dashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20"
     >
-      {/* NO ml-72 added here, your Layout handles that automatically! */}
       <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+        {/* ⬇️ THE WELCOME HEADER IS BACK HERE ⬇️ */}
+        <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
+
         {/* ========== STATS ========== */}
         <div className="mb-5 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
           {stats.map((stat) => (
