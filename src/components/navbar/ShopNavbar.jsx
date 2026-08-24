@@ -1,3 +1,5 @@
+// frontend/src/components/navbar/ShopNavbar.jsx
+
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +18,7 @@ import {
   HiOutlineXMark,
   HiOutlineChevronDown,
   HiArrowRightOnRectangle,
+  HiOutlineCog6Tooth, // ✅ ADD THIS
 } from "react-icons/hi2";
 
 import { getMyShop } from "../../services/shopService";
@@ -29,6 +32,10 @@ const navLinks = [
   { name: "Add Offer", path: "/shop/add-offer", icon: HiOutlinePlusCircle },
   { name: "My Offers", path: "/shop/my-offers", icon: HiOutlineTag },
   { name: "Analytics", path: "/shop/analytics", icon: HiOutlineChartBar },
+  // ✅ ADD NOTIFICATIONS AND PROFILE TO DESKTOP NAV TOO
+  { name: "Notifications", path: "/shop/notifications", icon: HiOutlineBell },
+  { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
+  { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth }, // ✅ ADD SETTINGS
 ];
 
 // ========== MAIN COMPONENT ==========
@@ -240,6 +247,13 @@ const ShopNavbar = () => {
                         >
                           <HiOutlineUser size={18} /> Profile
                         </Link>
+                        <Link
+                          to="/shop/settings"
+                          onClick={() => setShowProfileDropdown(false)}
+                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-violet-50"
+                        >
+                          <HiOutlineCog6Tooth size={18} /> Settings
+                        </Link>
                         <button
                           type="button"
                           onClick={handleLogout}
@@ -315,7 +329,7 @@ const ShopNavbar = () => {
                 </span>
               </div>
 
-              {/* Navigation Links */}
+              {/* Navigation Links - ADD SETTINGS HERE */}
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -348,13 +362,20 @@ const ShopNavbar = () => {
 
               <div className="my-3 border-t border-slate-100" />
 
-              {/* Profile & Logout */}
+              {/* Profile, Settings & Logout */}
               <Link
                 to="/shop/profile"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
               >
                 <HiOutlineUser size={18} /> Profile
+              </Link>
+              <Link
+                to="/shop/settings"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
+              >
+                <HiOutlineCog6Tooth size={18} /> Settings
               </Link>
               <button
                 type="button"
