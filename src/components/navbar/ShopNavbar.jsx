@@ -1,6 +1,6 @@
 // frontend/src/components/navbar/ShopNavbar.jsx
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,6 @@ import {
   HiOutlinePlusCircle,
   HiOutlineTag,
   HiOutlineChartBar,
-  NavLink,
 } from "react-icons/hi2";
 
 import { getMyShop } from "../../services/shopService";
@@ -26,7 +25,7 @@ import { getUnreadCount } from "../../services/notificationService";
 import toast from "react-hot-toast";
 import { logoutUser } from "../../services/authService";
 
-// ✅ IMPORT THE SHOP SIDEBAR
+// ✅ CORRECT: ShopSidebar is in components folder (not components/shop/)
 import ShopSidebar from "../ShopSidebar";
 
 // ========== MAIN COMPONENT ==========
@@ -327,7 +326,7 @@ const ShopNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* ✅ Mobile Hamburger - Now opens ShopSidebar */}
+              {/* Mobile Hamburger - Opens ShopSidebar */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
@@ -341,7 +340,7 @@ const ShopNavbar = () => {
         </div>
       </nav>
 
-      {/* ✅ Mobile Slide-in Sidebar - Using ShopSidebar component */}
+      {/* Mobile Slide-in Sidebar - Using ShopSidebar component */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -356,7 +355,7 @@ const ShopNavbar = () => {
         )}
       </AnimatePresence>
 
-      {/* ✅ NAVBAR SPACER - This prevents content from hiding behind the fixed navbar */}
+      {/* Navbar Spacer */}
       <div className="h-16" />
     </>
   );
