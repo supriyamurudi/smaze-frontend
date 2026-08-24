@@ -17,28 +17,23 @@ import toast from "react-hot-toast";
 import { createShop } from "../../services/shopService";
 import { getCategories } from "../../services/categoryService";
 
-// ========== SKELETON LOADER ==========
+// ========== SKELETON LOADER (Mobile optimized) ==========
 const SkeletonLoader = () => (
-  <div className="space-y-8">
-    <div className="flex items-center justify-between">
-      <div>
-        <div className="h-10 w-64 bg-slate-200 rounded animate-pulse"></div>
-        <div className="mt-2 h-6 w-80 bg-slate-200 rounded animate-pulse"></div>
-      </div>
-      <div className="h-8 w-24 bg-slate-200 rounded-full animate-pulse"></div>
-    </div>
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6">
+  <div className="space-y-6">
+    <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
+    <div className="h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-5">
       {[...Array(4)].map((_, i) => (
         <div key={i}>
-          <div className="h-5 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
-          <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
+          <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
+          <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
         </div>
       ))}
       <div>
-        <div className="h-5 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
-        <div className="h-48 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
+        <div className="h-40 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
-      <div className="h-14 bg-slate-200 rounded-2xl animate-pulse"></div>
+      <div className="h-12 bg-slate-200 rounded-2xl animate-pulse"></div>
     </div>
   </div>
 );
@@ -46,7 +41,7 @@ const SkeletonLoader = () => (
 // ========== FORM FIELD COMPONENT ==========
 const FormField = ({ label, required, children }) => (
   <div>
-    <label className="mb-2 block text-sm font-medium text-slate-700">
+    <label className="mb-1.5 block text-sm font-medium text-slate-700">
       {label} {required && <span className="text-rose-500">*</span>}
     </label>
     {children}
@@ -55,28 +50,28 @@ const FormField = ({ label, required, children }) => (
 
 const Input = ({ className = "", ...props }) => (
   <input
-    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
+    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
     {...props}
   />
 );
 
 const Textarea = ({ className = "", ...props }) => (
   <textarea
-    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition resize-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
+    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition resize-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
     {...props}
   />
 );
 
 const Select = ({ className = "", children, ...props }) => (
   <select
-    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
+    className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100 ${className}`}
     {...props}
   >
     {children}
   </select>
 );
 
-// ========== IMAGE UPLOAD COMPONENT ==========
+// ========== IMAGE UPLOAD COMPONENT (Mobile friendly) ==========
 const ImageUpload = ({ preview, onImageChange }) => {
   const [dragActive, setDragActive] = useState(false);
 
@@ -114,7 +109,7 @@ const ImageUpload = ({ preview, onImageChange }) => {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-all duration-300 ${
+        className={`relative flex min-h-[160px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-5 transition-all duration-300 ${
           dragActive
             ? "border-violet-500 bg-violet-50"
             : preview
@@ -127,7 +122,7 @@ const ImageUpload = ({ preview, onImageChange }) => {
             <img
               src={preview}
               alt="Preview"
-              className="mx-auto max-h-48 rounded-lg object-contain"
+              className="mx-auto max-h-40 rounded-lg object-contain"
             />
             <button
               type="button"
@@ -142,14 +137,14 @@ const ImageUpload = ({ preview, onImageChange }) => {
           </div>
         ) : (
           <>
-            <HiOutlinePhoto size={48} className="text-violet-600" />
-            <p className="mt-3 text-center text-slate-600">
+            <HiOutlinePhoto size={40} className="text-violet-600" />
+            <p className="mt-2 text-center text-sm text-slate-600">
               <span className="font-semibold text-violet-600">
                 Click to upload
               </span>{" "}
               or drag and drop
             </p>
-            <p className="mt-1 text-sm text-slate-400">PNG, JPG (Max 2MB)</p>
+            <p className="mt-1 text-xs text-slate-400">PNG, JPG (Max 2MB)</p>
           </>
         )}
       </label>
@@ -157,7 +152,7 @@ const ImageUpload = ({ preview, onImageChange }) => {
   );
 };
 
-// ========== PENDING APPROVAL COMPONENT ==========
+// ========== PENDING APPROVAL COMPONENT (Mobile optimized) ==========
 const PendingApproval = ({ shopName }) => {
   const navigate = useNavigate();
 
@@ -165,20 +160,20 @@ const PendingApproval = ({ shopName }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20 flex items-center justify-center"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20 flex items-center justify-center p-4"
     >
-      <div className="max-w-2xl w-full mx-4">
-        <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 text-center">
+      <div className="w-full max-w-2xl">
+        <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center">
           {/* Icon */}
-          <div className="mx-auto w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-6">
-            <HiOutlineClock className="text-amber-600 text-4xl" />
+          <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-100 flex items-center justify-center mb-4 sm:mb-6">
+            <HiOutlineClock className="text-amber-600 text-3xl sm:text-4xl" />
           </div>
 
-          <h2 className="text-3xl font-bold text-slate-900 mb-3">
+          <h2 className="text-xl sm:text-3xl font-bold text-slate-900 mb-3">
             Shop Submitted for Review
           </h2>
 
-          <p className="text-slate-500 mb-6">
+          <p className="text-sm sm:text-base text-slate-500 mb-6">
             Your shop{" "}
             <span className="font-semibold text-slate-800">"{shopName}"</span>{" "}
             has been successfully submitted. Our admin team will review your
@@ -186,7 +181,7 @@ const PendingApproval = ({ shopName }) => {
           </p>
 
           {/* Status Timeline */}
-          <div className="bg-slate-50 rounded-2xl p-6 mb-6 text-left">
+          <div className="bg-slate-50 rounded-2xl p-4 sm:p-6 mb-6 text-left">
             <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
               <HiOutlineShieldCheck className="text-violet-600" />
               Verification Status
@@ -236,7 +231,7 @@ const PendingApproval = ({ shopName }) => {
                 <p className="text-sm font-medium text-blue-800">
                   What happens next?
                 </p>
-                <ul className="text-sm text-blue-700 mt-1 space-y-1">
+                <ul className="text-xs sm:text-sm text-blue-700 mt-1 space-y-1">
                   <li>• Admin will review your shop details</li>
                   <li>• You'll receive a notification once approved</li>
                   <li>• You can start creating offers after approval</li>
@@ -248,7 +243,7 @@ const PendingApproval = ({ shopName }) => {
 
           <button
             onClick={() => navigate("/shop/dashboard")}
-            className="px-6 py-3 rounded-xl bg-violet-600 text-white font-semibold hover:bg-violet-700 transition"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-violet-600 text-white font-semibold hover:bg-violet-700 transition"
           >
             Go to Dashboard
           </button>
@@ -351,7 +346,7 @@ export default function CreateShop() {
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -365,37 +360,37 @@ export default function CreateShop() {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header (Mobile-first, compact) */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-4xl font-black text-slate-900">
+              <h1 className="text-2xl sm:text-4xl font-black text-slate-900">
                 Create Your Shop
               </h1>
-              <p className="mt-1 text-slate-500">
+              <p className="mt-1 text-sm sm:text-base text-slate-500">
                 Add your shop details and submit for verification
               </p>
             </div>
-            <span className="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-700">
+            <span className="self-start sm:self-center rounded-full bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-700">
               <HiOutlineClock className="inline mr-1" size={14} />
               Needs Approval
             </span>
           </div>
 
-          {/* Info Banner */}
-          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+          {/* Info Banner (Compact) */}
+          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4">
             <div className="flex items-start gap-3">
-              <HiOutlineShieldCheck className="text-blue-500 text-xl flex-shrink-0 mt-0.5" />
+              <HiOutlineShieldCheck className="text-blue-500 text-lg flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">
                   Shop Verification Required
                 </p>
-                <p className="text-sm text-blue-700">
+                <p className="text-xs sm:text-sm text-blue-700">
                   Your shop will be reviewed by our admin team before it becomes
                   visible to customers. This ensures a trusted marketplace.
                 </p>
@@ -412,7 +407,7 @@ export default function CreateShop() {
           onSubmit={handleSubmit}
           className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-5 sm:space-y-6">
             {/* Shop Name */}
             <FormField label="Shop Name" required>
               <Input
@@ -463,7 +458,7 @@ export default function CreateShop() {
 
             {/* Image Upload */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
                 Shop Image
               </label>
               <ImageUpload
@@ -478,7 +473,7 @@ export default function CreateShop() {
               disabled={loading}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className={`w-full rounded-2xl py-4 font-bold text-white transition-all ${
+              className={`w-full rounded-2xl py-3.5 sm:py-4 font-bold text-white transition-all ${
                 loading
                   ? "bg-slate-400 cursor-not-allowed"
                   : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-violet-200 hover:shadow-xl"
@@ -524,14 +519,16 @@ export default function CreateShop() {
           transition={{ delay: 0.3 }}
           className="mt-6"
         >
-          <div className="rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 p-5 border border-violet-100">
+          <div className="rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 p-4 sm:p-5 border border-violet-100">
             <div className="flex items-start gap-3">
               <div className="rounded-full bg-violet-200 p-2 text-violet-600">
                 <HiOutlineBuildingStorefront size={18} />
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800">Shop Tips</h3>
-                <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                <h3 className="font-semibold text-slate-800 text-sm sm:text-base">
+                  Shop Tips
+                </h3>
+                <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-slate-600">
                   <li>• Add a clear shop logo to attract customers</li>
                   <li>• Provide accurate address for location-based offers</li>
                   <li>• Select the right category for better visibility</li>
