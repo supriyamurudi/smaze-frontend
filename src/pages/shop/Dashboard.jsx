@@ -129,7 +129,7 @@ const ErrorState = ({ message, onRetry }) => (
   </div>
 );
 
-// ========== MERCHANT HEADER (PERFECT TEXT DISPLAY) ==========
+// ========== MERCHANT HEADER ==========
 const MerchantHeader = ({ shopName }) => (
   <motion.div
     initial={{ y: -20, opacity: 0 }}
@@ -142,7 +142,6 @@ const MerchantHeader = ({ shopName }) => (
           <HiOutlineBuildingStorefront size={24} className="text-white" />
         </div>
 
-        {/* whitespace-normal allows natural wrapping */}
         <div className="min-w-0 whitespace-normal">
           <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
             {shopName || "Pizza Hut"}
@@ -166,7 +165,7 @@ const MerchantHeader = ({ shopName }) => (
   </motion.div>
 );
 
-// ========== STAT CARD (PERFECT TITLE) ==========
+// ========== STAT CARD ==========
 const StatCard = ({ title, value, icon: Icon, color, growth }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -177,7 +176,7 @@ const StatCard = ({ title, value, icon: Icon, color, growth }) => (
     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
     <div className="relative flex items-start justify-between">
       <div className="flex-1 min-w-0">
-        {/* Removed truncate! */}
+        {/* No truncate here! */}
         <p className="text-xs font-medium text-slate-500">{title}</p>
         <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
       </div>
@@ -397,7 +396,6 @@ export default function Dashboard() {
               <h2 className="text-lg sm:text-xl font-bold text-slate-800">
                 Recent Offers
               </h2>
-              {/* Removed truncate */}
               <p className="text-xs sm:text-sm text-slate-500">
                 Track your latest promotions
               </p>
@@ -470,54 +468,73 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Account & Settings (FIXED - no truncate, allows wrapping) */}
+        {/* Account & Settings (FIXED - Wraps on mobile, no truncate!) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="mt-6 grid gap-4 md:grid-cols-2"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 p-4 sm:p-5">
+          <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 p-5">
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
             <div className="relative flex items-center gap-3">
               <div className="rounded-xl bg-violet-50 p-3 text-violet-600 flex-shrink-0">
                 <HiOutlineUser size={22} />
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-slate-800 text-sm sm:text-base">
-                  Account
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-500">
-                  Manage profile
-                </p>
+
+              {/* Text container: allows wrapping on mobile */}
+              <div className="flex-1">
+                <h4 className="font-medium text-slate-800">Account</h4>
+                <p className="text-xs text-slate-500">Manage profile</p>
               </div>
+
+              {/* Button: hidden on very small screens, visible on sm+ */}
               <Link
                 to="/shop/profile"
-                className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 flex-shrink-0"
+                className="hidden sm:inline-flex rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 flex-shrink-0"
               >
                 Manage
               </Link>
             </div>
+
+            {/* Button for Mobile - Full width below */}
+            <Link
+              to="/shop/profile"
+              className="mt-4 flex sm:hidden w-full rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
+            >
+              Manage Account
+            </Link>
           </div>
-          <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 p-4 sm:p-5">
+
+          <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 p-5">
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
             <div className="relative flex items-center gap-3">
               <div className="rounded-xl bg-slate-100 p-3 text-slate-600 flex-shrink-0">
                 <HiOutlineCog6Tooth size={22} />
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-slate-800 text-sm sm:text-base">
-                  Settings
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-500">Preferences</p>
+
+              {/* Text container: allows wrapping on mobile */}
+              <div className="flex-1">
+                <h4 className="font-medium text-slate-800">Settings</h4>
+                <p className="text-xs text-slate-500">Preferences</p>
               </div>
+
+              {/* Button: hidden on very small screens, visible on sm+ */}
               <Link
                 to="/shop/settings"
-                className="rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 flex-shrink-0"
+                className="hidden sm:inline-flex rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 flex-shrink-0"
               >
                 Manage
               </Link>
             </div>
+
+            {/* Button for Mobile - Full width below */}
+            <Link
+              to="/shop/settings"
+              className="mt-4 flex sm:hidden w-full rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            >
+              Manage Settings
+            </Link>
           </div>
         </motion.div>
       </div>
