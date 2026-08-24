@@ -4,9 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaArrowRight,
-  FaStore,
-  FaUsers,
-  FaLightbulb,
   FaStar,
   FaFire,
   FaShieldAlt,
@@ -248,59 +245,7 @@ export default function Hero() {
             </motion.div>
           </div>
         </div>
-
-        {/* Statistics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mt-8 sm:mt-10 lg:mt-12"
-        >
-          <Stat
-            icon={<FaStore />}
-            number={formatNumber(stats.totalShops)}
-            text="Verified Shops"
-            loading={loading}
-          />
-          <Stat
-            icon={<FaUsers />}
-            number={formatNumber(stats.totalCustomers)}
-            text="Happy Customers"
-            loading={loading}
-          />
-          <Stat
-            icon={<FaLightbulb />}
-            number={formatNumber(stats.totalOffers)}
-            text="Active Offers"
-            loading={loading}
-          />
-        </motion.div>
       </div>
     </section>
-  );
-}
-
-function Stat({ icon, number, text, loading }) {
-  return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
-      transition={{ duration: 0.2 }}
-      className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 lg:p-6 shadow-xl border border-white flex items-center gap-3 sm:gap-4 lg:gap-5"
-    >
-      <div className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 rounded-xl sm:rounded-2xl bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white flex items-center justify-center text-base sm:text-lg lg:text-xl flex-shrink-0">
-        {icon}
-      </div>
-
-      <div>
-        <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900">
-          {loading ? (
-            <span className="inline-block w-12 sm:w-16 h-6 sm:h-8 bg-slate-200 rounded animate-pulse"></span>
-          ) : (
-            number
-          )}
-        </h3>
-        <p className="text-xs sm:text-sm text-gray-500">{text}</p>
-      </div>
-    </motion.div>
   );
 }
