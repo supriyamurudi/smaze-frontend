@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ⚠️ Use your actual logo file. Usually a .png with transparent background.
-import smazeLogo from "../assets/icons/smazeLogo.png"; // Change .jpeg to .png if that's what you have!
+import smazeLogo from "../../assets/icons/smazeLogo.jpeg"; // Change .jpeg to .png if that's what you have!
 
 import {
   HiOutlineHome,
