@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import {
   FaFacebookF,
   FaInstagram,
-  FaLinkedinIn,
-  FaTwitter,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
@@ -178,7 +176,6 @@ const Footer = () => {
             >
               <span className="text-purple-500">S</span>
               maze
-              <span className="text-pink-500 text-base sm:text-lg">™</span>
             </h2>
 
             <p
@@ -229,42 +226,6 @@ const Footer = () => {
                 "
               >
                 <FaInstagram />
-              </a>
-
-              <a
-                href="#"
-                className="
-                  w-9 sm:w-10 md:w-11
-                  h-9 sm:h-10 md:h-11
-                  rounded-full
-                  bg-white/10
-                  hover:bg-sky-500
-                  flex
-                  items-center
-                  justify-center
-                  transition
-                  text-sm sm:text-base
-                "
-              >
-                <FaTwitter />
-              </a>
-
-              <a
-                href="#"
-                className="
-                  w-9 sm:w-10 md:w-11
-                  h-9 sm:h-10 md:h-11
-                  rounded-full
-                  bg-white/10
-                  hover:bg-blue-600
-                  flex
-                  items-center
-                  justify-center
-                  transition
-                  text-sm sm:text-base
-                "
-              >
-                <FaLinkedinIn />
               </a>
             </div>
           </div>
@@ -318,9 +279,9 @@ const Footer = () => {
             <ul className="space-y-2.5 sm:space-y-3 md:space-y-4">
               {[
                 "Fashion",
-                "Restaurants",
+                "Food",
                 "Electronics",
-                "Medical",
+                "Fitness",
                 "Beauty & Salon",
               ].map((item) => (
                 <li
@@ -411,7 +372,7 @@ const Footer = () => {
           "
         >
           <p className="text-xs sm:text-sm text-slate-400 text-center">
-            © 2026
+            2026
             <span className="text-white font-semibold"> Smaze</span>. All rights
             reserved.
           </p>
