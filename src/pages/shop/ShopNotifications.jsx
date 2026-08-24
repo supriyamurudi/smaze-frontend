@@ -73,19 +73,21 @@ const ShopNotifications = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="w-full">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Notifications</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
+            Notifications
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 sm:text-base">
             {unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}
           </p>
         </div>
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllAsRead}
-            className="px-4 py-2 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition"
+            className="w-full rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700 active:scale-[0.98] sm:w-auto"
           >
             Mark All Read
           </button>
@@ -94,12 +96,14 @@ const ShopNotifications = () => {
 
       {/* Notifications List */}
       {notifications.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <div className="text-6xl mb-4">🔔</div>
-          <h3 className="text-xl font-semibold text-slate-700">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center sm:p-12">
+          <div className="mb-4 text-5xl sm:text-6xl">🔔</div>
+          <h3 className="text-lg font-semibold text-slate-700 sm:text-xl">
             All caught up!
           </h3>
-          <p className="text-slate-500 mt-2">You have no notifications</p>
+          <p className="mt-2 text-sm text-slate-500 sm:text-base">
+            You have no notifications
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -108,17 +112,17 @@ const ShopNotifications = () => {
               key={notification.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`p-4 rounded-2xl border transition ${
+              className={`rounded-2xl border p-4 transition ${
                 notification.isRead
                   ? "bg-white border-slate-200"
                   : "bg-violet-50 border-violet-200 shadow-sm"
               }`}
             >
-              <div className="flex justify-between items-start gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3
-                      className={`font-semibold ${
+                      className={`text-sm font-semibold sm:text-base ${
                         notification.isRead
                           ? "text-slate-700"
                           : "text-violet-700"
@@ -127,10 +131,10 @@ const ShopNotifications = () => {
                       {notification.message}
                     </h3>
                     {!notification.isRead && (
-                      <span className="w-2 h-2 rounded-full bg-violet-500 inline-block"></span>
+                      <span className="inline-block h-2 w-2 rounded-full bg-violet-500"></span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="mt-1 text-xs text-slate-400">
                     {new Date(notification.createdAt).toLocaleString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -140,18 +144,20 @@ const ShopNotifications = () => {
                     })}
                   </p>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
+
+                {/* Mobile: Stacked buttons, Desktop: Horizontal */}
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-shrink-0 sm:gap-2">
                   {!notification.isRead && (
                     <button
                       onClick={() => handleMarkAsRead(notification.id)}
-                      className="text-xs text-violet-600 hover:text-violet-800 font-medium px-2 py-1"
+                      className="w-full rounded-lg bg-violet-100 px-4 py-2 text-xs font-medium text-violet-600 transition hover:bg-violet-200 active:scale-[0.98] sm:w-auto"
                     >
                       Mark read
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(notification.id)}
-                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
+                    className="w-full rounded-lg bg-red-50 px-4 py-2 text-xs font-medium text-red-500 transition hover:bg-red-100 active:scale-[0.98] sm:w-auto"
                   >
                     Delete
                   </button>
