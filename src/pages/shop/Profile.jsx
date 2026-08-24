@@ -253,7 +253,7 @@ export default function Profile() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-black text-slate-900 sm:text-4xl">
-                Shop Profile
+                Profile
               </h1>
               <p className="mt-1 text-sm text-slate-500 sm:text-base">
                 Manage your shop details and public information
