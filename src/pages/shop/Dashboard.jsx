@@ -30,7 +30,7 @@ const SkeletonLoader = () => (
       </div>
       <div className="mt-4 md:mt-0 h-10 w-40 bg-slate-200 rounded-xl animate-pulse"></div>
     </div>
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3">
       {[...Array(4)].map((_, i) => (
         <div
           key={i}
@@ -129,22 +129,20 @@ const ErrorState = ({ message, onRetry }) => (
   </div>
 );
 
-// ========== MERCHANT HEADER (PERFECT TEXT DISPLAY FIX) ==========
+// ========== MERCHANT HEADER (PERFECT TEXT DISPLAY) ==========
 const MerchantHeader = ({ shopName }) => (
   <motion.div
     initial={{ y: -20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     className="mb-6 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 p-5 sm:p-6 text-white shadow-xl"
   >
-    {/* Stack on Mobile, Horizontal on Desktop */}
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      {/* Left: Icon & Text (Flex-row inside so text doesn't split into vertical letters!) */}
       <div className="flex items-center gap-3 sm:gap-4 min-w-0">
         <div className="rounded-2xl bg-white/20 p-3 sm:p-4 flex-shrink-0">
           <HiOutlineBuildingStorefront size={24} className="text-white" />
         </div>
 
-        {/* Remove break-words! Use whitespace-normal so words wrap naturally */}
+        {/* whitespace-normal allows natural wrapping */}
         <div className="min-w-0 whitespace-normal">
           <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
             {shopName || "Pizza Hut"}
@@ -155,7 +153,6 @@ const MerchantHeader = ({ shopName }) => (
         </div>
       </div>
 
-      {/* Right: Badges */}
       <div className="flex items-center gap-2 sm:flex-shrink-0">
         <span className="hidden sm:inline-flex items-center rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium backdrop-blur-sm">
           🏪 Merchant
@@ -169,7 +166,7 @@ const MerchantHeader = ({ shopName }) => (
   </motion.div>
 );
 
-// ========== STAT CARD (PERFECT TITLE DISPLAY FIX) ==========
+// ========== STAT CARD (PERFECT TITLE) ==========
 const StatCard = ({ title, value, icon: Icon, color, growth }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -180,7 +177,7 @@ const StatCard = ({ title, value, icon: Icon, color, growth }) => (
     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
     <div className="relative flex items-start justify-between">
       <div className="flex-1 min-w-0">
-        {/* Removed truncate so title is always fully visible! */}
+        {/* Removed truncate! */}
         <p className="text-xs font-medium text-slate-500">{title}</p>
         <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
       </div>
@@ -303,24 +300,28 @@ export default function Dashboard() {
       value: dashboardData?.stats?.totalOffers || 0,
       icon: HiOutlineTag,
       color: "bg-gradient-to-r from-violet-500 to-purple-500",
+      growth: "+12%",
     },
     {
       title: "Active Offers",
       value: activeOffersCount,
       icon: HiOutlinePlusCircle,
       color: "bg-gradient-to-r from-emerald-500 to-teal-500",
+      growth: "+8%",
     },
     {
       title: "Total Views",
       value: dashboardData?.stats?.totalViews || 0,
       icon: HiOutlineEye,
       color: "bg-gradient-to-r from-blue-500 to-indigo-500",
+      growth: "+24%",
     },
     {
       title: "Saved Offers",
       value: dashboardData?.stats?.savedOffers || 0,
       icon: HiOutlineHeart,
       color: "bg-gradient-to-r from-rose-500 to-pink-500",
+      growth: "+15%",
     },
   ];
 
@@ -359,7 +360,7 @@ export default function Dashboard() {
         {/* Merchant Header */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
 
-        {/* Stats: Always fit properly - 1 col on tiny screens, 2 col on mobile, 4 on desktop */}
+        {/* Stats */}
         <div className="mb-6 grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((stat) => (
             <StatCard key={stat.title} {...stat} />
@@ -393,10 +394,11 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
           <div className="relative flex items-center justify-between border-b border-slate-100 px-5 sm:px-6 py-4 sm:py-5">
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl font-bold text-slate-800 truncate">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-800">
                 Recent Offers
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 truncate">
+              {/* Removed truncate */}
+              <p className="text-xs sm:text-sm text-slate-500">
                 Track your latest promotions
               </p>
             </div>
@@ -468,7 +470,7 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Account & Settings */}
+        {/* Account & Settings (FIXED - no truncate, allows wrapping) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -481,9 +483,11 @@ export default function Dashboard() {
               <div className="rounded-xl bg-violet-50 p-3 text-violet-600 flex-shrink-0">
                 <HiOutlineUser size={22} />
               </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-slate-800 truncate">Account</h4>
-                <p className="text-xs sm:text-sm text-slate-500 truncate">
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-slate-800 text-sm sm:text-base">
+                  Account
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-500">
                   Manage profile
                 </p>
               </div>
@@ -501,13 +505,11 @@ export default function Dashboard() {
               <div className="rounded-xl bg-slate-100 p-3 text-slate-600 flex-shrink-0">
                 <HiOutlineCog6Tooth size={22} />
               </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-slate-800 truncate">
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-slate-800 text-sm sm:text-base">
                   Settings
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-500 truncate">
-                  Preferences
-                </p>
+                <p className="text-xs sm:text-sm text-slate-500">Preferences</p>
               </div>
               <Link
                 to="/shop/settings"
