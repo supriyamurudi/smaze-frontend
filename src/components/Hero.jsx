@@ -9,8 +9,8 @@ import {
   FaLightbulb,
   FaStar,
   FaFire,
-  FaClock,
   FaShieldAlt,
+  FaClock,
   FaGift,
   FaShoppingBag,
 } from "react-icons/fa";
@@ -68,7 +68,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-pink-50 py-12 sm:py-16 md:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-pink-50 pt-8 sm:pt-10 md:pt-12 lg:pt-16 pb-12 sm:pb-16 md:pb-20 lg:pb-24">
       {/* Background Shapes */}
       <div className="absolute -top-40 -left-32 h-64 w-64 sm:h-80 sm:w-80 lg:h-96 lg:w-96 rounded-full bg-violet-300/20 blur-3xl"></div>
       <div className="absolute -bottom-40 -right-32 h-64 w-64 sm:h-80 sm:w-80 lg:h-96 lg:w-96 rounded-full bg-pink-300/20 blur-3xl"></div>
