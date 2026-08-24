@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import ShopNavbar from "../components/ShopNavbar";
+import ShopNavbar from "../components/navbar/ShopNavbar";
 import { getMyShop } from "../services/shopService";
 import toast from "react-hot-toast";
 
