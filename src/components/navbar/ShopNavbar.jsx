@@ -2,7 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import smazeLogo from "../assets/icons/smazeLogo.jpeg";
+// ⚠️ Use your actual logo file. Usually a .png with transparent background.
+import smazeLogo from "../assets/icons/smazeLogo.png"; // Change .jpeg to .png if that's what you have!
 
 import {
   HiOutlineHome,
@@ -11,8 +12,8 @@ import {
   HiOutlineChartBar,
   HiOutlineUser,
   HiOutlineBell,
-  HiOutlineXMark, // ✅ IMPORTED!
   HiBars3,
+  HiOutlineXMark,
   HiOutlineChevronDown,
   HiArrowRightOnRectangle,
 } from "react-icons/hi2";
@@ -195,7 +196,7 @@ const ShopNavbar = () => {
               {/* Desktop Profile Dropdown */}
               <div className="hidden md:relative md:block">
                 <button
-                  type="button" // ✅ Added explicit type!
+                  type="button"
                   onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition"
                 >
@@ -239,7 +240,7 @@ const ShopNavbar = () => {
                           <HiOutlineUser size={18} /> Profile
                         </Link>
                         <button
-                          type="button" // ✅ Added explicit type!
+                          type="button"
                           onClick={handleLogout}
                           className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-rose-500 hover:bg-rose-50"
                         >
@@ -253,7 +254,7 @@ const ShopNavbar = () => {
 
               {/* Mobile Hamburger */}
               <button
-                type="button" // ✅ Added explicit type!
+                type="button"
                 onClick={() => setMobileMenuOpen(true)}
                 className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 transition active:scale-95"
                 aria-label="Open menu"
@@ -286,12 +287,12 @@ const ShopNavbar = () => {
                 <span className="text-xl font-bold text-slate-800">Smaze</span>
               </div>
               <button
-                type="button" // ✅ Added explicit type!
+                type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100"
                 aria-label="Close menu"
               >
-                <HiOutlineXMark size={24} /> {/* ✅ Fixed import usage */}
+                <HiOutlineXMark size={24} />
               </button>
             </div>
 
@@ -355,7 +356,7 @@ const ShopNavbar = () => {
                 <HiOutlineUser size={18} /> Profile
               </Link>
               <button
-                type="button" // ✅ Added explicit type!
+                type="button"
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-rose-500 hover:bg-rose-50"
               >
