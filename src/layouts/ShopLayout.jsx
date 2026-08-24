@@ -22,7 +22,6 @@ const ContentSkeleton = () => {
   return (
     <div className="min-h-[calc(100vh-140px)] rounded-3xl bg-white p-4 shadow-sm border border-slate-200 sm:p-5 md:p-7">
       <div className="space-y-6">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
@@ -31,7 +30,6 @@ const ContentSkeleton = () => {
           <div className="mt-4 md:mt-0 h-10 w-32 bg-slate-200 rounded-xl animate-pulse"></div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <div
@@ -48,7 +46,6 @@ const ContentSkeleton = () => {
           ))}
         </div>
 
-        {/* Quick Actions Skeleton */}
         <div className="grid gap-3 md:grid-cols-3">
           {[...Array(3)].map((_, i) => (
             <div
@@ -58,7 +55,6 @@ const ContentSkeleton = () => {
           ))}
         </div>
 
-        {/* Recent Offers Table Skeleton */}
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-6 py-5 border-b border-slate-100">
             <div className="h-6 w-32 bg-slate-200 rounded animate-pulse"></div>
@@ -81,37 +77,6 @@ const ContentSkeleton = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-// ========== MOBILE SIDEBAR ==========
-const MobileSidebar = ({ isOpen, onClose }) => {
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-          />
-
-          {/* Slide-in Sidebar */}
-          <motion.div
-            initial={{ x: -320 }}
-            animate={{ x: 0 }}
-            exit={{ x: -320 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed left-0 top-0 z-50 h-full w-72 bg-white shadow-2xl lg:hidden"
-          >
-            <ShopSidebar isMobile onClose={onClose} />
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
   );
 };
 
@@ -182,19 +147,37 @@ const ShopLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
-      {/* Mobile Sidebar */}
-      <MobileSidebar
-        isOpen={mobileSidebarOpen}
-        onClose={() => setMobileSidebarOpen(false)}
-      />
-
       {/* Desktop Sidebar (Always visible) */}
-      <div className="hidden lg:block">
+      <div className="hidden h-screen w-72 flex-shrink-0 border-r border-slate-200 bg-white lg:block">
         <ShopSidebar />
       </div>
 
-      {/* Main Content Area (Pushed right on desktop) */}
-      <div className="flex-1 lg:ml-72">
+      {/* Mobile Sidebar (Slide-in) */}
+      <AnimatePresence>
+        {mobileSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileSidebarOpen(false)}
+              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+            />
+            <motion.div
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="fixed left-0 top-0 z-50 h-full w-72 bg-white shadow-2xl lg:hidden"
+            >
+              <ShopSidebar onClose={() => setMobileSidebarOpen(false)} />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Area */}
+      <div className="flex-1">
         {/* Header */}
         <header className="sticky top-0 z-30 bg-white shadow-sm">
           <div className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-8">
@@ -231,7 +214,6 @@ const ShopLayout = () => {
 
             {/* Right */}
             <div className="flex items-center gap-2 sm:gap-4">
-              {/* Notifications */}
               <Link
                 to="/shop/notifications"
                 className="relative rounded-full p-2 text-slate-400 transition hover:bg-violet-50 hover:text-violet-600"
@@ -244,7 +226,6 @@ const ShopLayout = () => {
                 )}
               </Link>
 
-              {/* Profile Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
@@ -281,7 +262,6 @@ const ShopLayout = () => {
                   />
                 </button>
 
-                {/* Dropdown Menu */}
                 {showDropdown && !loading && (
                   <motion.div
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
