@@ -309,13 +309,13 @@ const PremiumOfferCard = ({ offer, featured = false }) => (
 );
 
 // Minimal Compact Offer
-// Minimal Compact Offer (Button BELOW text)
+// Minimal Compact Offer (PERFECT MOBILE FIX - Buttons ALWAYS visible)
 const MinimalCompactOffer = ({ offer, type }) => {
   const isEnding = type === "ending";
   return (
-    <div className="group flex flex-col w-full overflow-hidden rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl">
+    <div className="group flex w-full flex-col sm:flex-row sm:items-center gap-3 rounded-xl bg-white p-3 border border-slate-100 shadow-md transition-all duration-300 hover:shadow-xl">
       {/* Top Section: Image & Text */}
-      <div className="flex w-full items-center gap-3 min-w-0">
+      <div className="flex w-full min-w-0 items-center gap-3">
         {/* Image - NEVER shrinks */}
         <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl">
           <img
@@ -357,10 +357,10 @@ const MinimalCompactOffer = ({ offer, type }) => {
         </div>
       </div>
 
-      {/* Button - Below text */}
+      {/* Button - Full width on mobile, right aligned on desktop. Never hidden. */}
       <Link
         to={`/customer/offers/${offer.id}`}
-        className={`mt-3 w-full rounded-xl py-2 text-center text-xs font-semibold text-white transition-all duration-300 hover:scale-[1.02] ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
+        className={`w-full sm:w-auto flex-shrink-0 rounded-xl py-2 sm:py-2 sm:px-4 text-center text-xs font-semibold text-white transition-all duration-300 hover:scale-[1.02] ${isEnding ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-violet-600 to-purple-600"}`}
       >
         {isEnding ? "Grab" : "View"}
       </Link>
