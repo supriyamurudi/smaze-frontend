@@ -14,7 +14,7 @@ import {
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
-import { createShop } from "../../services/shopService";
+import { createShop, getMyShop } from "../../services/shopService"; // Added getMyShop
 import { getCategories } from "../../services/categoryService";
 
 // ========== SKELETON LOADER (Mobile optimized) ==========
@@ -274,18 +274,39 @@ export default function CreateShop() {
     categoryId: "",
   });
 
-  // Fetch categories
+  // =========================
+  // Check if user already has a pending shop on login
+  // =========================
   useEffect(() => {
+    const checkExistingShop = async () => {
+      try {
+        const response = await getMyShop();
+        const shop = response.shop || response;
+
+        if (shop && shop.status === "pending") {
+          setCreatedShopName(shop.name);
+          setShowPending(true);
+          toast.success("Your shop is still awaiting admin approval");
+        }
+      } catch (error) {
+        // If no shop exists or error occurs, just show the form
+        console.log("No existing shop found:", error);
+      } finally {
+        setPageLoading(false);
+      }
+    };
+
+    // Fetch categories simultaneously
     const fetchCategories = async () => {
       try {
         const response = await getCategories();
         setCategories(response.categories || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
-      } finally {
-        setPageLoading(false);
       }
     };
+
+    checkExistingShop();
     fetchCategories();
   }, []);
 
@@ -342,7 +363,7 @@ export default function CreateShop() {
     }
   };
 
-  // Show pending approval page
+  // Show pending approval page if we have a pending shop
   if (showPending) {
     return <PendingApproval shopName={createdShopName} />;
   }
