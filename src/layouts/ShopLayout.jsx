@@ -1,7 +1,7 @@
 // frontend/src/layouts/ShopLayout.jsx
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   HiOutlineBell,
@@ -79,25 +79,6 @@ const ContentSkeleton = () => {
             ))}
           </div>
         </div>
-
-        {/* Account & Settings Skeleton */}
-        <div className="grid gap-4 md:grid-cols-2">
-          {[...Array(2)].map((_, i) => (
-            <div
-              key={i}
-              className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-12 w-12 bg-slate-200 rounded-lg animate-pulse"></div>
-                <div className="flex-1">
-                  <div className="h-5 w-24 bg-slate-200 rounded animate-pulse"></div>
-                  <div className="mt-1 h-4 w-32 bg-slate-200 rounded animate-pulse"></div>
-                </div>
-                <div className="h-10 w-20 bg-slate-200 rounded-lg animate-pulse"></div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -106,28 +87,31 @@ const ContentSkeleton = () => {
 // ========== MOBILE SIDEBAR ==========
 const MobileSidebar = ({ isOpen, onClose }) => {
   return (
-    <>
-      {/* Overlay */}
+    <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-        />
-      )}
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          />
 
-      {/* Sidebar */}
-      <motion.div
-        initial={{ x: -320 }}
-        animate={{ x: isOpen ? 0 : -320 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="fixed left-0 top-0 z-50 h-full w-72 bg-white shadow-2xl lg:hidden"
-      >
-        <ShopSidebar isMobile onClose={onClose} />
-      </motion.div>
-    </>
+          {/* Slide-in Sidebar */}
+          <motion.div
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            exit={{ x: -320 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed left-0 top-0 z-50 h-full w-72 bg-white shadow-2xl lg:hidden"
+          >
+            <ShopSidebar isMobile onClose={onClose} />
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -137,7 +121,6 @@ const ShopLayout = () => {
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -148,7 +131,6 @@ const ShopLayout = () => {
         const res = await getMyShop();
         setShop(res.shop);
       } catch (error) {
-        console.error("Error loading shop:", error);
         if (error.response?.status === 404 || error.response?.status === 400) {
           setShop(null);
           const currentPath = window.location.pathname;
@@ -168,17 +150,6 @@ const ShopLayout = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // ===============================
-  // Fetch Unread Count
-  // ===============================
-  useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
         const data = await getUnreadCount();
@@ -189,8 +160,6 @@ const ShopLayout = () => {
     };
 
     fetchUnreadCount();
-
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -212,32 +181,26 @@ const ShopLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
       {/* Mobile Sidebar */}
       <MobileSidebar
         isOpen={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
       />
 
-      {/* Desktop Sidebar - Always visible */}
+      {/* Desktop Sidebar (Always visible) */}
       <div className="hidden lg:block">
         <ShopSidebar />
       </div>
 
-      {/* Main Content */}
-      <div className="lg:ml-72">
-        {/* Header - Always visible with skeleton text if loading */}
-        <header
-          className={`sticky top-0 z-30 transition-all duration-300 ${
-            scrolled
-              ? "bg-white/90 backdrop-blur-md shadow-lg"
-              : "bg-white shadow-sm"
-          }`}
-        >
+      {/* Main Content Area (Pushed right on desktop) */}
+      <div className="flex-1 lg:ml-72">
+        {/* Header */}
+        <header className="sticky top-0 z-30 bg-white shadow-sm">
           <div className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-8">
             {/* Left */}
             <div className="flex items-center gap-3">
-              {/* Hamburger Menu Button - Mobile */}
+              {/* Mobile Hamburger */}
               <button
                 onClick={() => setMobileSidebarOpen(true)}
                 className="rounded-lg p-2 text-slate-600 transition hover:bg-violet-50 hover:text-violet-600 lg:hidden"
@@ -367,7 +330,7 @@ const ShopLayout = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="min-h-[calc(100vh-140px)] rounded-3xl bg-white p-4 shadow-sm border border-slate-200 sm:p-5 md:p-7"
+              className="min-h-[calc(100vh-140px)]"
             >
               <Outlet />
             </motion.div>
