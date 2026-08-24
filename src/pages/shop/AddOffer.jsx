@@ -19,28 +19,25 @@ import { getCategories } from "../../services/categoryService";
 import { createOffer } from "../../services/offerService";
 import WhatsAppChannelModal from "../../components/WhatsAppChannelModal";
 
-// ========== SKELETON LOADER ==========
+// ========== SKELETON LOADER (Mobile optimized) ==========
 const SkeletonLoader = () => (
-  <div className="space-y-8">
+  <div className="space-y-6">
     <div>
-      <div className="h-10 w-48 bg-slate-200 rounded animate-pulse"></div>
-      <div className="mt-2 h-6 w-64 bg-slate-200 rounded animate-pulse"></div>
+      <div className="h-8 w-48 bg-slate-200 rounded animate-pulse"></div>
+      <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
     </div>
-    <div className="space-y-6">
-      <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-5">
-        <div className="h-6 w-40 bg-slate-200 rounded animate-pulse"></div>
-        <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-        <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-        <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-          <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
-        </div>
-        <div className="h-32 bg-slate-200 rounded-xl animate-pulse"></div>
+    <div className="space-y-5">
+      <div className="rounded-2xl border bg-white p-5 shadow-sm space-y-4">
+        <div className="h-5 w-40 bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-11 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-24 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="h-6 w-32 bg-slate-200 rounded animate-pulse"></div>
-        <div className="mt-4 h-64 bg-slate-200 rounded-xl animate-pulse"></div>
+      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+        <div className="h-5 w-32 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-4 h-40 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
       <div className="h-12 bg-slate-200 rounded-xl animate-pulse"></div>
     </div>
@@ -170,7 +167,7 @@ const AddOffer = () => {
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <SkeletonLoader />
         </div>
       </div>
@@ -185,19 +182,19 @@ const AddOffer = () => {
         transition={{ duration: 0.5 }}
         className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
       >
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:mr-8 lg:mb-8">
           {/* ========== HEADER ========== */}
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-4xl font-black text-slate-900">
+                <h1 className="text-2xl sm:text-4xl font-black text-slate-900">
                   Add New Offer
                 </h1>
-                <p className="mt-1 text-slate-500">
+                <p className="mt-1 text-sm sm:text-base text-slate-500">
                   Create attractive offers for customers
                 </p>
               </div>
@@ -216,11 +213,11 @@ const AddOffer = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
             onSubmit={handleSubmit}
-            className="space-y-6"
+            className="space-y-5 sm:space-y-6"
           >
             {/* Offer Information */}
             <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-6 py-4">
+              <div className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-4 sm:px-6 py-4">
                 <div className="flex items-center gap-2">
                   <HiOutlineTag className="text-violet-600" size={20} />
                   <h2 className="font-semibold text-slate-800">
@@ -228,7 +225,7 @@ const AddOffer = () => {
                   </h2>
                 </div>
               </div>
-              <div className="p-6 space-y-5">
+              <div className="p-4 sm:p-6 space-y-5">
                 {/* Title */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -335,14 +332,14 @@ const AddOffer = () => {
 
             {/* Image Upload */}
             <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-6 py-4">
+              <div className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-4 sm:px-6 py-4">
                 <div className="flex items-center gap-2">
                   <HiOutlinePhoto className="text-violet-600" size={20} />
                   <h2 className="font-semibold text-slate-800">Offer Image</h2>
                   <span className="text-xs text-rose-500">*</span>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <input
                   type="file"
                   accept="image/*"
@@ -357,7 +354,7 @@ const AddOffer = () => {
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
                   onDrop={handleDrop}
-                  className={`relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-all duration-300 ${
+                  className={`relative flex min-h-[160px] sm:min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-300 ${
                     dragActive
                       ? "border-violet-500 bg-violet-50"
                       : imagePreview
@@ -371,7 +368,7 @@ const AddOffer = () => {
                         <img
                           src={imagePreview}
                           alt="Preview"
-                          className="mx-auto max-h-[400px] w-full object-contain"
+                          className="mx-auto max-h-[300px] sm:max-h-[400px] w-full object-contain"
                         />
                         <button
                           type="button"
@@ -391,16 +388,16 @@ const AddOffer = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="mb-4 rounded-full bg-violet-100 p-4 text-violet-600">
-                        <HiOutlineCloudArrowUp size={32} />
+                      <div className="mb-4 rounded-full bg-violet-100 p-3 text-violet-600">
+                        <HiOutlineCloudArrowUp size={28} />
                       </div>
-                      <p className="text-center text-slate-600">
+                      <p className="text-center text-sm sm:text-base text-slate-600">
                         <span className="font-semibold text-violet-600">
                           Click to upload
                         </span>{" "}
                         or drag and drop
                       </p>
-                      <p className="mt-2 text-sm text-slate-400">
+                      <p className="mt-2 text-xs sm:text-sm text-slate-400">
                         PNG, JPG, WEBP (Max 5MB)
                       </p>
                     </>
