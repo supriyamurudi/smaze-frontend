@@ -1,21 +1,11 @@
 // frontend/src/layouts/ShopLayout.jsx
-import { Outlet, useNavigate, Link } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-import {
-  HiOutlineBell,
-  HiOutlineUser,
-  HiOutlineChevronDown,
-  HiArrowRightOnRectangle,
-  HiOutlineBars3,
-} from "react-icons/hi2";
-
-import ShopSidebar from "../components/ShopSidebar";
+import ShopNavbar from "../components/ShopNavbar";
 import { getMyShop } from "../services/shopService";
-import { getUnreadCount } from "../services/notificationService";
 import toast from "react-hot-toast";
-import { logoutUser } from "../services/authService";
 
 // ========== CONTENT SKELETON LOADER ==========
 const ContentSkeleton = () => {
@@ -83,21 +73,15 @@ const ContentSkeleton = () => {
 // ========== MAIN COMPONENT ==========
 const ShopLayout = () => {
   const navigate = useNavigate();
-  const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const loadShop = async () => {
       try {
         setLoading(true);
-        const res = await getMyShop();
-        setShop(res.shop);
+        await getMyShop(); // We don't need to store it, just check if it exists
       } catch (error) {
         if (error.response?.status === 404 || error.response?.status === 400) {
-          setShop(null);
           const currentPath = window.location.pathname;
           if (currentPath !== "/shop/create-shop") {
             navigate("/shop/create-shop", { replace: true });
@@ -114,209 +98,26 @@ const ShopLayout = () => {
     loadShop();
   }, [navigate]);
 
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const data = await getUnreadCount();
-        setUnreadCount(data.count || 0);
-      } catch (error) {
-        console.error("Error fetching unread count:", error);
-      }
-    };
-
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleLogout = () => {
-    logoutUser();
-    toast.success("Logged out successfully");
-    navigate("/login", { replace: true });
-  };
-
-  const getInitials = (name) => {
-    if (!name) return "S";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
-      {/* Desktop Sidebar (Always visible) */}
-      <div className="hidden h-screen w-72 flex-shrink-0 border-r border-slate-200 bg-white lg:block">
-        <ShopSidebar />
-      </div>
-
-      {/* Mobile Sidebar (Slide-in) */}
-      <AnimatePresence>
-        {mobileSidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileSidebarOpen(false)}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-            />
-            <motion.div
-              initial={{ x: -320 }}
-              animate={{ x: 0 }}
-              exit={{ x: -320 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="fixed left-0 top-0 z-50 h-full w-72 bg-white shadow-2xl lg:hidden"
-            >
-              <ShopSidebar onClose={() => setMobileSidebarOpen(false)} />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
+      {/* Top Navbar (Contains Smaze Logo) */}
+      <ShopNavbar />
 
       {/* Main Content Area */}
-      <div className="flex-1">
-        {/* Header */}
-        <header className="sticky top-0 z-30 bg-white shadow-sm">
-          <div className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-8">
-            {/* Left */}
-            <div className="flex items-center gap-3">
-              {/* Mobile Hamburger */}
-              <button
-                onClick={() => setMobileSidebarOpen(true)}
-                className="rounded-lg p-2 text-slate-600 transition hover:bg-violet-50 hover:text-violet-600 lg:hidden"
-              >
-                <HiOutlineBars3 size={24} />
-              </button>
-
-              <div>
-                {loading ? (
-                  <>
-                    <div className="h-7 w-48 bg-slate-200 rounded animate-pulse"></div>
-                    <div className="mt-1 h-4 w-64 bg-slate-200 rounded animate-pulse"></div>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
-                      {shop ? shop.name : "Create Your Shop"}
-                    </h2>
-                    <p className="hidden text-sm text-slate-500 sm:block">
-                      {shop
-                        ? "Welcome to the Smaze Merchant Portal 👋"
-                        : "Create your shop to start posting offers."}
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Right */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link
-                to="/shop/notifications"
-                className="relative rounded-full p-2 text-slate-400 transition hover:bg-violet-50 hover:text-violet-600"
-              >
-                <HiOutlineBell size={22} />
-                {unreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[10px] font-bold text-white shadow-lg shadow-rose-200">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </Link>
-
-              <div className="relative">
-                <button
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 p-1 pr-2 transition hover:shadow-md sm:pr-3"
-                >
-                  {loading ? (
-                    <>
-                      <div className="h-8 w-8 bg-slate-200 rounded-full animate-pulse sm:h-9 sm:w-9"></div>
-                      <div className="hidden sm:block text-left">
-                        <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-1"></div>
-                        <div className="h-3 w-32 bg-slate-200 rounded animate-pulse"></div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-sm font-bold text-white shadow-md sm:h-9 sm:w-9">
-                        {getInitials(shop?.owner?.name || "User")}
-                      </div>
-                      <div className="hidden sm:block text-left">
-                        <p className="text-sm font-semibold text-slate-800">
-                          {shop?.owner?.name || "Shop Owner"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {shop?.owner?.email || "Merchant Account"}
-                        </p>
-                      </div>
-                    </>
-                  )}
-                  <HiOutlineChevronDown
-                    size={16}
-                    className={`hidden sm:block text-slate-400 transition-transform duration-200 ${
-                      showDropdown ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {showDropdown && !loading && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-white shadow-2xl border border-slate-100 overflow-hidden"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    <div className="px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50">
-                      <p className="font-semibold text-slate-800">
-                        {shop?.owner?.name || "User"}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {shop?.owner?.email || "Merchant Account"}
-                      </p>
-                    </div>
-                    <div className="p-2">
-                      <button
-                        onClick={() => navigate("/shop/profile")}
-                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-violet-50 hover:text-violet-600"
-                      >
-                        <HiOutlineUser size={18} />
-                        Profile
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50"
-                      >
-                        <HiArrowRightOnRectangle size={18} />
-                        Logout
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="p-4 md:p-6 lg:p-8">
-          {loading ? (
-            <ContentSkeleton />
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="min-h-[calc(100vh-140px)]"
-            >
-              <Outlet />
-            </motion.div>
-          )}
-        </main>
-      </div>
+      <main className="flex-1 p-4 md:p-6 lg:p-8">
+        {loading ? (
+          <ContentSkeleton />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="min-h-[calc(100vh-140px)]"
+          >
+            <Outlet />
+          </motion.div>
+        )}
+      </main>
     </div>
   );
 };
