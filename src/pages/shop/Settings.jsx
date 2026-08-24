@@ -1,246 +1,470 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { getMyShop } from "../../services/shopService";
-import { getUnreadCount } from "../../services/notificationService";
-import toast from "react-hot-toast";
-import { logoutUser } from "../../services/authService";
+// frontend/src/pages/shop/Settings.jsx
 
+import { useState } from "react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import {
-  HiOutlineHome,
-  HiOutlinePlusCircle,
-  HiOutlineTag,
-  HiOutlineChartBar,
-  HiOutlineUser,
-  HiOutlineCog6Tooth,
-  HiOutlineArrowLeftOnRectangle,
+  HiOutlineSave,
+  HiOutlineXMark,
   HiOutlineBuildingStorefront,
+  HiOutlinePhone,
+  HiOutlineMapPin,
+  HiOutlineGlobeAlt,
+  HiOutlineEnvelope,
+  HiOutlineCog6Tooth,
+  HiOutlineShieldCheck,
   HiOutlineBell,
-  HiXMark,
+  HiOutlinePalette,
 } from "react-icons/hi2";
 
-// ========== MENU ITEMS ==========
-const getMenuItems = (hasShop) => {
-  const shopItems = [
-    { name: "Dashboard", path: "/shop/dashboard", icon: HiOutlineHome },
-    { name: "Add Offer", path: "/shop/add-offer", icon: HiOutlinePlusCircle },
-    { name: "My Offers", path: "/shop/my-offers", icon: HiOutlineTag },
-    { name: "Analytics", path: "/shop/analytics", icon: HiOutlineChartBar },
-    { name: "Notifications", path: "/shop/notifications", icon: HiOutlineBell },
-    { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
-    { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth }, // ✅ ADDED SETTINGS HERE
-  ];
-
-  const createShopItems = [
-    {
-      name: "Create Shop",
-      path: "/shop/create-shop",
-      icon: HiOutlineBuildingStorefront,
+const Settings = () => {
+  const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState({
+    shopName: "Pizza Hut",
+    phone: "+1 (555) 123-4567",
+    email: "pizza@smaze.com",
+    address: "123 Main Street, New York, NY 10001",
+    website: "https://pizzahut.example.com",
+    businessHours: {
+      monday: "9:00 AM - 9:00 PM",
+      tuesday: "9:00 AM - 9:00 PM",
+      wednesday: "9:00 AM - 9:00 PM",
+      thursday: "9:00 AM - 9:00 PM",
+      friday: "9:00 AM - 10:00 PM",
+      saturday: "10:00 AM - 10:00 PM",
+      sunday: "10:00 AM - 8:00 PM",
     },
-    { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
-    { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth },
+    notifications: {
+      email: true,
+      sms: false,
+      push: true,
+    },
+    theme: "light",
+  });
+
+  const [activeTab, setActiveTab] = useState("general");
+
+  const tabs = [
+    { id: "general", label: "General", icon: HiOutlineCog6Tooth },
+    { id: "business", label: "Business", icon: HiOutlineBuildingStorefront },
+    { id: "notifications", label: "Notifications", icon: HiOutlineBell },
+    { id: "appearance", label: "Appearance", icon: HiOutlinePalette },
+    { id: "security", label: "Security", icon: HiOutlineShieldCheck },
   ];
 
-  return hasShop ? shopItems : createShopItems;
-};
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox") {
+      setSettings((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    } else if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setSettings((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setSettings((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
 
-// ========== NAV ITEM COMPONENT ==========
-const NavItem = ({ item, unreadCount, onClick }) => {
-  const Icon = item.icon;
-  const isNotification = item.name === "Notifications";
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      toast.success("Settings saved successfully!");
+    } catch {
+      toast.error("Failed to save settings");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <NavLink
-      key={item.path}
-      to={item.path}
-      onClick={onClick}
-      className={({ isActive }) =>
-        `
-          group relative flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
-          ${
-            isActive
-              ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
-              : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
-          }
-        `
-      }
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="mx-auto max-w-4xl"
     >
-      {({ isActive }) => (
-        <>
-          {isActive && (
-            <motion.div
-              layoutId="activeIndicator"
-              className="absolute left-0 h-8 w-1 rounded-r-full bg-white"
-              transition={{ type: "spring", duration: 0.3 }}
-            />
-          )}
-          <div className="relative">
-            <Icon
-              size={22}
-              className={
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
+          Shop Settings
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Manage your shop preferences and configuration
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
                 isActive
-                  ? "text-white"
-                  : "text-slate-500 group-hover:text-violet-700"
-              }
-            />
-            {isNotification && unreadCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[10px] font-bold text-white shadow-lg shadow-rose-200">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
+                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
+                  : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+              }`}
+            >
+              <Icon size={18} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Settings Form */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* General Settings */}
+        {activeTab === "general" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
+          >
+            <h2 className="text-lg font-semibold text-slate-800">
+              General Settings
+            </h2>
+            <p className="mb-4 text-sm text-slate-500">
+              Update your shop's basic information
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Shop Name
+                </label>
+                <div className="relative">
+                  <HiOutlineBuildingStorefront
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="shopName"
+                    value={settings.shopName}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    placeholder="Enter shop name"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <HiOutlineEnvelope
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    value={settings.email}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    placeholder="Enter email address"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <HiOutlinePhone
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={settings.phone}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Business Settings */}
+        {activeTab === "business" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
+          >
+            <h2 className="text-lg font-semibold text-slate-800">
+              Business Information
+            </h2>
+            <p className="mb-4 text-sm text-slate-500">
+              Update your business details and location
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Address
+                </label>
+                <div className="relative">
+                  <HiOutlineMapPin
+                    className="absolute left-3 top-3 text-slate-400"
+                    size={18}
+                  />
+                  <textarea
+                    name="address"
+                    value={settings.address}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    placeholder="Enter shop address"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Website
+                </label>
+                <div className="relative">
+                  <HiOutlineGlobeAlt
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
+                  <input
+                    type="url"
+                    name="website"
+                    value={settings.website}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    placeholder="Enter website URL"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Business Hours
+                </label>
+                <div className="space-y-2">
+                  {Object.entries(settings.businessHours).map(
+                    ([day, hours]) => (
+                      <div key={day} className="flex items-center gap-3">
+                        <span className="w-24 text-sm capitalize text-slate-600">
+                          {day}:
+                        </span>
+                        <input
+                          type="text"
+                          name={`businessHours.${day}`}
+                          value={hours}
+                          onChange={handleChange}
+                          className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                          placeholder="e.g., 9:00 AM - 9:00 PM"
+                        />
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Notification Settings */}
+        {activeTab === "notifications" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
+          >
+            <h2 className="text-lg font-semibold text-slate-800">
+              Notification Preferences
+            </h2>
+            <p className="mb-4 text-sm text-slate-500">
+              Choose how you want to receive notifications
+            </p>
+
+            <div className="space-y-3">
+              {Object.entries(settings.notifications).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="flex items-center justify-between rounded-xl border border-slate-200 p-4"
+                >
+                  <div>
+                    <h4 className="font-medium text-slate-800 capitalize">
+                      {key} Notifications
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Receive updates via {key}
+                    </p>
+                  </div>
+                  <label className="relative inline-flex cursor-pointer items-center">
+                    <input
+                      type="checkbox"
+                      name={key}
+                      checked={value}
+                      onChange={handleChange}
+                      className="peer sr-only"
+                    />
+                    <div className="h-6 w-11 rounded-full bg-slate-300 peer-checked:bg-violet-600 peer-focus:ring-2 peer-focus:ring-violet-200"></div>
+                    <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Appearance Settings */}
+        {activeTab === "appearance" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
+          >
+            <h2 className="text-lg font-semibold text-slate-800">Appearance</h2>
+            <p className="mb-4 text-sm text-slate-500">
+              Customize your shop's appearance
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  Theme
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {["light", "dark", "system"].map((theme) => (
+                    <button
+                      key={theme}
+                      type="button"
+                      onClick={() =>
+                        setSettings((prev) => ({ ...prev, theme }))
+                      }
+                      className={`rounded-xl border-2 p-4 text-center transition-all ${
+                        settings.theme === theme
+                          ? "border-violet-500 bg-violet-50"
+                          : "border-slate-200 hover:border-violet-300"
+                      }`}
+                    >
+                      <span className="text-sm font-medium capitalize text-slate-700">
+                        {theme}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Security Settings */}
+        {activeTab === "security" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
+          >
+            <h2 className="text-lg font-semibold text-slate-800">Security</h2>
+            <p className="mb-4 text-sm text-slate-500">
+              Manage your account security settings
+            </p>
+
+            <div className="space-y-4">
+              <div className="rounded-xl border border-slate-200 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-slate-800">
+                      Change Password
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Update your password regularly
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
+                  >
+                    Change
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-slate-800">
+                      Two-Factor Authentication
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Add an extra layer of security
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                  >
+                    Enable
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-violet-200 disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <HiOutlineSave size={18} />
+                Save Settings
+              </>
             )}
-          </div>
-          <span>{item.name}</span>
-          {isActive && <span className="ml-auto text-xs text-white/60">●</span>}
-        </>
-      )}
-    </NavLink>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.history.back()}
+            className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-6 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          >
+            <HiOutlineXMark size={18} />
+            Cancel
+          </button>
+        </div>
+      </form>
+    </motion.div>
   );
 };
 
-// ========== MAIN COMPONENT ==========
-export default function ShopSidebar({ onClose }) {
-  const navigate = useNavigate();
-  const [shop, setShop] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  // Load Shop
-  useEffect(() => {
-    const loadShop = async () => {
-      try {
-        const res = await getMyShop();
-        setShop(res.shop);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setShop(null);
-        } else {
-          console.error(err);
-        }
-      }
-    };
-    loadShop();
-  }, []);
-
-  // Fetch Unread Count
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const data = await getUnreadCount();
-        setUnreadCount(data.count || 0);
-      } catch (error) {
-        console.error("Error fetching unread count:", error);
-      }
-    };
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleLogout = () => {
-    logoutUser();
-    toast.success("Logged out successfully");
-    navigate("/login", { replace: true });
-  };
-
-  const menuItems = getMenuItems(!!shop);
-
-  const getInitials = (name) => {
-    if (!name) return "S";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  return (
-    <aside className="flex h-full w-full flex-col bg-white">
-      {/* Top Logo */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-        <div className="flex items-center gap-2">
-          {/* ✅ Changed to HiOutlineSparkles to match the customer logo */}
-          <div className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 p-2 text-white">
-            <HiOutlineBuildingStorefront size={22} />
-          </div>
-          <h1 className="text-2xl font-extrabold tracking-tight">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600">
-              S
-            </span>
-            <span className="text-slate-900">maze</span>
-          </h1>
-        </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200"
-          >
-            <HiXMark size={22} />
-          </button>
-        )}
-      </div>
-
-      {/* Shop Info */}
-      <div className="mx-4 mt-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-4 border border-violet-100">
-        <div className="flex items-center gap-3">
-          {shop?.image ? (
-            <img
-              src={shop.image}
-              alt={shop.name}
-              className="h-12 w-12 rounded-xl object-cover border-2 border-violet-200"
-              onError={(e) => {
-                e.target.src = "";
-                e.target.style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200">
-              <span className="text-lg font-bold">
-                {getInitials(shop?.name)}
-              </span>
-            </div>
-          )}
-
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-slate-800 truncate">
-              {shop?.name || "No Shop Yet"}
-            </h3>
-            <p className="text-xs text-slate-500 truncate">
-              {shop?.phone || "Create your first shop"}
-            </p>
-          </div>
-          {shop && (
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-              Active
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-5">
-        <div className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-          {shop ? "Main Menu" : "Getting Started"}
-        </div>
-        {menuItems.map((item) => (
-          <NavItem
-            key={item.path}
-            item={item}
-            unreadCount={unreadCount}
-            onClick={onClose}
-          />
-        ))}
-      </nav>
-
-      {/* Footer */}
-      <div className="border-t border-slate-200 p-4">
-        <button
-          onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50 hover:shadow-md"
-        >
-          <HiOutlineArrowLeftOnRectangle size={20} />
-          Logout
-        </button>
-      </div>
-    </aside>
-  );
-}
+export default Settings;
