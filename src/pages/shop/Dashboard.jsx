@@ -303,28 +303,24 @@ export default function Dashboard() {
       value: dashboardData?.stats?.totalOffers || 0,
       icon: HiOutlineTag,
       color: "bg-gradient-to-r from-violet-500 to-purple-500",
-      growth: "+12%",
     },
     {
       title: "Active Offers",
       value: activeOffersCount,
       icon: HiOutlinePlusCircle,
       color: "bg-gradient-to-r from-emerald-500 to-teal-500",
-      growth: "+8%",
     },
     {
       title: "Total Views",
       value: dashboardData?.stats?.totalViews || 0,
       icon: HiOutlineEye,
       color: "bg-gradient-to-r from-blue-500 to-indigo-500",
-      growth: "+24%",
     },
     {
       title: "Saved Offers",
       value: dashboardData?.stats?.savedOffers || 0,
       icon: HiOutlineHeart,
       color: "bg-gradient-to-r from-rose-500 to-pink-500",
-      growth: "+15%",
     },
   ];
 
