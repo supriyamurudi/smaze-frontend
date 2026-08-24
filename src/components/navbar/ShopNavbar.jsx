@@ -2,6 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import smazeLogo from "../assets/icons/smazeLogo.jpeg";
+
 import {
   HiOutlineHome,
   HiOutlinePlusCircle,
@@ -9,8 +11,8 @@ import {
   HiOutlineChartBar,
   HiOutlineUser,
   HiOutlineBell,
-  HiOutlineBars3,
-  HiOutlineXMark,
+  HiOutlineXMark, // ✅ IMPORTED!
+  HiBars3,
   HiOutlineChevronDown,
   HiArrowRightOnRectangle,
 } from "react-icons/hi2";
@@ -37,9 +39,7 @@ const ShopNavbar = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
-  // ===============================
   // Load Shop
-  // ===============================
   useEffect(() => {
     const loadShop = async () => {
       try {
@@ -57,9 +57,7 @@ const ShopNavbar = () => {
     loadShop();
   }, []);
 
-  // ===============================
   // Handle Scroll Effect
-  // ===============================
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -68,9 +66,7 @@ const ShopNavbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ===============================
   // Fetch Unread Count
-  // ===============================
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
@@ -104,7 +100,7 @@ const ShopNavbar = () => {
 
   return (
     <>
-      {/* ===== MOBILE MENU OVERLAY ===== */}
+      {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -112,53 +108,42 @@ const ShopNavbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-slate-200/50"
-            : "bg-white shadow-md border-b border-slate-200"
+            ? "bg-white/95 backdrop-blur-xl shadow-lg border-b border-slate-100"
+            : "bg-white/90 backdrop-blur-sm border-b border-slate-100"
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Left: Logo & Shop Name */}
-            <div className="flex items-center gap-3">
-              {/* Logo */}
-              <Link
-                to="/shop/dashboard"
-                className="flex items-center gap-2 group shrink-0"
-              >
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200">
-                  <span className="text-lg font-black">S</span>
-                </div>
-                <span className="hidden sm:block text-xl font-extrabold tracking-tight">
-                  <span className="text-slate-800">Sm</span>
-                  <span className="text-violet-600">aze</span>
-                </span>
-              </Link>
+          <div className="flex h-16 items-center justify-between gap-3">
+            {/* ========== LEFT: Smaze Logo & Name ========== */}
+            <Link
+              to="/shop/dashboard"
+              className="flex items-center gap-2 shrink-0"
+            >
+              <img
+                src={smazeLogo}
+                alt="Smaze Logo"
+                className="h-10 w-10 object-contain"
+              />
 
-              {/* Divider */}
-              <div className="hidden h-6 w-px bg-slate-200 sm:block"></div>
+              <span className="text-xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
+                <span className="text-purple-600">S</span>
+                <span className="text-gray-900">maze</span>
+              </span>
 
-              {/* Shop Name (Center) */}
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base sm:text-lg font-semibold text-slate-800 truncate max-w-[120px] sm:max-w-[200px]">
-                  {shop?.name || "Shop"}
-                </span>
-                {shop && (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                    Active
-                  </span>
-                )}
-              </div>
-            </div>
+              <span className="hidden sm:block text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                Shop
+              </span>
+            </Link>
 
-            {/* Center: Desktop Navigation */}
+            {/* ========== CENTER: Desktop Navigation ========== */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -192,16 +177,16 @@ const ShopNavbar = () => {
               })}
             </div>
 
-            {/* Right: Notifications & Profile */}
-            <div className="flex items-center gap-2">
+            {/* ========== RIGHT: Notifications & Profile ========== */}
+            <div className="flex items-center gap-1 shrink-0">
               {/* Notifications */}
               <Link
                 to="/shop/notifications"
-                className="relative rounded-full p-2 text-slate-600 transition hover:bg-violet-50 hover:text-violet-600"
+                className="relative w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-violet-600 hover:bg-violet-50 transition"
               >
                 <HiOutlineBell size={22} />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[10px] font-bold text-white shadow-lg shadow-rose-200">
+                  <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
@@ -210,15 +195,19 @@ const ShopNavbar = () => {
               {/* Desktop Profile Dropdown */}
               <div className="hidden md:relative md:block">
                 <button
+                  type="button" // ✅ Added explicit type!
                   onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 p-1 pr-2 transition hover:shadow-md"
+                  className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-sm font-bold text-white">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
                     {getInitials(shop?.name)}
                   </div>
+                  <span className="hidden xl:block text-sm font-medium text-slate-700 max-w-20 truncate">
+                    {shop?.name || "Shop"}
+                  </span>
                   <HiOutlineChevronDown
                     size={14}
-                    className={`text-slate-500 transition-transform ${
+                    className={`hidden xl:block text-slate-400 transition-transform ${
                       showProfileDropdown ? "rotate-180" : ""
                     }`}
                   />
@@ -230,27 +219,29 @@ const ShopNavbar = () => {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100"
+                      className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2"
                       onClick={() => setShowProfileDropdown(false)}
                     >
-                      <div className="border-b border-slate-100 bg-gradient-to-r from-violet-50 to-purple-50 px-4 py-3">
+                      <div className="px-3 py-2 border-b border-slate-100">
                         <p className="text-sm font-semibold text-slate-800">
-                          {shop?.name || "Shop"}
+                          {shop?.name}
                         </p>
                         <p className="text-xs text-slate-500">
                           Merchant Account
                         </p>
                       </div>
-                      <div className="p-2">
-                        <button
-                          onClick={() => navigate("/shop/profile")}
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-violet-50"
+                      <div className="p-1">
+                        <Link
+                          to="/shop/profile"
+                          onClick={() => setShowProfileDropdown(false)}
+                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-600 hover:bg-violet-50"
                         >
                           <HiOutlineUser size={18} /> Profile
-                        </button>
+                        </Link>
                         <button
+                          type="button" // ✅ Added explicit type!
                           onClick={handleLogout}
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50"
+                          className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-rose-500 hover:bg-rose-50"
                         >
                           <HiArrowRightOnRectangle size={18} /> Logout
                         </button>
@@ -260,49 +251,69 @@ const ShopNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Hamburger */}
               <button
+                type="button" // ✅ Added explicit type!
                 onClick={() => setMobileMenuOpen(true)}
-                className="rounded-lg p-2 text-slate-600 transition hover:bg-violet-50 hover:text-violet-600 md:hidden"
+                className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 transition active:scale-95"
+                aria-label="Open menu"
               >
-                <HiOutlineBars3 size={24} />
+                <HiBars3 size={26} />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* ===== MOBILE SLIDE-IN SIDEBAR ===== */}
+      {/* Mobile Slide-in Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.aside
-            initial={{ x: -320 }}
+            initial={{ x: -300 }}
             animate={{ x: 0 }}
-            exit={{ x: -320 }}
+            exit={{ x: -300 }}
             transition={{ type: "spring", damping: 30 }}
-            className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col bg-white shadow-2xl md:hidden"
+            className="fixed top-0 left-0 z-50 h-dvh w-72 max-w-[85vw] bg-white shadow-2xl md:hidden"
           >
-            {/* Mobile Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            {/* Menu Header */}
+            <div className="h-16 flex items-center justify-between border-b border-slate-100 px-5">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold">
-                  S
-                </div>
-                <span className="text-lg font-extrabold">
-                  <span className="text-slate-800">Sm</span>
-                  <span className="text-violet-600">aze</span>
-                </span>
+                <img
+                  src={smazeLogo}
+                  alt="Smaze Logo"
+                  className="w-8 h-8 rounded-lg object-cover"
+                />
+                <span className="text-xl font-bold text-slate-800">Smaze</span>
               </div>
               <button
+                type="button" // ✅ Added explicit type!
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100"
+                className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100"
+                aria-label="Close menu"
               >
-                <HiOutlineXMark size={22} />
+                <HiOutlineXMark size={24} /> {/* ✅ Fixed import usage */}
               </button>
             </div>
 
-            {/* Mobile Navigation */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            {/* Menu Content */}
+            <div className="h-[calc(100dvh-64px)] overflow-y-auto p-4 space-y-1">
+              {/* Shop Info */}
+              <div className="flex items-center gap-3 p-3 mb-2 bg-violet-50 rounded-xl">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                  {getInitials(shop?.name)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="block text-sm font-semibold text-slate-800 truncate">
+                    {shop?.name || "No Shop Yet"}
+                  </span>
+                  <span className="text-xs text-slate-500">Merchant</span>
+                </div>
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                  Active
+                </span>
+              </div>
+
+              {/* Navigation Links */}
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -311,10 +322,10 @@ const ShopNavbar = () => {
                     to={link.path}
                     onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+                      `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium ${
                         isActive
-                          ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white"
-                          : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                          ? "text-violet-600 bg-violet-50"
+                          : "text-slate-600 hover:bg-violet-50"
                       }`
                     }
                   >
@@ -322,49 +333,41 @@ const ShopNavbar = () => {
                       <>
                         <Icon
                           size={20}
-                          className={isActive ? "text-white" : "text-slate-400"}
+                          className={
+                            isActive ? "text-violet-600" : "text-slate-400"
+                          }
                         />
-                        <span>{link.name}</span>
+                        <span className="flex-1">{link.name}</span>
                       </>
                     )}
                   </NavLink>
                 );
               })}
 
-              <div className="border-t border-slate-200 pt-3 mt-3 space-y-2">
-                <Link
-                  to="/shop/notifications"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-violet-50 hover:text-violet-700"
-                >
-                  <HiOutlineBell size={20} />
-                  Notifications
-                  {unreadCount > 0 && (
-                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </Link>
-                <Link
-                  to="/shop/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-violet-50 hover:text-violet-700"
-                >
-                  <HiOutlineUser size={20} />
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
-                >
-                  <HiArrowRightOnRectangle size={20} />
-                  Logout
-                </button>
-              </div>
+              <div className="my-3 border-t border-slate-100" />
+
+              {/* Profile & Logout */}
+              <Link
+                to="/shop/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
+              >
+                <HiOutlineUser size={18} /> Profile
+              </Link>
+              <button
+                type="button" // ✅ Added explicit type!
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-rose-500 hover:bg-rose-50"
+              >
+                <HiArrowRightOnRectangle size={18} /> Logout
+              </button>
             </div>
           </motion.aside>
         )}
       </AnimatePresence>
+
+      {/* Navbar Spacer */}
+      <div className="h-16" />
     </>
   );
 };
