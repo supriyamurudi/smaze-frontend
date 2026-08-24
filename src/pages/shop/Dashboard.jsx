@@ -384,7 +384,6 @@ export default function Dashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen overflow-x-hidden pb-16 sm:pb-20"
     >
-      {/* ✅ FIXED: Removed top padding to eliminate gap with navbar */}
       <div className="mx-auto w-full max-w-7xl px-3 pt-0 sm:px-6 sm:pt-0 lg:px-8">
         {/* ========== MERCHANT HEADER (Purple Banner) ========== */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
@@ -519,7 +518,7 @@ export default function Dashboard() {
           transition={{ delay: 0.5 }}
           className="mt-5 grid grid-cols-1 gap-4 sm:mt-6 md:grid-cols-2"
         >
-          {/* Account */}
+          {/* Account / Profile */}
           <div className="relative overflow-hidden rounded-2xl border border-white/50 bg-white/70 p-4 shadow-xl shadow-slate-200/30 backdrop-blur-xl sm:p-5">
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
 
@@ -530,7 +529,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="min-w-0">
-                  <h4 className="font-semibold text-slate-800">Account</h4>
+                  <h4 className="font-semibold text-slate-800">Profile</h4>
                   <p className="text-xs text-slate-500 sm:text-sm">
                     Manage your profile
                   </p>
