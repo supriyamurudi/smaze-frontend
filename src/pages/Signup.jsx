@@ -1,5 +1,8 @@
+// frontend/src/pages/Signup.jsx
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import {
@@ -8,6 +11,8 @@ import {
   HiOutlineLockClosed,
   HiOutlineBuildingStorefront,
   HiOutlineKey,
+  HiOutlineArrowLeft,
+  HiOutlineShieldCheck,
 } from "react-icons/hi2";
 
 import { registerUser } from "../services/authService";
@@ -16,10 +21,6 @@ import { registerUser } from "../services/authService";
 // EMAIL VALIDATION FUNCTION
 // ===============================
 const validateEmail = (email) => {
-  // Must start with a letter (a-z or A-Z)
-  // Can contain letters, numbers, dots, underscores, hyphens
-  // Must have @ symbol
-  // Must have valid domain
   const emailRegex = /^[A-Za-z][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   return emailRegex.test(email);
 };
@@ -27,6 +28,7 @@ const validateEmail = (email) => {
 const Signup = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -60,7 +62,6 @@ const Signup = () => {
       return updated;
     });
 
-    // Clear error for this field
     setErrors((prev) => ({
       ...prev,
       [name]: "",
@@ -130,7 +131,7 @@ const Signup = () => {
 
       const payload = {
         name: formData.name.trim(),
-        email: formData.email.trim().toLowerCase(), // Convert to lowercase
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
         role: formData.role,
         ...(formData.role === "SHOP_OWNER" && {
@@ -153,58 +154,103 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
-      <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2">
-        {/* LEFT SIDE */}
-        <div className="hidden md:flex flex-col justify-center bg-violet-600 text-white p-12">
-          <h1 className="text-4xl font-bold mb-5">Join Smaze 🚀</h1>
-          <p className="text-violet-100 text-lg">
-            Discover local deals, connect with shops and save more every day.
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center px-4 py-6 sm:py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-6xl bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-white lg:grid lg:grid-cols-2"
+      >
+        {/* LEFT SECTION - Hidden on mobile, shown on large screens */}
+        <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 text-white p-10 xl:p-14">
+          <div className="flex items-center gap-2">
+            <h1 className="text-5xl xl:text-6xl font-black">
+              <span className="text-yellow-300">S</span>
+              maze
+            </h1>
+            <span className="text-sm text-white/70">™</span>
+          </div>
+
+          <h2 className="mt-8 text-3xl xl:text-4xl font-bold leading-tight">
+            Join Smaze 🚀
+            <br />
+            <span className="text-yellow-200">Discover Local Deals</span>
+          </h2>
+
+          <p className="mt-4 text-base xl:text-lg text-purple-100">
+            Connect with shops, explore exclusive offers and save more every
+            day.
           </p>
 
-          <div className="mt-10 space-y-6">
-            <div className="flex gap-4 items-center">
-              <div className="bg-white/20 p-3 rounded-xl">
-                <HiOutlineBuildingStorefront size={25} />
+          <div className="mt-8 xl:mt-10 space-y-4 xl:space-y-6">
+            <div className="flex gap-4 items-center bg-white/10 rounded-2xl p-4 xl:p-5 backdrop-blur-sm">
+              <div className="bg-white/20 p-2.5 xl:p-3 rounded-xl">
+                <HiOutlineBuildingStorefront
+                  size={22}
+                  className="xl:w-6 xl:h-6"
+                />
               </div>
               <div>
-                <h3 className="font-semibold">Local Shops</h3>
-                <p className="text-sm text-violet-100">Explore nearby offers</p>
+                <h3 className="font-semibold text-sm xl:text-base">
+                  Local Shops
+                </h3>
+                <p className="text-xs xl:text-sm text-purple-100">
+                  Explore nearby offers
+                </p>
               </div>
             </div>
 
-            <div className="flex gap-4 items-center">
-              <div className="bg-white/20 p-3 rounded-xl">
-                <HiOutlineUser size={25} />
+            <div className="flex gap-4 items-center bg-white/10 rounded-2xl p-4 xl:p-5 backdrop-blur-sm">
+              <div className="bg-white/20 p-2.5 xl:p-3 rounded-xl">
+                <HiOutlineUser size={22} className="xl:w-6 xl:h-6" />
               </div>
               <div>
-                <h3 className="font-semibold">Easy Access</h3>
-                <p className="text-sm text-violet-100">
+                <h3 className="font-semibold text-sm xl:text-base">
+                  Easy Access
+                </h3>
+                <p className="text-xs xl:text-sm text-purple-100">
                   Manage your account easily
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4 items-center">
-              <div className="bg-white/20 p-3 rounded-xl">
-                <HiOutlineKey size={25} />
+            <div className="flex gap-4 items-center bg-white/10 rounded-2xl p-4 xl:p-5 backdrop-blur-sm">
+              <div className="bg-white/20 p-2.5 xl:p-3 rounded-xl">
+                <HiOutlineShieldCheck size={22} className="xl:w-6 xl:h-6" />
               </div>
               <div>
-                <h3 className="font-semibold">Secure Platform</h3>
-                <p className="text-sm text-violet-100">Safe and protected</p>
+                <h3 className="font-semibold text-sm xl:text-base">
+                  Secure Platform
+                </h3>
+                <p className="text-xs xl:text-sm text-purple-100">
+                  Safe and protected
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* FORM */}
-        <div className="p-8 md:p-12">
-          <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
-          <p className="text-gray-500 mt-2 mb-8">
-            Register to continue with Smaze
-          </p>
+        <div className="p-6 sm:p-8 md:p-10 lg:p-12 xl:p-16">
+          {/* Mobile Back Button */}
+          <button
+            onClick={() => navigate("/login")}
+            className="lg:hidden flex items-center gap-2 text-slate-600 hover:text-violet-600 transition-colors mb-4"
+          >
+            <HiOutlineArrowLeft size={20} />
+            <span className="text-sm">Back to Login</span>
+          </button>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">
+              Create Account
+            </h2>
+            <p className="text-sm sm:text-base text-gray-500 mt-1 sm:mt-2 mb-6 sm:mb-8">
+              Register to continue with Smaze
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <InputField
               icon={<HiOutlineUser />}
               label="Full Name"
@@ -237,15 +283,19 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="Create password (min 6 characters)"
               error={errors.password}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
             />
 
             <div>
-              <label className="text-sm font-medium">Register As</label>
+              <label className="text-sm font-medium text-gray-700">
+                Register As
+              </label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="w-full mt-1 px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full mt-1.5 px-4 py-3 sm:py-3.5 border rounded-xl outline-none focus:ring-2 focus:ring-violet-500 text-sm sm:text-base bg-white"
               >
                 <option value="CUSTOMER">Customer</option>
                 <option value="SHOP_OWNER">Shop Owner</option>
@@ -254,44 +304,107 @@ const Signup = () => {
             </div>
 
             {formData.role === "SHOP_OWNER" && (
-              <InputField
-                label="Shop Name"
-                name="shopName"
-                value={formData.shopName}
-                onChange={handleChange}
-                placeholder="Enter shop name"
-                error={errors.shopName}
-              />
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <InputField
+                  icon={<HiOutlineBuildingStorefront />}
+                  label="Shop Name"
+                  name="shopName"
+                  value={formData.shopName}
+                  onChange={handleChange}
+                  placeholder="Enter shop name"
+                  error={errors.shopName}
+                />
+              </motion.div>
             )}
 
             {formData.role === "ADMIN" && (
-              <InputField
-                label="Admin Secret Code"
-                name="adminSecret"
-                type="password"
-                value={formData.adminSecret}
-                onChange={handleChange}
-                placeholder="Enter secret code"
-                error={errors.adminSecret}
-              />
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <InputField
+                  icon={<HiOutlineKey />}
+                  label="Admin Secret Code"
+                  name="adminSecret"
+                  type="password"
+                  value={formData.adminSecret}
+                  onChange={handleChange}
+                  placeholder="Enter secret code"
+                  error={errors.adminSecret}
+                />
+              </motion.div>
             )}
 
             <button
               disabled={loading}
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-xl font-semibold disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white py-3 sm:py-3.5 rounded-xl font-semibold hover:scale-[1.02] transition shadow-lg shadow-violet-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 
-          <p className="text-center text-gray-500 mt-6">
+          <p className="text-center text-sm sm:text-base text-gray-500 mt-6">
             Already have an account?
-            <Link to="/login" className="text-violet-600 font-semibold ml-2">
+            <Link
+              to="/login"
+              className="text-violet-600 font-semibold ml-2 hover:text-violet-700 transition-colors"
+            >
               Login
             </Link>
           </p>
+
+          {/* Mobile Features - Show on small screens */}
+          <div className="lg:hidden mt-6 pt-6 border-t border-gray-200">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="text-xs text-gray-600">
+                <span className="block text-lg mb-1">🛍️</span>
+                Local Shops
+              </div>
+              <div className="text-xs text-gray-600">
+                <span className="block text-lg mb-1">✅</span>
+                Easy Access
+              </div>
+              <div className="text-xs text-gray-600">
+                <span className="block text-lg mb-1">🔒</span>
+                Secure
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -307,29 +420,47 @@ const InputField = ({
   placeholder,
   error,
   helperText,
+  showPassword,
+  setShowPassword,
 }) => {
+  const isPassword = type === "password";
+  const inputType = isPassword && showPassword ? "text" : type;
+
   return (
     <div>
       <label className="text-sm font-medium text-gray-700">{label}</label>
-      <div className="relative mt-1">
+      <div className="relative mt-1.5">
         {icon && (
-          <span className="absolute left-3 top-3 text-gray-400">{icon}</span>
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+            {icon}
+          </span>
         )}
         <input
-          type={type}
+          type={inputType}
           name={name}
           value={value}
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
-          className={`w-full ${
-            icon ? "pl-10" : "px-4"
-          } py-3 border rounded-xl outline-none focus:ring-2 focus:ring-violet-500 ${
-            error ? "border-red-500" : ""
+          className={`w-full ${icon ? "pl-11" : "px-4"} pr-4 py-3 sm:py-3.5 border rounded-xl outline-none focus:ring-2 focus:ring-violet-500 transition text-sm sm:text-base ${
+            error ? "border-red-500" : "border-gray-200"
           }`}
         />
+        {isPassword && setShowPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+          >
+            {showPassword ? (
+              <HiOutlineLockClosed size={18} className="text-green-500" />
+            ) : (
+              <HiOutlineLockClosed size={18} />
+            )}
+          </button>
+        )}
       </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-red-500 text-xs sm:text-sm mt-1">{error}</p>}
       {helperText && !error && (
         <p className="text-gray-400 text-xs mt-1">{helperText}</p>
       )}
