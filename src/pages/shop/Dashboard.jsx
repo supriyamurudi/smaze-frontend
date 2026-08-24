@@ -384,8 +384,9 @@ export default function Dashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen overflow-x-hidden pb-16 sm:pb-20"
     >
-      <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
-        {/* ========== MERCHANT HEADER (Purple Banner Added) ========== */}
+      {/* ✅ FIXED: Removed top padding to eliminate gap with navbar */}
+      <div className="mx-auto w-full max-w-7xl px-3 pt-0 sm:px-6 sm:pt-0 lg:px-8">
+        {/* ========== MERCHANT HEADER (Purple Banner) ========== */}
         <MerchantHeader shopName={dashboardData?.shop?.name || "Pizza Hut"} />
 
         {/* ========== STATS ========== */}
