@@ -1,6 +1,6 @@
 // frontend/src/components/navbar/ShopNavbar.jsx
 
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -8,17 +8,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import smazeLogo from "../../assets/icons/smazeLogo.jpeg";
 
 import {
+  HiOutlineUser,
+  HiOutlineBell,
+  HiBars3,
+  HiOutlineChevronDown,
+  HiArrowRightOnRectangle,
+  HiOutlineCog6Tooth,
   HiOutlineHome,
   HiOutlinePlusCircle,
   HiOutlineTag,
   HiOutlineChartBar,
-  HiOutlineUser,
-  HiOutlineBell,
-  HiBars3,
-  HiOutlineXMark,
-  HiOutlineChevronDown,
-  HiArrowRightOnRectangle,
-  HiOutlineCog6Tooth, // ✅ ADD THIS
+  NavLink,
 } from "react-icons/hi2";
 
 import { getMyShop } from "../../services/shopService";
@@ -26,17 +26,8 @@ import { getUnreadCount } from "../../services/notificationService";
 import toast from "react-hot-toast";
 import { logoutUser } from "../../services/authService";
 
-// ========== NAV LINKS ==========
-const navLinks = [
-  { name: "Dashboard", path: "/shop/dashboard", icon: HiOutlineHome },
-  { name: "Add Offer", path: "/shop/add-offer", icon: HiOutlinePlusCircle },
-  { name: "My Offers", path: "/shop/my-offers", icon: HiOutlineTag },
-  { name: "Analytics", path: "/shop/analytics", icon: HiOutlineChartBar },
-  // ✅ ADD NOTIFICATIONS AND PROFILE TO DESKTOP NAV TOO
-  { name: "Notifications", path: "/shop/notifications", icon: HiOutlineBell },
-  { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
-  { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth }, // ✅ ADD SETTINGS
-];
+// ✅ IMPORT THE SHOP SIDEBAR
+import ShopSidebar from "../shop/ShopSidebar";
 
 // ========== MAIN COMPONENT ==========
 const ShopNavbar = () => {
@@ -121,7 +112,7 @@ const ShopNavbar = () => {
         )}
       </AnimatePresence>
 
-      {/* ✅ FIXED: Changed from sticky to fixed */}
+      {/* Fixed Navbar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
           scrolled
@@ -154,36 +145,105 @@ const ShopNavbar = () => {
 
             {/* ========== CENTER: Desktop Navigation ========== */}
             <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              <NavLink
+                to="/shop/dashboard"
+                className={({ isActive }) =>
+                  `group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
+                      : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <HiOutlineHome
+                      size={18}
+                      className={
                         isActive
-                          ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
-                          : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <Icon
-                          size={18}
-                          className={
-                            isActive
-                              ? "text-white"
-                              : "text-slate-400 group-hover:text-violet-600"
-                          }
-                        />
-                        <span>{link.name}</span>
-                      </>
-                    )}
-                  </NavLink>
-                );
-              })}
+                          ? "text-white"
+                          : "text-slate-400 group-hover:text-violet-600"
+                      }
+                    />
+                    <span>Dashboard</span>
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink
+                to="/shop/add-offer"
+                className={({ isActive }) =>
+                  `group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
+                      : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <HiOutlinePlusCircle
+                      size={18}
+                      className={
+                        isActive
+                          ? "text-white"
+                          : "text-slate-400 group-hover:text-violet-600"
+                      }
+                    />
+                    <span>Add Offer</span>
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink
+                to="/shop/my-offers"
+                className={({ isActive }) =>
+                  `group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
+                      : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <HiOutlineTag
+                      size={18}
+                      className={
+                        isActive
+                          ? "text-white"
+                          : "text-slate-400 group-hover:text-violet-600"
+                      }
+                    />
+                    <span>My Offers</span>
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink
+                to="/shop/analytics"
+                className={({ isActive }) =>
+                  `group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
+                      : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <HiOutlineChartBar
+                      size={18}
+                      className={
+                        isActive
+                          ? "text-white"
+                          : "text-slate-400 group-hover:text-violet-600"
+                      }
+                    />
+                    <span>Analytics</span>
+                  </>
+                )}
+              </NavLink>
             </div>
 
             {/* ========== RIGHT: Notifications & Profile ========== */}
@@ -267,7 +327,7 @@ const ShopNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Mobile Hamburger */}
+              {/* ✅ Mobile Hamburger - Now opens ShopSidebar */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
@@ -281,111 +341,18 @@ const ShopNavbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Slide-in Sidebar */}
+      {/* ✅ Mobile Slide-in Sidebar - Using ShopSidebar component */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.aside
-            initial={{ x: -300 }}
+          <motion.div
+            initial={{ x: -320 }}
             animate={{ x: 0 }}
-            exit={{ x: -300 }}
+            exit={{ x: -320 }}
             transition={{ type: "spring", damping: 30 }}
-            className="fixed top-0 left-0 z-50 h-dvh w-72 max-w-[85vw] bg-white shadow-2xl md:hidden"
+            className="fixed top-0 left-0 z-50 h-dvh w-80 max-w-[85vw] shadow-2xl md:hidden"
           >
-            {/* Menu Header */}
-            <div className="h-16 flex items-center justify-between border-b border-slate-100 px-5">
-              <div className="flex items-center gap-2">
-                <img
-                  src={smazeLogo}
-                  alt="Smaze Logo"
-                  className="h-8 w-8 rounded-full object-cover border border-violet-200"
-                />
-                <span className="text-xl font-bold text-slate-800">Smaze</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100"
-                aria-label="Close menu"
-              >
-                <HiOutlineXMark size={24} />
-              </button>
-            </div>
-
-            {/* Menu Content */}
-            <div className="h-[calc(100dvh-64px)] overflow-y-auto p-4 space-y-1">
-              {/* Shop Info */}
-              <div className="flex items-center gap-3 p-3 mb-2 bg-violet-50 rounded-xl">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                  {getInitials(shop?.name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="block text-sm font-semibold text-slate-800 truncate">
-                    {shop?.name || "No Shop Yet"}
-                  </span>
-                  <span className="text-xs text-slate-500">Merchant</span>
-                </div>
-                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                  Active
-                </span>
-              </div>
-
-              {/* Navigation Links - ADD SETTINGS HERE */}
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium ${
-                        isActive
-                          ? "text-violet-600 bg-violet-50"
-                          : "text-slate-600 hover:bg-violet-50"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <Icon
-                          size={20}
-                          className={
-                            isActive ? "text-violet-600" : "text-slate-400"
-                          }
-                        />
-                        <span className="flex-1">{link.name}</span>
-                      </>
-                    )}
-                  </NavLink>
-                );
-              })}
-
-              <div className="my-3 border-t border-slate-100" />
-
-              {/* Profile, Settings & Logout */}
-              <Link
-                to="/shop/profile"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
-              >
-                <HiOutlineUser size={18} /> Profile
-              </Link>
-              <Link
-                to="/shop/settings"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
-              >
-                <HiOutlineCog6Tooth size={18} /> Settings
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-rose-500 hover:bg-rose-50"
-              >
-                <HiArrowRightOnRectangle size={18} /> Logout
-              </button>
-            </div>
-          </motion.aside>
+            <ShopSidebar onClose={() => setMobileMenuOpen(false)} />
+          </motion.div>
         )}
       </AnimatePresence>
 
