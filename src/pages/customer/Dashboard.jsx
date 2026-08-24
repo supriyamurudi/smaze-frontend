@@ -18,7 +18,6 @@ import {
   HiOutlineFire,
   HiOutlineSparkles,
   HiOutlineShoppingBag,
-  HiOutlineChartBar,
   HiOutlineArrowRightOnRectangle,
 } from "react-icons/hi2";
 import { RiStore2Line } from "react-icons/ri";
@@ -157,33 +156,30 @@ const getTimeRemaining = (endDate) => {
 // ========== SUB-COMPONENTS ==========
 
 // Glassmorphism Card
-const GlassCard = ({ children, className = "", hover = true }) => (
-  <motion.div
-    whileHover={hover ? { y: -4, scale: 1.01 } : {}}
+const GlassCard = ({ children, className = "" }) => (
+  <div
     className={`relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/30 ${className}`}
   >
     <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
     <div className="relative">{children}</div>
-  </motion.div>
+  </div>
 );
 
 // Modern Stat Card
 const ModernStatCard = ({ label, value, icon, color, subtitle }) => (
-  <GlassCard className="p-5 md:p-6">
+  <GlassCard className="p-4 sm:p-5">
     <div className="flex items-start justify-between">
       <div className="flex-1 min-w-0">
-        <p className="text-xs sm:text-sm font-medium text-slate-500">{label}</p>
-        <p className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 truncate">
+        <p className="text-xs font-medium text-slate-500">{label}</p>
+        <p className="mt-1 text-xl font-bold text-slate-900 truncate">
           {value}
         </p>
         {subtitle && (
-          <p className="mt-1 text-[10px] sm:text-xs text-slate-400">
-            {subtitle}
-          </p>
+          <p className="mt-1 text-[10px] text-slate-400">{subtitle}</p>
         )}
       </div>
       <div
-        className={`rounded-2xl bg-gradient-to-br ${color} p-2.5 sm:p-3 text-white shadow-lg flex-shrink-0`}
+        className={`rounded-xl bg-gradient-to-br ${color} p-2.5 text-white shadow-lg flex-shrink-0`}
       >
         {icon}
       </div>
@@ -203,11 +199,9 @@ const ModernCategoryCard = ({
   onClick,
   isActive,
 }) => (
-  <motion.button
-    whileHover={{ y: -4, scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+  <button
     onClick={onClick}
-    className={`relative overflow-hidden rounded-2xl p-3 sm:p-4 transition-all duration-300 ${
+    className={`relative overflow-hidden rounded-xl sm:rounded-2xl p-3 transition-all duration-300 ${
       isActive
         ? `bg-gradient-to-br ${gradient} text-white shadow-lg shadow-violet-200`
         : `${bg} ${border} ${hover} shadow-sm`
@@ -215,31 +209,23 @@ const ModernCategoryCard = ({
   >
     <div className="relative text-center">
       <div
-        className={`text-2xl sm:text-3xl transition-transform duration-300 ${isActive ? "scale-110" : ""}`}
+        className={`text-2xl transition-transform duration-300 ${isActive ? "scale-110" : ""}`}
       >
         {icon}
       </div>
       <span
-        className={`mt-1 sm:mt-2 block text-xs sm:text-sm font-medium ${isActive ? "text-white" : text}`}
+        className={`mt-1 block text-[10px] sm:text-xs font-medium ${isActive ? "text-white" : text}`}
       >
         {name}
       </span>
     </div>
-    {isActive && (
-      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-    )}
-  </motion.button>
+  </button>
 );
 
 // Premium Offer Card
 const PremiumOfferCard = ({ offer, featured = false }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -8 }}
-    className={`group relative overflow-hidden rounded-2xl bg-white shadow-xl shadow-slate-200/30 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-300/40 ${
-      featured ? "ring-2 ring-violet-500/30" : ""
-    }`}
+  <div
+    className={`group relative overflow-hidden rounded-2xl bg-white shadow-xl shadow-slate-200/30 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-300/40 ${featured ? "ring-2 ring-violet-500/30" : ""}`}
   >
     {featured && (
       <div className="absolute top-3 right-3 z-10 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-lg">
@@ -288,28 +274,27 @@ const PremiumOfferCard = ({ offer, featured = false }) => (
         <div className="flex items-center gap-1.5">
           <div className="flex items-center gap-0.5 text-yellow-500">
             <HiOutlineStar size={14} className="fill-yellow-500" />
-            <span className="text-xs sm:text-sm font-medium text-slate-700">
+            <span className="text-xs font-medium text-slate-700">
               {offer.rating || "4.5"}
             </span>
           </div>
           <span className="text-xs text-slate-400">•</span>
-          <span className="text-[10px] sm:text-xs text-slate-500">
+          <span className="text-[10px] text-slate-500">
             {offer.reviews || 12} reviews
           </span>
         </div>
         <Link
           to={`/customer/offers/${offer.id}`}
-          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-3 sm:px-4 py-1 text-xs sm:text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-violet-200"
+          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-3 py-1 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-violet-200"
         >
           Claim
         </Link>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
-// Minimal Compact Offer
-// Minimal Compact Offer (PERFECT MOBILE FIX - Buttons ALWAYS visible)
+// Minimal Compact Offer (Button BELOW text with proper left/right padding)
 const MinimalCompactOffer = ({ offer, type }) => {
   const isEnding = type === "ending";
   return (
@@ -367,24 +352,25 @@ const MinimalCompactOffer = ({ offer, type }) => {
     </div>
   );
 };
+
 // Section Header
 const SectionHeader = ({ title, icon, subtitle, link, linkText }) => (
-  <div className="mb-3 sm:mb-4 flex items-center justify-between">
-    <div>
-      <h2 className="flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg font-bold text-slate-800">
-        {icon && <span className="text-lg sm:text-xl">{icon}</span>}
+  <div className="mb-3 sm:mb-4 flex items-center justify-between gap-2">
+    <div className="min-w-0">
+      <h2 className="flex items-center gap-1.5 text-lg font-bold text-slate-800 truncate">
+        {icon && <span className="text-lg">{icon}</span>}
         {title}
       </h2>
       {subtitle && (
-        <p className="text-[10px] sm:text-xs text-slate-500">{subtitle}</p>
+        <p className="text-xs text-slate-500 truncate">{subtitle}</p>
       )}
     </div>
     {link && (
       <Link
         to={link}
-        className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold text-violet-600 shadow-lg shadow-slate-200/30 transition-all duration-300 hover:shadow-xl border border-white/50"
+        className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-600 shadow-md border border-slate-100 hover:shadow-lg flex-shrink-0"
       >
-        {linkText || "View All"} <HiOutlineChevronRight size={12} />
+        {linkText || "View All"} <HiOutlineChevronRight size={14} />
       </Link>
     )}
   </div>
@@ -410,13 +396,11 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(null);
 
-  // Fetch dashboard data
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
         const response = await getCustomerDashboard();
-
         if (response && response.data) {
           setData({
             customer: response.data.customer || {
@@ -435,7 +419,6 @@ const Dashboard = () => {
             endingSoon: response.data.endingSoon || [],
           });
         } else if (response) {
-          // If response doesn't have data property
           setData({
             customer: response.customer || {
               name: "Customer",
@@ -452,13 +435,9 @@ const Dashboard = () => {
             recommendedOffers: response.recommendedOffers || [],
             endingSoon: response.endingSoon || [],
           });
-        } else {
-          // Use fallback data if response is empty
-          console.warn("Using fallback dashboard data");
         }
       } catch (err) {
         console.error("Dashboard Error:", err);
-        // Keep using the fallback data from initial state
       } finally {
         setLoading(false);
       }
@@ -469,7 +448,6 @@ const Dashboard = () => {
   const { customer, stats, trendingOffers, recommendedOffers, endingSoon } =
     data;
 
-  // Memoized stat values
   const statValues = useMemo(
     () => [
       stats.availableOffers || 0,
@@ -480,16 +458,12 @@ const Dashboard = () => {
     [stats],
   );
 
-  // Search handler - FIXED
   const handleSearch = useCallback(
     (e) => {
       e.preventDefault();
-      e.stopPropagation();
       const query = searchQuery.trim();
-      console.log("🔍 Searching for:", query);
-      if (query) {
+      if (query)
         navigate(`/customer/offers?search=${encodeURIComponent(query)}`);
-      }
     },
     [searchQuery, navigate],
   );
@@ -502,11 +476,8 @@ const Dashboard = () => {
     [navigate],
   );
 
-  const handleLogout = useCallback(() => {
-    navigate("/login");
-  }, [navigate]);
+  const handleLogout = useCallback(() => navigate("/login"), [navigate]);
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
@@ -519,69 +490,53 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20">
-      {/* Decorative Background Elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-16 sm:pb-20 overflow-x-hidden">
+      {/* Decorative Background */}
       <div className="fixed -top-40 -right-40 h-96 w-96 rounded-full bg-violet-200/20 blur-3xl" />
       <div className="fixed -bottom-40 -left-40 h-96 w-96 rounded-full bg-blue-200/20 blur-3xl" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-purple-200/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
         {/* Header */}
         <header className="relative pt-4 sm:pt-6 pb-3 sm:pb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="relative">
-                <div className="h-12 w-12 sm:h-14 sm:w-14 overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 p-0.5 shadow-lg shadow-violet-200">
-                  <div className="flex h-full w-full items-center justify-center rounded-2xl bg-white/10 text-base sm:text-xl font-bold text-white backdrop-blur-sm">
-                    {getInitials(customer.name)}
-                  </div>
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 rounded-full bg-emerald-500 p-0.5 ring-2 ring-white">
-                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-violet-600 to-purple-600 shadow-lg shadow-violet-200">
+                <div className="flex h-full w-full items-center justify-center text-white">
+                  <HiOutlineSparkles size={24} />
                 </div>
               </div>
-              <div>
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900">
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-slate-900 truncate">
                   {getGreeting()}, {customer.name || "Customer"} 👋
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-500 truncate max-w-[180px] sm:max-w-none">
+                <p className="text-xs text-slate-500 truncate">
                   {customer.email || "Let's find you the best deals"}
                 </p>
               </div>
             </div>
-
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <Link
                 to="/customer/notifications"
-                className="relative rounded-full bg-white/80 backdrop-blur-xl p-2 sm:p-2.5 shadow-lg shadow-slate-200/30 transition-all duration-300 hover:shadow-xl border border-white/50"
+                className="relative rounded-full bg-white p-2 shadow-md text-slate-600 border border-slate-100"
               >
-                <HiOutlineBell
-                  size={18}
-                  className="sm:w-5 sm:h-5 text-slate-600"
-                />
+                <HiOutlineBell size={20} />
                 {stats.notifications > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[8px] sm:text-[10px] font-bold text-white shadow-lg shadow-rose-200">
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[8px] font-bold text-white">
                     {stats.notifications}
                   </span>
                 )}
               </Link>
               <Link
                 to="/customer/profile"
-                className="rounded-full bg-white/80 backdrop-blur-xl p-2 sm:p-2.5 shadow-lg shadow-slate-200/30 transition-all duration-300 hover:shadow-xl border border-white/50"
+                className="rounded-full bg-white p-2 shadow-md text-slate-600 border border-slate-100"
               >
-                <HiOutlineCog6Tooth
-                  size={18}
-                  className="sm:w-5 sm:h-5 text-slate-600"
-                />
+                <HiOutlineCog6Tooth size={20} />
               </Link>
               <button
                 onClick={handleLogout}
-                className="rounded-full bg-white/80 backdrop-blur-xl p-2 sm:p-2.5 shadow-lg shadow-slate-200/30 transition-all duration-300 hover:shadow-xl border border-white/50 hover:bg-rose-50"
+                className="rounded-full bg-white p-2 shadow-md text-slate-600 border border-slate-100 hover:bg-rose-50"
               >
-                <HiOutlineArrowRightOnRectangle
-                  size={18}
-                  className="sm:w-5 sm:h-5 text-slate-600"
-                />
+                <HiOutlineArrowRightOnRectangle size={20} />
               </button>
             </div>
           </div>
@@ -590,31 +545,27 @@ const Dashboard = () => {
         {/* Hero Section */}
         <HeroSection customer={customer} />
 
-        {/* Search - FIXED with proper form handling */}
+        {/* Search */}
         <motion.section
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
           className="relative mb-4 sm:mb-6"
         >
-          <form onSubmit={handleSearch} className="relative" role="search">
-            <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-              <HiOutlineMagnifyingGlass
-                size={16}
-                className="sm:w-[18px] sm:h-[18px]"
-              />
+          <form onSubmit={handleSearch} className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              <HiOutlineMagnifyingGlass size={18} />
             </div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for deals, shops, or categories..."
-              className="w-full rounded-full border-0 bg-white/80 backdrop-blur-xl py-2.5 sm:py-3 pl-9 sm:pl-11 pr-24 sm:pr-32 text-xs sm:text-sm text-slate-800 shadow-lg shadow-slate-200/30 outline-none ring-1 ring-white/50 transition-all duration-300 placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
-              aria-label="Search for deals, shops, or categories"
+              className="w-full rounded-full border-0 bg-white py-3 pl-11 pr-20 text-sm text-slate-800 shadow-lg shadow-slate-200/40 outline-none ring-1 ring-slate-100 transition-all placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
             />
             <button
               type="submit"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-3 sm:px-5 py-1 sm:py-1.5 text-[10px] sm:text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-violet-200"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-1.5 text-xs font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
             >
               Search
             </button>
@@ -626,7 +577,7 @@ const Dashboard = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-4 sm:mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4"
+          className="mb-5 grid grid-cols-2 sm:grid-cols-4 gap-3"
         >
           {STAT_CONFIGS.map((config, i) => (
             <ModernStatCard
@@ -642,14 +593,14 @@ const Dashboard = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mb-4 sm:mb-6"
+          className="mb-6"
         >
           <SectionHeader
             title="Categories"
             subtitle="Explore by category"
             link="/customer/offers"
           />
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {CATEGORIES.map((cat) => (
               <ModernCategoryCard
                 key={cat.name}
@@ -667,7 +618,7 @@ const Dashboard = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mb-4 sm:mb-6"
+            className="mb-6"
           >
             <SectionHeader
               title="Trending Now"
@@ -675,7 +626,7 @@ const Dashboard = () => {
               link="/customer/offers"
               icon={<HiOutlineFire className="text-orange-500" />}
             />
-            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {trendingOffers.slice(0, 3).map((offer, i) => (
                 <PremiumOfferCard
                   key={offer.id || i}
@@ -689,12 +640,13 @@ const Dashboard = () => {
 
         {/* Recommended & Ending Soon */}
         {(recommendedOffers.length > 0 || endingSoon.length > 0) && (
-          <div className="mb-4 sm:mb-6 grid gap-4 sm:gap-6 lg:grid-cols-2">
+          <div className="mb-6 grid gap-6 lg:grid-cols-2">
             {recommendedOffers.length > 0 && (
               <motion.section
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
+                className="min-w-0 overflow-hidden"
               >
                 <SectionHeader
                   title="Recommended"
@@ -702,8 +654,8 @@ const Dashboard = () => {
                   link="/customer/offers"
                   icon={<HiOutlineSparkles className="text-violet-500" />}
                 />
-                <div className="space-y-2">
-                  {recommendedOffers.slice(0, 3).map((offer, i) => (
+                <div className="space-y-3">
+                  {recommendedOffers.slice(0, 4).map((offer, i) => (
                     <MinimalCompactOffer key={offer.id || i} offer={offer} />
                   ))}
                 </div>
@@ -715,6 +667,7 @@ const Dashboard = () => {
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.7 }}
+                className="min-w-0 overflow-hidden"
               >
                 <SectionHeader
                   title="Ending Soon"
@@ -722,8 +675,8 @@ const Dashboard = () => {
                   link="/customer/offers"
                   icon={<HiOutlineClock className="text-amber-500" />}
                 />
-                <div className="space-y-2">
-                  {endingSoon.slice(0, 3).map((offer, i) => (
+                <div className="space-y-3">
+                  {endingSoon.slice(0, 4).map((offer, i) => (
                     <MinimalCompactOffer
                       key={offer.id || i}
                       offer={offer}
@@ -737,85 +690,76 @@ const Dashboard = () => {
         )}
 
         {/* Location & Saved */}
-        <div className="mb-4 sm:mb-6 grid gap-4 sm:gap-6 lg:grid-cols-2">
-          <GlassCard className="p-5 sm:p-6 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="rounded-xl bg-white/20 p-2 sm:p-2.5 backdrop-blur-sm">
-                <HiOutlineMapPin
-                  size={18}
-                  className="sm:w-[22px] sm:h-[22px]"
-                />
+        <div className="mb-6 grid gap-4 lg:grid-cols-2">
+          <GlassCard className="p-5 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white">
+            <div className="flex items-start gap-3">
+              <div className="rounded-xl bg-white/20 p-2.5 backdrop-blur-sm">
+                <HiOutlineMapPin size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-sm sm:text-base">
-                  Your Location
-                </h3>
-                <p className="text-xs sm:text-sm text-white/70 truncate max-w-[150px] sm:max-w-none">
+                <h3 className="font-bold text-base">Your Location</h3>
+                <p className="text-sm text-white/70 truncate">
                   {customer.location || "Not set"}
                 </p>
               </div>
             </div>
-            <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-white/80">
+            <p className="mt-3 text-sm text-white/80">
               {customer.location
                 ? "Showing the best offers around you"
                 : "Set your location to find nearby offers"}
             </p>
             <Link
               to="/customer/profile"
-              className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-white px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-violet-700 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-violet-700 transition-all hover:scale-105 hover:shadow-xl"
             >
               {customer.location ? "Explore Nearby" : "Set Location"}{" "}
               <HiOutlineArrowRight size={14} />
             </Link>
           </GlassCard>
 
-          <GlassCard className="p-5 sm:p-6">
+          <GlassCard className="p-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="flex items-center gap-1.5 sm:gap-2 font-bold text-slate-800 text-sm sm:text-base">
+                <h3 className="flex items-center gap-2 font-bold text-slate-800 text-base">
                   <HiOutlineHeart className="text-rose-500" size={18} /> Saved
                   Offers
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500">
+                <p className="text-sm text-slate-500">
                   {stats.savedOffers || 0} offers saved
                 </p>
               </div>
               <Link
                 to="/customer/saved-offers"
-                className="rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-3 sm:px-4 py-1 text-[10px] sm:text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-rose-200"
+                className="rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-1 text-xs font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
               >
                 View All
               </Link>
             </div>
             {stats.savedOffers > 0 ? (
-              <div className="mt-3 sm:mt-4 flex items-center justify-between">
+              <div className="mt-4 flex items-center justify-between">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map((_, i) => (
                     <div
                       key={i}
-                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-white bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-rose-600 shadow-md"
+                      className="h-10 w-10 rounded-full border-2 border-white bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center text-xs font-bold text-rose-600 shadow-md"
                     >
                       {getInitials(customer.name || "User")}
                     </div>
                   ))}
                   {stats.savedOffers > 3 && (
-                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border-2 border-white bg-violet-100 text-[10px] sm:text-xs font-bold text-violet-600 shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-violet-100 text-xs font-bold text-violet-600 shadow-md">
                       +{stats.savedOffers - 3}
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] sm:text-xs text-slate-500">
-                  Your favorites
-                </span>
+                <span className="text-xs text-slate-500">Your favorites</span>
               </div>
             ) : (
-              <div className="mt-3 sm:mt-4 rounded-xl bg-slate-50 p-3 text-center">
-                <p className="text-xs sm:text-sm text-slate-500">
-                  No saved offers yet
-                </p>
+              <div className="mt-4 rounded-xl bg-slate-50 p-3 text-center">
+                <p className="text-sm text-slate-500">No saved offers yet</p>
                 <Link
                   to="/customer/offers"
-                  className="mt-1 inline-block text-[10px] sm:text-xs font-semibold text-violet-600 hover:text-violet-700"
+                  className="mt-1 inline-block text-xs font-semibold text-violet-600 hover:text-violet-700"
                 >
                   Explore offers →
                 </Link>
@@ -824,104 +768,34 @@ const Dashboard = () => {
           </GlassCard>
         </div>
 
-        {/* Recent Activity */}
-        <motion.section
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="mb-4 sm:mb-6"
-        >
-          <GlassCard className="p-5 sm:p-6">
-            <SectionHeader
-              title="Recent Activity"
-              subtitle="Your latest interactions"
-              link="/customer/activity"
-              icon={<HiOutlineChartBar className="text-emerald-500" />}
-              linkText="View History"
-            />
-            <div className="space-y-2">
-              {[
-                {
-                  icon: "👀",
-                  text: `You viewed ${trendingOffers.length || 0} new offers`,
-                  time: "Just now",
-                  gradient: "from-violet-50 to-purple-50",
-                },
-                {
-                  icon: "❤️",
-                  text: `You have ${stats.savedOffers || 0} saved offers`,
-                  time: "Today",
-                  gradient: "from-rose-50 to-pink-50",
-                },
-                {
-                  icon: "🔔",
-                  text: `${stats.notifications || 0} new notifications`,
-                  time: "Recent",
-                  gradient: "from-amber-50 to-orange-50",
-                },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ x: 4 }}
-                  className={`flex items-center gap-2 sm:gap-3 rounded-xl bg-gradient-to-r ${item.gradient} p-2.5 sm:p-3 transition-all duration-300`}
-                >
-                  <span className="text-lg sm:text-xl">{item.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-slate-800 truncate">
-                      {item.text}
-                    </p>
-                    <p className="text-[10px] sm:text-xs text-slate-500">
-                      {item.time}
-                    </p>
-                  </div>
-                  <HiOutlineChevronRight
-                    className="text-slate-400 flex-shrink-0"
-                    size={14}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </GlassCard>
-        </motion.section>
-
-        {/* CTA */}
+        {/* Bottom CTA */}
         <motion.section
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.1 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-700 via-purple-700 to-fuchsia-700 p-6 sm:p-8 text-center text-white"
+          transition={{ delay: 0.8 }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-700 via-purple-700 to-fuchsia-700 p-6 sm:p-8 text-center text-white"
         >
           <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="relative">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1.2, type: "spring" }}
-              className="mx-auto mb-2 sm:mb-3 inline-block rounded-full bg-white/20 p-2.5 sm:p-3 backdrop-blur-sm"
-            >
-              <HiOutlineShoppingBag
-                size={24}
-                className="sm:w-[32px] sm:h-[32px]"
-              />
-            </motion.div>
-            <h2 className="text-xl sm:text-2xl font-bold">
-              Ready to Save More? 🎉
-            </h2>
-            <p className="mx-auto mt-1 sm:mt-2 max-w-2xl text-xs sm:text-sm text-violet-100">
+            <div className="mx-auto mb-3 inline-block rounded-full bg-white/20 p-3 backdrop-blur-sm">
+              <HiOutlineShoppingBag size={28} />
+            </div>
+            <h2 className="text-2xl font-bold">Ready to Save More? 🎉</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-violet-100">
               Discover {stats.availableOffers || 0} verified offers from your
               favorite shops
             </p>
-            <div className="mt-3 sm:mt-5 flex flex-wrap justify-center gap-2 sm:gap-3">
+            <div className="mt-5 flex flex-wrap justify-center gap-3">
               <Link
                 to="/customer/offers"
-                className="rounded-full bg-white px-4 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-bold text-violet-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                className="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-violet-700 transition-all hover:scale-105 hover:shadow-2xl"
               >
                 Explore Offers
               </Link>
               <Link
                 to="/customer/saved-offers"
-                className="rounded-full border-2 border-white/30 px-4 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 hover:bg-white/10 hover:scale-105"
+                className="rounded-full border-2 border-white/30 px-6 py-2.5 text-sm font-semibold transition-all hover:bg-white/10 hover:scale-105"
               >
                 My Favorites
               </Link>
