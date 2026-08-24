@@ -13,8 +13,9 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineShieldCheck,
   HiOutlineBell,
+  HiOutlineSave,
+  HiOutlinePaintBrush, // ✅ Use HiOutlinePaintBrush instead
 } from "react-icons/hi2";
-import { HiOutlineSave, HiOutlinePalette } from "react-icons/hi"; // ✅ Import from hi instead
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ const Settings = () => {
     { id: "general", label: "General", icon: HiOutlineCog6Tooth },
     { id: "business", label: "Business", icon: HiOutlineBuildingStorefront },
     { id: "notifications", label: "Notifications", icon: HiOutlineBell },
-    { id: "appearance", label: "Appearance", icon: HiOutlinePalette },
+    { id: "appearance", label: "Appearance", icon: HiOutlinePaintBrush },
     { id: "security", label: "Security", icon: HiOutlineShieldCheck },
   ];
 
