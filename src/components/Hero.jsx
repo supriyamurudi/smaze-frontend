@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaArrowRight,
-  FaStar,
   FaFire,
-  FaShieldAlt,
   FaClock,
   FaGift,
   FaShoppingBag,
@@ -142,17 +140,12 @@ export default function Hero() {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mt-5 sm:mt-6"
             >
-              <div className="flex text-yellow-400 gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-base sm:text-lg" />
-                ))}
-              </div>
               <p className="text-xs sm:text-sm text-gray-600">
                 Trusted by{" "}
                 <span className="font-bold text-violet-700">
                   {loading ? "..." : formatNumber(stats.totalCustomers)}
                 </span>{" "}
-                customers across India.
+                customers across Belagavi.
               </p>
             </motion.div>
           </div>
@@ -206,25 +199,6 @@ export default function Hero() {
                 </motion.div>
 
                 {/* Stats Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-white/50"
-                >
-                  <div className="flex items-center gap-1.5 text-green-500 text-xs sm:text-sm font-medium">
-                    <FaShieldAlt className="text-xs sm:text-sm" />
-                    Verified
-                  </div>
-                  <div className="mt-1">
-                    <span className="text-xl sm:text-2xl font-black text-pink-600">
-                      {loading ? "..." : formatNumber(stats.totalShops)}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 text-xs sm:text-sm">
-                    Active Shops
-                  </p>
-                </motion.div>
               </div>
 
               {/* Mobile Quick Info */}
