@@ -19,12 +19,13 @@ import {
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("general");
   const [settings, setSettings] = useState({
-    shopName: "Pizza Hut",
-    phone: "+1 (555) 123-4567",
-    email: "pizza@smaze.com",
+    shopName: "Beauty Salon",
+    email: "beauty@smaze.com",
+    phone: "8656787656",
     address: "123 Main Street, New York, NY 10001",
-    website: "https://pizzahut.example.com",
+    website: "https://beautysalon.example.com",
     businessHours: {
       monday: "9:00 AM - 9:00 PM",
       tuesday: "9:00 AM - 9:00 PM",
@@ -42,8 +43,6 @@ const Settings = () => {
     theme: "light",
   });
 
-  const [activeTab, setActiveTab] = useState("general");
-
   const tabs = [
     { id: "general", label: "General", icon: HiOutlineCog6Tooth },
     { id: "business", label: "Business", icon: HiOutlineBuildingStorefront },
@@ -57,7 +56,10 @@ const Settings = () => {
     if (type === "checkbox") {
       setSettings((prev) => ({
         ...prev,
-        [name]: checked,
+        notifications: {
+          ...prev.notifications,
+          [name]: checked,
+        },
       }));
     } else if (name.includes(".")) {
       const [parent, child] = name.split(".");
@@ -80,7 +82,6 @@ const Settings = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
       toast.success("Settings saved successfully!");
     } catch {
@@ -100,7 +101,7 @@ const Settings = () => {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
-          Shop Settings
+          Settings
         </h1>
         <p className="mt-1 text-sm text-slate-500">
           Manage your shop preferences and configuration
