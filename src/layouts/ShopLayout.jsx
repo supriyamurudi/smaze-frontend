@@ -104,8 +104,8 @@ const ShopLayout = () => {
       {/* ✅ Navbar with the Smaze Logo */}
       <ShopNavbar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      {/* Main Content Area - with proper spacing */}
+      <main className="flex-1 pt-20 sm:pt-24 md:pt-28 lg:pt-32 px-4 sm:px-6 md:px-8 pb-8 sm:pb-12 md:pb-16">
         {loading ? (
           <ContentSkeleton />
         ) : (
@@ -113,7 +113,7 @@ const ShopLayout = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="min-h-[calc(100vh-140px)]"
+            className="max-w-7xl mx-auto"
           >
             <Outlet />
           </motion.div>

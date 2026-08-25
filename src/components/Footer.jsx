@@ -284,7 +284,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/customer/shops"
+                  to="/shops"
                   className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Shops
