@@ -50,7 +50,7 @@ export default function Contact() {
             <InfoCard
               icon={<FaEnvelope />}
               title="Email"
-              text="support@smaze.in"
+              text="hellosmaze@gmail.com"
             />
             <InfoCard
               icon={<FaMapMarkerAlt />}
