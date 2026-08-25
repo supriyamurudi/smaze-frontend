@@ -1,3 +1,4 @@
+// frontend/src/components/AdminNavbar.jsx
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
@@ -16,6 +17,7 @@ import {
   Sparkles,
   Shield,
   Award,
+  LayoutGrid, // ✅ ADDED THIS IMPORT
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProfile } from "../../services/adminService";
@@ -41,6 +43,11 @@ const AdminNavbar = () => {
       name: "Users",
       path: "/admin/users",
       icon: Users,
+    },
+    {
+      name: "Categories", // ✅ Updated to use the correct icon
+      path: "/admin/categories",
+      icon: LayoutGrid,
     },
     {
       name: "Shops",
