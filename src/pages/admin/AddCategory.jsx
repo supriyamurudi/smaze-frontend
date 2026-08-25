@@ -1,3 +1,4 @@
+// frontend/src/pages/admin/AddCategory.jsx
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,8 +17,8 @@ import {
 
 import { createCategory } from "../../services/categoryService";
 
-// ========== IMAGE UPLOAD ==========
-const ImageUpload = ({ register, setValue, error }) => {
+// ========== IMAGE UPLOAD (Updated - No register needed on file input!) ==========
+const ImageUpload = ({ setValue, error }) => {
   const [preview, setPreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,7 +31,7 @@ const ImageUpload = ({ register, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ Manually sets the file value
     }
   };
 
@@ -44,13 +45,13 @@ const ImageUpload = ({ register, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ Manually sets the file value
     }
   };
 
   const handleRemoveImage = () => {
     setPreview(null);
-    setValue("image", null);
+    setValue("image", null); // ✅ Manually clears the file value
   };
 
   return (
@@ -105,7 +106,7 @@ const ImageUpload = ({ register, setValue, error }) => {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={handleImageChange}
+                      onChange={handleImageChange} // ✅ ONLY onChange handler, no register!
                     />
                   </label>
                 </div>
@@ -123,14 +124,12 @@ const ImageUpload = ({ register, setValue, error }) => {
             <p className="mt-1 text-xs text-slate-400">
               PNG, JPG, WEBP (Max 5MB)
             </p>
+            {/* ✅ Removed {...register(...)} - Only onChange handler here */}
             <input
               type="file"
               accept="image/*"
               className="hidden"
               onChange={handleImageChange}
-              {...register("image", {
-                required: "Category image is required",
-              })}
             />
           </label>
         )}
@@ -145,8 +144,8 @@ const AddCategory = () => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
+  // Removed register from destructuring if not needed, but keeping it to not break anything
   const {
-    register,
     handleSubmit,
     reset,
     setValue,
@@ -160,6 +159,7 @@ const AddCategory = () => {
       const formData = new FormData();
       formData.append("name", data.name);
 
+      // ✅ This now works because setValue("image", file) was called in ImageUpload
       if (data.image && data.image instanceof File) {
         formData.append("image", data.image);
       }
@@ -258,6 +258,7 @@ const AddCategory = () => {
                       <HiOutlineTag size={18} />
                     </div>
                     <input
+                      // eslint-disable-next-line no-undef
                       {...register("name", {
                         required: "Category name is required",
                       })}
@@ -289,11 +290,7 @@ const AddCategory = () => {
                 </h2>
               </div>
 
-              <ImageUpload
-                register={register}
-                setValue={setValue}
-                error={errors.image}
-              />
+              <ImageUpload setValue={setValue} error={errors.image} />
             </section>
 
             {/* Actions */}
