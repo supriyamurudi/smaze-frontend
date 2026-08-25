@@ -1,11 +1,6 @@
 // frontend/src/pages/Contact.jsx
 import { motion } from "framer-motion";
-import {
-  FaPhoneAlt,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaClock,
-} from "react-icons/fa";
+import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function Contact() {
   return (
@@ -61,11 +56,6 @@ export default function Contact() {
               icon={<FaMapMarkerAlt />}
               title="Address"
               text="Belagavi, Karnataka, India"
-            />
-            <InfoCard
-              icon={<FaClock />}
-              title="Business Hours"
-              text="Mon - Sat : 9:00 AM - 6:00 PM"
             />
           </div>
         </div>
