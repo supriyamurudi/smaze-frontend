@@ -17,10 +17,48 @@ import {
   Sparkles,
   Shield,
   Award,
-  LayoutGrid, // ✅ ADDED THIS IMPORT
+  LayoutGrid,
+  Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProfile } from "../../services/adminService";
+import {
+  getAdminNotifications,
+  getAdminUnreadCount,
+  markAdminNotificationAsRead,
+  markAllAdminNotificationsAsRead,
+  getTimeAgo,
+} from "../../services/notificationService";
+import toast from "react-hot-toast";
+
+// ========== HELPER FUNCTIONS ==========
+const getNotificationIcon = (type) => {
+  const iconMap = {
+    user: <Users size={14} className="text-blue-500" />,
+    shop: <Store size={14} className="text-violet-500" />,
+    offer: <Tag size={14} className="text-emerald-500" />,
+    category: <LayoutGrid size={14} className="text-amber-500" />,
+    order: <FileText size={14} className="text-orange-500" />,
+    user_registered: <Users size={14} className="text-blue-500" />,
+    shop_created: <Store size={14} className="text-violet-500" />,
+    offer_created: <Tag size={14} className="text-emerald-500" />,
+  };
+  return iconMap[type] || <Bell size={14} className="text-slate-400" />;
+};
+
+const getNotificationColor = (type) => {
+  const colorMap = {
+    user: "bg-blue-50 border-blue-100",
+    shop: "bg-violet-50 border-violet-100",
+    offer: "bg-emerald-50 border-emerald-100",
+    category: "bg-amber-50 border-amber-100",
+    order: "bg-orange-50 border-orange-100",
+    user_registered: "bg-blue-50 border-blue-100",
+    shop_created: "bg-violet-50 border-violet-100",
+    offer_created: "bg-emerald-50 border-emerald-100",
+  };
+  return colorMap[type] || "bg-slate-50 border-slate-100";
+};
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
@@ -30,8 +68,14 @@ const AdminNavbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
   const profileRef = useRef(null);
   const notificationsRef = useRef(null);
+  const isFirstRender = useRef(true);
+  const pollingInterval = useRef(null);
 
   const navLinks = [
     {
@@ -45,7 +89,7 @@ const AdminNavbar = () => {
       icon: Users,
     },
     {
-      name: "Categories", // ✅ Updated to use the correct icon
+      name: "Categories",
       path: "/admin/categories",
       icon: LayoutGrid,
     },
@@ -66,51 +110,105 @@ const AdminNavbar = () => {
     },
   ];
 
-  const notifications = [
-    {
-      id: 1,
-      title: "New user registered",
-      description: "John Doe just joined the platform",
-      time: "5 min ago",
-      type: "user",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "New shop listed",
-      description: "Fashion Hub has been approved",
-      time: "1 hour ago",
-      type: "shop",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "Offer expiring soon",
-      description: "Summer Sale ends in 2 days",
-      time: "3 hours ago",
-      type: "offer",
-      read: true,
-    },
-  ];
+  // ========== FETCH FUNCTIONS ==========
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await getAdminUnreadCount();
+      setUnreadCount(response.count || 0);
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+    }
+  };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const fetchRecentNotifications = async () => {
+    try {
+      setLoadingNotifications(true);
+      const response = await getAdminNotifications({
+        limit: 5,
+        page: 1,
+        filter: "all",
+      });
+      setNotifications(response.notifications || []);
+      await fetchUnreadCount();
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
 
-  // Fetch profile data
+  // ========== MARK AS READ FUNCTIONS ==========
+  const handleMarkSingleAsRead = async (notificationId, e) => {
+    e.stopPropagation();
+    try {
+      await markAdminNotificationAsRead(notificationId);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n)),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      toast.success("Notification marked as read");
+    } catch (error) {
+      console.error("Error marking as read:", error);
+      toast.error("Failed to mark as read");
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAdminNotificationsAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+      toast.success("All notifications marked as read");
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+      toast.error("Failed to mark all as read");
+    }
+  };
+
+  // ========== HANDLE NOTIFICATION CLICK ==========
+  const handleNotificationClick = (notification) => {
+    if (notification.link) {
+      navigate(notification.link);
+      setIsNotificationsOpen(false);
+    }
+  };
+
+  // ========== FETCH PROFILE ==========
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await getProfile();
-        const userData = response.user || response.data || response;
-        setProfile(userData);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoadingProfile(false);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+
+      const fetchProfile = async () => {
+        try {
+          const response = await getProfile();
+          const userData = response.user || response.data || response;
+          setProfile(userData);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        } finally {
+          setLoadingProfile(false);
+        }
+      };
+
+      fetchProfile();
+      fetchRecentNotifications();
+      fetchUnreadCount();
+
+      // Set up polling every 30 seconds
+      pollingInterval.current = setInterval(() => {
+        fetchRecentNotifications();
+      }, 30000);
+    }
+
+    return () => {
+      // Clean up polling on unmount
+      if (pollingInterval.current) {
+        clearInterval(pollingInterval.current);
       }
     };
-    fetchProfile();
   }, []);
 
+  // ========== SCROLL HANDLER ==========
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -119,6 +217,7 @@ const AdminNavbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // ========== CLICK OUTSIDE HANDLER ==========
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -135,37 +234,17 @@ const AdminNavbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // ========== HANDLE LOGOUT ==========
   const handleLogout = () => {
+    // Clear polling on logout
+    if (pollingInterval.current) {
+      clearInterval(pollingInterval.current);
+    }
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case "user":
-        return <Users size={14} className="text-blue-500" />;
-      case "shop":
-        return <Store size={14} className="text-violet-500" />;
-      case "offer":
-        return <Tag size={14} className="text-emerald-500" />;
-      default:
-        return <Bell size={14} className="text-amber-500" />;
-    }
-  };
-
-  const getNotificationColor = (type) => {
-    switch (type) {
-      case "user":
-        return "bg-blue-50 border-blue-100";
-      case "shop":
-        return "bg-violet-50 border-violet-100";
-      case "offer":
-        return "bg-emerald-50 border-emerald-100";
-      default:
-        return "bg-amber-50 border-amber-100";
-    }
-  };
-
+  // ========== GET INITIALS ==========
   const getInitials = (name) => {
     if (!name) return "A";
     return name
@@ -176,6 +255,7 @@ const AdminNavbar = () => {
       .slice(0, 2);
   };
 
+  // ========== GET ROLE DISPLAY ==========
   const getRoleDisplay = (role) => {
     if (!role) return "Administrator";
     const roleMap = {
@@ -281,7 +361,12 @@ const AdminNavbar = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                  onClick={() => {
+                    setIsNotificationsOpen(!isNotificationsOpen);
+                    if (!isNotificationsOpen) {
+                      fetchRecentNotifications();
+                    }
+                  }}
                   className="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:bg-violet-50 hover:text-violet-600 transition-all relative"
                 >
                   <Bell size={20} />
@@ -291,7 +376,7 @@ const AdminNavbar = () => {
                       animate={{ scale: 1 }}
                       className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[10px] font-bold text-white flex items-center justify-center shadow-lg shadow-rose-200"
                     >
-                      {unreadCount}
+                      {unreadCount > 99 ? "99+" : unreadCount}
                     </motion.span>
                   )}
                 </motion.button>
@@ -307,63 +392,113 @@ const AdminNavbar = () => {
                     >
                       <div className="sticky top-0 z-10 bg-white p-4 border-b border-slate-100 flex items-center justify-between">
                         <div>
-                          <h3 className="font-bold text-slate-800">
+                          <h3 className="font-bold text-slate-800 flex items-center gap-2">
                             Notifications
+                            {unreadCount > 0 && (
+                              <span className="text-xs bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium">
+                                {unreadCount} new
+                              </span>
+                            )}
                           </h3>
                           <p className="text-xs text-slate-500">
-                            {unreadCount} unread
+                            {notifications.length} notifications
                           </p>
                         </div>
-                        <button className="text-xs font-medium text-violet-600 hover:text-violet-700">
-                          Mark all as read
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {unreadCount > 0 && (
+                            <button
+                              onClick={handleMarkAllAsRead}
+                              className="text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors"
+                            >
+                              Mark all read
+                            </button>
+                          )}
+                          <Link
+                            to="/admin/notifications"
+                            className="text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors"
+                            onClick={() => setIsNotificationsOpen(false)}
+                          >
+                            View All
+                          </Link>
+                        </div>
                       </div>
 
                       <div className="p-2 space-y-1">
-                        {notifications.map((notification) => (
-                          <motion.div
-                            key={notification.id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                              notification.read
-                                ? "bg-white border-transparent"
-                                : `bg-gradient-to-r ${getNotificationColor(
-                                    notification.type,
-                                  )} bg-opacity-10`
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="flex-shrink-0 h-8 w-8 rounded-xl bg-white shadow-sm flex items-center justify-center">
-                                {getNotificationIcon(notification.type)}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-800">
-                                  {notification.title}
-                                </p>
-                                <p className="text-xs text-slate-500 mt-0.5">
-                                  {notification.description}
-                                </p>
-                                <p className="text-[10px] text-slate-400 mt-1">
-                                  {notification.time}
-                                </p>
-                              </div>
-                              {!notification.read && (
-                                <span className="flex-shrink-0 h-2 w-2 rounded-full bg-violet-500"></span>
-                              )}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
+                        {loadingNotifications ? (
+                          <div className="flex items-center justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+                          </div>
+                        ) : notifications.length === 0 ? (
+                          <div className="text-center py-8">
+                            <div className="text-4xl mb-2">🔔</div>
+                            <p className="text-sm font-medium text-slate-700">
+                              No notifications yet
+                            </p>
+                            <p className="text-xs text-slate-400 mt-1">
+                              We'll notify you when something happens
+                            </p>
+                          </div>
+                        ) : (
+                          notifications.map((notification) => (
+                            <motion.div
+                              key={notification.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className={`p-3 rounded-xl border transition-all cursor-pointer ${
+                                notification.isRead
+                                  ? "bg-white border-transparent hover:bg-slate-50"
+                                  : `bg-gradient-to-r ${getNotificationColor(
+                                      notification.type,
+                                    )} bg-opacity-10 border-opacity-30`
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div
+                                  className="flex-1 min-w-0 cursor-pointer"
+                                  onClick={() =>
+                                    handleNotificationClick(notification)
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex-shrink-0 h-8 w-8 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                                      {getNotificationIcon(notification.type)}
+                                    </div>
+                                    <p className="text-sm font-semibold text-slate-800 flex-1">
+                                      {notification.title}
+                                    </p>
+                                    {notification.priority === "high" && (
+                                      <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-[8px] font-bold rounded-full">
+                                        HIGH
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 ml-10">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 mt-1 ml-10">
+                                    {getTimeAgo(notification.createdAt)}
+                                  </p>
+                                </div>
 
-                      <div className="sticky bottom-0 bg-white p-3 border-t border-slate-100 text-center">
-                        <Link
-                          to="/admin/notifications"
-                          className="text-xs font-medium text-violet-600 hover:text-violet-700"
-                          onClick={() => setIsNotificationsOpen(false)}
-                        >
-                          View all notifications
-                        </Link>
+                                {!notification.isRead && (
+                                  <button
+                                    onClick={(e) =>
+                                      handleMarkSingleAsRead(notification.id, e)
+                                    }
+                                    className="flex-shrink-0 p-1.5 rounded-lg text-violet-600 hover:bg-violet-100 transition-colors"
+                                    title="Mark as read"
+                                  >
+                                    <Check size={14} />
+                                  </button>
+                                )}
+
+                                {!notification.isRead && (
+                                  <span className="flex-shrink-0 h-2 w-2 rounded-full bg-violet-500 mt-1"></span>
+                                )}
+                              </div>
+                            </motion.div>
+                          ))
+                        )}
                       </div>
                     </motion.div>
                   )}
