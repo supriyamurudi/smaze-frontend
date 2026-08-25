@@ -204,7 +204,7 @@ const CustomerCategories = () => {
     Entertainment: "🎬",
     Health: "💊",
     Education: "📚",
-    Automotive: "🚗",
+    Automobile: "🚗",
     Home: "🏠",
   };
 
