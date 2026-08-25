@@ -8,9 +8,6 @@ import {
   FaClock,
   FaGift,
   FaShoppingBag,
-  FaStore,
-  FaUsers,
-  FaLightbulb,
   FaStar,
   FaShieldAlt,
 } from "react-icons/fa";
@@ -247,59 +244,7 @@ export default function Hero() {
             </motion.div>
           </div>
         </div>
-
-        {/* Statistics Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 mt-8 sm:mt-10 lg:mt-12"
-        >
-          <Stat
-            icon={<FaStore />}
-            number={formatNumber(stats.totalShops)}
-            text="Verified Shops"
-            loading={loading}
-          />
-          <Stat
-            icon={<FaUsers />}
-            number={formatNumber(stats.totalCustomers)}
-            text="Happy Customers"
-            loading={loading}
-          />
-          <Stat
-            icon={<FaLightbulb />}
-            number={formatNumber(stats.totalOffers)}
-            text="Active Offers"
-            loading={loading}
-          />
-        </motion.div>
       </div>
     </section>
-  );
-}
-
-function Stat({ icon, number, text, loading }) {
-  return (
-    <motion.div
-      whileHover={{ y: -3, scale: 1.02 }}
-      transition={{ duration: 0.2 }}
-      className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl lg:rounded-3xl p-3.5 sm:p-4 lg:p-5 shadow-lg border border-white flex items-center gap-3 sm:gap-4"
-    >
-      <div className="h-9 w-9 sm:h-11 sm:w-11 lg:h-13 lg:w-13 rounded-xl sm:rounded-2xl bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white flex items-center justify-center text-sm sm:text-base lg:text-lg flex-shrink-0">
-        {icon}
-      </div>
-
-      <div>
-        <h3 className="text-base sm:text-lg lg:text-xl font-black text-gray-900">
-          {loading ? (
-            <span className="inline-block w-10 sm:w-14 h-5 sm:h-7 bg-slate-200 rounded animate-pulse"></span>
-          ) : (
-            number
-          )}
-        </h3>
-        <p className="text-[10px] sm:text-xs text-gray-500">{text}</p>
-      </div>
-    </motion.div>
   );
 }
