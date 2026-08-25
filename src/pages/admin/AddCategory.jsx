@@ -146,6 +146,7 @@ const AddCategory = () => {
 
   // Removed register from destructuring if not needed, but keeping it to not break anything
   const {
+    register,
     handleSubmit,
     reset,
     setValue,
@@ -258,7 +259,6 @@ const AddCategory = () => {
                       <HiOutlineTag size={18} />
                     </div>
                     <input
-                      // eslint-disable-next-line no-undef
                       {...register("name", {
                         required: "Category name is required",
                       })}
