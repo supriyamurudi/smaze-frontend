@@ -1,3 +1,4 @@
+// frontend/src/components/Navbar.jsx
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import smazeLogo from "../assets/icons/smazeLogo.jpeg";
@@ -53,7 +54,6 @@ const Navbar = () => {
           }
         `}
       >
-        {/* IMPORTANT: grid prevents hamburger from being pushed */}
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
           <div
             className="
@@ -166,7 +166,6 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center gap-3 xl:gap-4 flex-shrink-0">
               <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-white border border-gray-200 shadow-sm">
                 <FaMapMarkerAlt className="text-pink-500 text-sm" />
-
                 <span className="text-sm font-medium text-gray-700">
                   Belagavi
                 </span>
@@ -202,7 +201,7 @@ const Navbar = () => {
               hover:bg-gray-100
               active:bg-gray-200
               transition-all
-              ml-2  // Reduce this or use -mr-1
+              ml-2
             "
               aria-label="Open menu"
             >
@@ -211,6 +210,9 @@ const Navbar = () => {
           </div>
         </div>
       </header>
+
+      {/* ✅ SPACER - This prevents content from hiding behind the fixed navbar */}
+      <div className="h-16 sm:h-20 lg:h-0" />
 
       {/* Mobile Drawer */}
       <aside
