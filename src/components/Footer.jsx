@@ -1,5 +1,6 @@
 // frontend/src/components/Footer.jsx
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaFacebookF,
@@ -11,6 +12,7 @@ import {
 } from "react-icons/fa";
 
 const Footer = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -21,6 +23,10 @@ const Footer = () => {
       setEmail("");
       setTimeout(() => setIsSubscribed(false), 3000);
     }
+  };
+
+  const handleCategoryClick = (category) => {
+    navigate(`/offers?category=${encodeURIComponent(category)}`);
   };
 
   return (
@@ -167,16 +173,20 @@ const Footer = () => {
         >
           {/* Brand */}
           <div className="text-center sm:text-left">
-            <h2
-              className="
-                text-3xl sm:text-4xl
-                font-black
-                text-white
-              "
-            >
-              <span className="text-purple-500">S</span>
-              maze
-            </h2>
+            <Link to="/" className="inline-block">
+              <h2
+                className="
+                  text-3xl sm:text-4xl
+                  font-black
+                  text-white
+                  hover:text-purple-400
+                  transition
+                "
+              >
+                <span className="text-purple-500">S</span>
+                maze
+              </h2>
+            </Link>
 
             <p
               className="
@@ -193,7 +203,9 @@ const Footer = () => {
 
             <div className="flex gap-3 sm:gap-4 mt-6 sm:mt-8 justify-center sm:justify-start">
               <a
-                href="#"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="
                   w-9 sm:w-10 md:w-11
                   h-9 sm:h-10 md:h-11
@@ -211,7 +223,9 @@ const Footer = () => {
               </a>
 
               <a
-                href="#"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="
                   w-9 sm:w-10 md:w-11
                   h-9 sm:h-10 md:h-11
@@ -244,22 +258,78 @@ const Footer = () => {
             </h3>
 
             <ul className="space-y-2.5 sm:space-y-3 md:space-y-4">
-              {["Home", "Offers", "Categories", "Shops", "About Us"].map(
-                (item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="
-                        text-sm sm:text-base
-                        hover:text-pink-400
-                        transition
-                      "
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ),
-              )}
+              <li>
+                <Link
+                  to="/"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/offers"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  Offers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/categories"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/customer/shops"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  Shops
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="
+                    text-sm sm:text-base
+                    hover:text-pink-400
+                    transition
+                  "
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -283,9 +353,11 @@ const Footer = () => {
                 "Electronics",
                 "Fitness",
                 "Beauty & Salon",
+                "Home & Furniture",
               ].map((item) => (
                 <li
                   key={item}
+                  onClick={() => handleCategoryClick(item)}
                   className="
                     text-sm sm:text-base
                     hover:text-purple-400
@@ -336,7 +408,12 @@ const Footer = () => {
                     flex-shrink-0
                   "
                 />
-                <p className="text-sm sm:text-base">+91 XXXXX XXXXX</p>
+                <a
+                  href="tel:+91XXXXXXXXX"
+                  className="text-sm sm:text-base hover:text-purple-400 transition"
+                >
+                  +91 XXXXX XXXXX
+                </a>
               </div>
 
               <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
@@ -348,7 +425,12 @@ const Footer = () => {
                     flex-shrink-0
                   "
                 />
-                <p className="text-sm sm:text-base">hellosmaze@gmail.com</p>
+                <a
+                  href="mailto:hellosmaze@gmail.com"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
+                >
+                  hellosmaze@gmail.com
+                </a>
               </div>
             </div>
           </div>
@@ -372,31 +454,31 @@ const Footer = () => {
           "
         >
           <p className="text-xs sm:text-sm text-slate-400 text-center">
-            2026
+            © {new Date().getFullYear()}
             <span className="text-white font-semibold"> Smaze</span>. All rights
             reserved.
           </p>
 
           <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm flex-wrap justify-center">
-            <a
-              href="#"
+            <Link
+              to="/privacy-policy"
               className="
                 hover:text-pink-400
                 transition
               "
             >
               Privacy Policy
-            </a>
+            </Link>
 
-            <a
-              href="#"
+            <Link
+              to="/terms"
               className="
                 hover:text-purple-400
                 transition
               "
             >
               Terms & Conditions
-            </a>
+            </Link>
           </div>
         </div>
       </div>
