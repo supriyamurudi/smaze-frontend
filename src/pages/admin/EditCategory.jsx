@@ -1,3 +1,4 @@
+// src/pages/admin/EditCategory.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -57,8 +58,8 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// ========== IMAGE UPLOAD ==========
-const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
+// ========== IMAGE UPLOAD (✅ FIXED: No register() on file input!) ==========
+const ImageUpload = ({ preview, setPreview, setValue, error }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleImageChange = (e) => {
@@ -70,7 +71,7 @@ const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ Manually stores the file in react-hook-form
     }
   };
 
@@ -84,13 +85,13 @@ const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ Manually stores the file
     }
   };
 
   const handleRemoveImage = () => {
     setPreview(null);
-    setValue("image", null);
+    setValue("image", null); // ✅ Manually clears the file
   };
 
   return (
@@ -141,6 +142,7 @@ const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
                 <div className="mt-3">
                   <label className="cursor-pointer rounded-lg bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-200">
                     Change Image
+                    {/* ✅ Removed register, only onChange */}
                     <input
                       type="file"
                       accept="image/*"
@@ -163,11 +165,11 @@ const ImageUpload = ({ preview, setPreview, register, setValue, error }) => {
             <p className="mt-1 text-xs text-slate-400">
               PNG, JPG, WEBP (Max 5MB)
             </p>
+            {/* ✅ Removed register, only onChange */}
             <input
               type="file"
               accept="image/*"
               className="hidden"
-              {...register("image")}
               onChange={handleImageChange}
             />
           </label>
@@ -214,10 +216,6 @@ export default function EditCategory() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ Debug log
-  console.log("🔍 EditCategory - ID from URL:", id);
-  console.log("🔍 EditCategory - Full URL:", window.location.pathname);
-
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -239,11 +237,7 @@ export default function EditCategory() {
         setLoading(true);
         setError(null);
 
-        console.log("📡 Fetching category with ID:", id);
-
-        // If no ID, show error
         if (!id) {
-          console.error("❌ No ID provided in URL");
           setError("No category ID provided");
           setLoading(false);
           return;
@@ -251,16 +245,11 @@ export default function EditCategory() {
 
         const response = await getCategoryById(id);
 
-        console.log("📦 API Response:", response);
-
-        // Handle different response structures
         const data = response.category || response.data || response;
 
         if (!data) {
           throw new Error("Category not found");
         }
-
-        console.log("✅ Category data:", data);
 
         setCategory(data);
         setPreview(data.image || null);
@@ -271,7 +260,6 @@ export default function EditCategory() {
           description: data.description || "",
         });
       } catch (error) {
-        console.error("❌ Error fetching category:", error);
         setError(error.message || "Failed to load category");
         toast.error(error.response?.data?.message || "Failed to load category");
       } finally {
@@ -279,8 +267,6 @@ export default function EditCategory() {
       }
     };
 
-    // ✅ Data fetching is a valid use case for useEffect
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategory();
   }, [id, reset]);
 
@@ -297,8 +283,6 @@ export default function EditCategory() {
       if (data.image && data.image instanceof File) {
         formData.append("image", data.image);
       }
-
-      console.log("📦 Updating category:", Object.fromEntries(formData));
 
       await updateCategory(id, formData);
 
@@ -493,8 +477,7 @@ export default function EditCategory() {
               <ImageUpload
                 preview={preview}
                 setPreview={setPreview}
-                register={register}
-                setValue={setValue}
+                setValue={setValue} // ✅ Pass setValue only, NOT register
                 error={errors.image}
               />
             </section>
