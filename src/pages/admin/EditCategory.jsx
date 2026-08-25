@@ -1,5 +1,5 @@
 // src/pages/admin/EditCategory.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
@@ -58,8 +58,14 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// ========== IMAGE UPLOAD (✅ FIXED: No register() on file input!) ==========
-const ImageUpload = ({ preview, setPreview, setValue, error }) => {
+// ========== IMAGE UPLOAD (Uses useRef to guarantee file capture!) ==========
+const ImageUpload = ({
+  preview,
+  setPreview,
+  setValue,
+  fileInputRef,
+  error,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleImageChange = (e) => {
@@ -71,7 +77,7 @@ const ImageUpload = ({ preview, setPreview, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file); // ✅ Manually stores the file in react-hook-form
+      setValue("image", file);
     }
   };
 
@@ -85,13 +91,13 @@ const ImageUpload = ({ preview, setPreview, setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file); // ✅ Manually stores the file
+      setValue("image", file);
     }
   };
 
   const handleRemoveImage = () => {
     setPreview(null);
-    setValue("image", null); // ✅ Manually clears the file
+    setValue("image", null);
   };
 
   return (
@@ -142,8 +148,8 @@ const ImageUpload = ({ preview, setPreview, setValue, error }) => {
                 <div className="mt-3">
                   <label className="cursor-pointer rounded-lg bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-200">
                     Change Image
-                    {/* ✅ Removed register, only onChange */}
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -165,8 +171,8 @@ const ImageUpload = ({ preview, setPreview, setValue, error }) => {
             <p className="mt-1 text-xs text-slate-400">
               PNG, JPG, WEBP (Max 5MB)
             </p>
-            {/* ✅ Removed register, only onChange */}
             <input
+              ref={fileInputRef}
               type="file"
               accept="image/*"
               className="hidden"
@@ -215,6 +221,7 @@ const LoadingSkeleton = () => (
 export default function EditCategory() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null); // ✅ Grabs the file directly!
 
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -224,10 +231,9 @@ export default function EditCategory() {
 
   const {
     register,
-    handleSubmit,
-    formState: { errors },
     reset,
     setValue,
+    formState: { errors },
   } = useForm();
 
   // ========== FETCH CATEGORY ==========
@@ -270,18 +276,27 @@ export default function EditCategory() {
     fetchCategory();
   }, [id, reset]);
 
-  // ========== SUBMIT ==========
-  const onSubmit = async (data) => {
+  // ========== SUBMIT (Uses e.preventDefault() to be crash-proof) ==========
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
       setSubmitting(true);
 
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("status", data.status || "active");
-      formData.append("description", data.description || "");
+      // Get data from DOM directly
+      const name = e.target.elements.name.value;
+      const status = e.target.elements.status.value;
+      const description = e.target.elements.description.value;
 
-      if (data.image && data.image instanceof File) {
-        formData.append("image", data.image);
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("status", status);
+      formData.append("description", description);
+
+      // ✅ Use ref to grab the file if it exists!
+      if (fileInputRef.current?.files?.[0]) {
+        const file = fileInputRef.current.files[0];
+        formData.append("image", file);
       }
 
       await updateCategory(id, formData);
@@ -384,10 +399,7 @@ export default function EditCategory() {
           transition={{ delay: 0.1 }}
           className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="p-6 sm:p-8 space-y-8"
-          >
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
             {/* Basic Information */}
             <section>
               <div className="mb-6 flex items-center gap-3">
@@ -410,6 +422,7 @@ export default function EditCategory() {
                       <HiOutlineTag size={18} />
                     </div>
                     <input
+                      name="name"
                       {...register("name", {
                         required: "Category name is required",
                       })}
@@ -434,6 +447,7 @@ export default function EditCategory() {
                     Status
                   </label>
                   <select
+                    name="status"
                     {...register("status")}
                     className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition appearance-none focus:ring-2 focus:ring-violet-500"
                   >
@@ -453,6 +467,7 @@ export default function EditCategory() {
                       <HiOutlineDocumentText size={18} />
                     </div>
                     <textarea
+                      name="description"
                       {...register("description")}
                       rows="4"
                       className="w-full rounded-xl border-0 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 resize-none focus:ring-2 focus:ring-violet-500"
@@ -477,38 +492,14 @@ export default function EditCategory() {
               <ImageUpload
                 preview={preview}
                 setPreview={setPreview}
-                setValue={setValue} // ✅ Pass setValue only, NOT register
+                setValue={setValue}
+                fileInputRef={fileInputRef} // ✅ Pass the ref here!
                 error={errors.image}
               />
             </section>
 
             {/* Actions */}
             <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-8 sm:flex-row sm:justify-end sm:gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  reset({
-                    name: category.name || "",
-                    status: category.status || "active",
-                    description: category.description || "",
-                  });
-                  setPreview(category.image || null);
-                  setValue("image", null);
-                }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
-              >
-                <HiOutlineXCircle size={18} />
-                Reset
-              </button>
-              <Link to="/admin/categories">
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
-                >
-                  <HiOutlineXCircle size={18} />
-                  Cancel
-                </button>
-              </Link>
               <motion.button
                 type="submit"
                 disabled={submitting}

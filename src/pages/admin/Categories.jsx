@@ -1,5 +1,5 @@
 // src/pages/customer/Categories.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -12,7 +12,7 @@ import {
   HiOutlineClock,
   HiOutlineTag,
   HiOutlineXMark,
-  HiOutlinePlus, // ✅ ADDED THIS
+  HiOutlinePlus,
   HiOutlinePencil,
 } from "react-icons/hi2";
 
@@ -70,36 +70,47 @@ const CustomerCategories = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Category content state
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [shops, setShops] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loadingContent, setLoadingContent] = useState(false);
-  const [showContent, setShowContent] = useState(false);
 
-  // Get category from URL params
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const categoryParam = params.get("category");
+  // ✅ FIX: Extract categoryParam from URL directly
+  const params = new URLSearchParams(location.search);
+  const categoryParam = params.get("category");
 
-    if (categoryParam && categories.length > 0) {
-      const foundCategory = categories.find(
-        (c) =>
-          c.id === categoryParam ||
-          c.slug === categoryParam ||
-          c.name.toLowerCase() === categoryParam.toLowerCase(),
-      );
-      if (foundCategory) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setSelectedCategory(foundCategory);
-        setShowContent(true);
-        // eslint-disable-next-line react-hooks/immutability
-        fetchCategoryContent(foundCategory.id);
-      }
-    } else {
-      setShowContent(false);
-      setSelectedCategory(null);
+  // ✅ FIX: Derive selectedCategory directly (No useEffect needed!)
+  const selectedCategory = categories.find(
+    (c) =>
+      c.id === categoryParam ||
+      c.slug === categoryParam ||
+      c.name.toLowerCase() === categoryParam?.toLowerCase(),
+  );
+  const showContent = !!selectedCategory;
+
+  // ✅ FIXED: Define fetchCategoryContent BEFORE useEffect using useCallback
+  const fetchCategoryContent = useCallback(async (categoryId) => {
+    try {
+      setLoadingContent(true);
+      const shopsResponse = await getShopsByCategory(categoryId);
+      setShops(shopsResponse.data || []);
+      const offersResponse = await getOffersByCategory(categoryId);
+      setOffers(offersResponse.data || []);
+    } catch (error) {
+      console.error("Error fetching category content:", error);
+      toast.error("Failed to load category content");
+    } finally {
+      setLoadingContent(false);
     }
-  }, [location.search, categories]);
+  }, []);
+
+  // ✅ FIX: Use this effect ONLY to fetch content when category changes
+  useEffect(() => {
+    if (selectedCategory) {
+      // ✅ ESLint disable comment to silence the warning for this specific line
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchCategoryContent(selectedCategory.id);
+    }
+  }, [selectedCategory?.id, fetchCategoryContent]);
 
   // Fetch categories
   useEffect(() => {
@@ -130,34 +141,15 @@ const CustomerCategories = () => {
     };
   }, []);
 
-  // Fetch category content
-  const fetchCategoryContent = async (categoryId) => {
-    try {
-      setLoadingContent(true);
-      const shopsResponse = await getShopsByCategory(categoryId);
-      setShops(shopsResponse.data || []);
-      const offersResponse = await getOffersByCategory(categoryId);
-      setOffers(offersResponse.data || []);
-    } catch (error) {
-      console.error("Error fetching category content:", error);
-      toast.error("Failed to load category content");
-    } finally {
-      setLoadingContent(false);
-    }
-  };
-
   const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    setShowContent(true);
+    setShops([]);
+    setOffers([]);
     navigate(
       `/customer/categories?category=${encodeURIComponent(category.name)}`,
     );
-    fetchCategoryContent(category.id);
   };
 
   const handleCloseContent = () => {
-    setShowContent(false);
-    setSelectedCategory(null);
     setShops([]);
     setOffers([]);
     navigate("/customer/categories");
@@ -268,7 +260,7 @@ const CustomerCategories = () => {
               </p>
             </div>
 
-            {/* ✅ ADDED: Actions Section */}
+            {/* ✅ ADDED: Actions Section (Only Add Button - NO Edit here!) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 to="/customer/offers"
@@ -285,15 +277,6 @@ const CustomerCategories = () => {
               >
                 <HiOutlinePlus size={16} className="sm:w-5 sm:h-5" />
                 Add Category
-              </Link>
-
-              {/* ✅ ADDED: Edit Category Button */}
-              <Link
-                to="/admin/EditCategory"
-                className="inline-flex items-center gap-1 sm:gap-2 rounded-xl border-2 border-violet-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-violet-700 transition hover:bg-violet-50 hover:border-violet-300"
-              >
-                <HiOutlinePencil size={16} className="sm:w-5 sm:h-5" />
-                Edit Category
               </Link>
             </div>
           </div>
@@ -616,20 +599,31 @@ const CustomerCategories = () => {
           // Categories Grid View - Mobile Responsive
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {filteredCategories.map((category, index) => (
-              <motion.button
+              <motion.div
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -4 }}
                 onClick={() => handleCategoryClick(category)}
-                className="group relative block w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 md:p-6 text-center shadow-md transition-all duration-300 hover:shadow-xl"
+                className="group relative block w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white p-3 sm:p-4 md:p-6 text-center shadow-md transition-all duration-300 hover:shadow-xl cursor-pointer"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${getCategoryColor(
                     index,
                   )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
                 />
+
+                {/* ✅ ADDED: Edit Icon per category card */}
+                <div className="absolute top-2 right-2 z-10">
+                  <Link
+                    to={`/admin/categories/edit/${category.id}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md text-violet-600 hover:bg-violet-50"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <HiOutlinePencil size={14} />
+                  </Link>
+                </div>
 
                 <div className="relative mx-auto flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110">
                   <span className="text-3xl sm:text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
@@ -646,7 +640,7 @@ const CustomerCategories = () => {
                     index,
                   )} transition-all duration-300 group-hover:w-8 sm:group-hover:w-12`}
                 />
-              </motion.button>
+              </motion.div>
             ))}
           </div>
         )}
