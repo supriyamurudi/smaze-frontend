@@ -3,7 +3,7 @@ import axios from "axios";
 
 // ✅ Get the API URL with fallback
 // Vite injects env variables at build time - use import.meta.env
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL + "/api";
 
 console.log("🔧 API URL configured:", API_URL); // This will help debug
 
@@ -12,7 +12,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000,
+  timeout: 30000,
 });
 
 // Request interceptor
