@@ -13,6 +13,7 @@ import {
   HiOutlineTag,
   HiOutlineXMark,
   HiOutlinePlus, // ✅ ADDED THIS
+  HiOutlinePencil,
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -284,6 +285,15 @@ const CustomerCategories = () => {
               >
                 <HiOutlinePlus size={16} className="sm:w-5 sm:h-5" />
                 Add Category
+              </Link>
+
+              {/* ✅ ADDED: Edit Category Button */}
+              <Link
+                to={`/admin/categories/edit/${selectedCategory?.id}`}
+                className="inline-flex items-center gap-1 sm:gap-2 rounded-xl border-2 border-violet-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-violet-700 transition hover:bg-violet-50 hover:border-violet-300"
+              >
+                <HiOutlinePencil size={16} className="sm:w-5 sm:h-5" />
+                Edit Category
               </Link>
             </div>
           </div>
