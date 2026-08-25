@@ -212,7 +212,7 @@ const Navbar = () => {
       </header>
 
       {/* ✅ SPACER - This prevents content from hiding behind the fixed navbar */}
-      <div className="h-16 sm:h-20 lg:h-0" />
+      <div className="h-14 sm:h-10 lg:h-0" />
 
       {/* Mobile Drawer */}
       <aside
