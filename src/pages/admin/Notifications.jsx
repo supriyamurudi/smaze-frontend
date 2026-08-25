@@ -1,28 +1,28 @@
-// src/pages/admin/Notifications.jsx
-import { useEffect, useState, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
+// src/pages/admin/AdminNotifications.jsx
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 import {
-  HiOutlineArrowLeft,
   HiOutlineBell,
+  HiOutlineBuildingStorefront,
   HiOutlineCheck,
   HiOutlineTrash,
   HiOutlineCheckCircle,
+  HiOutlineArrowLeft,
   HiOutlineUser,
-  HiOutlineBuildingStorefront,
   HiOutlineTag,
   HiOutlineFolder,
   HiOutlineShoppingCart,
   HiOutlineCreditCard,
   HiOutlineCog,
   HiOutlineChartBar,
-  HiOutlineClock,
   HiOutlineUserGroup,
   HiOutlineFilter,
   HiOutlineRefresh,
 } from "react-icons/hi2";
+
+import toast from "react-hot-toast";
 
 import {
   getAdminNotifications,
@@ -33,6 +33,308 @@ import {
   deleteAllAdminNotifications,
   getTimeAgo,
 } from "../../services/notificationService";
+
+// ========== STATS BADGE ==========
+const StatsBadge = ({ count }) => (
+  <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
+    {count} New
+  </span>
+);
+
+// ========== FILTER BUTTONS ==========
+const FilterButtons = ({ activeFilter, setActiveFilter, counts }) => {
+  const filters = [
+    { label: `All (${counts.total})`, value: "all" },
+    { label: `Unread (${counts.unread})`, value: "unread" },
+    { label: `Read (${counts.read})`, value: "read" },
+  ];
+
+  return (
+    <div className="flex gap-2 rounded-xl bg-white p-1 shadow-sm border border-slate-200">
+      {filters.map((filter) => (
+        <button
+          key={filter.value}
+          onClick={() => setActiveFilter(filter.value)}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+            activeFilter === filter.value
+              ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// ========== TYPE FILTER ==========
+const TypeFilter = ({ selectedType, setSelectedType, types }) => {
+  return (
+    <select
+      value={selectedType}
+      onChange={(e) => setSelectedType(e.target.value)}
+      className="rounded-xl border-0 bg-white px-4 py-2 text-sm text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-violet-500"
+    >
+      {types.map((type) => (
+        <option key={type} value={type}>
+          {type === "all"
+            ? "All Types"
+            : type.charAt(0).toUpperCase() + type.slice(1)}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+// ========== NOTIFICATION CARD ==========
+const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const getIcon = (type) => {
+    const iconMap = {
+      user: <HiOutlineUser size={24} className="text-blue-500" />,
+      shop: (
+        <HiOutlineBuildingStorefront size={24} className="text-violet-500" />
+      ),
+      offer: <HiOutlineTag size={24} className="text-emerald-500" />,
+      category: <HiOutlineFolder size={24} className="text-amber-500" />,
+      order: <HiOutlineShoppingCart size={24} className="text-orange-500" />,
+      payment: <HiOutlineCreditCard size={24} className="text-green-500" />,
+      system: <HiOutlineCog size={24} className="text-slate-500" />,
+      report: <HiOutlineChartBar size={24} className="text-rose-500" />,
+      user_group: <HiOutlineUserGroup size={24} className="text-indigo-500" />,
+    };
+    return (
+      iconMap[type] || <HiOutlineBell size={24} className="text-slate-400" />
+    );
+  };
+
+  const getBg = (type) => {
+    const colorMap = {
+      user: "bg-blue-50",
+      shop: "bg-violet-50",
+      offer: "bg-emerald-50",
+      category: "bg-amber-50",
+      order: "bg-orange-50",
+      payment: "bg-green-50",
+      system: "bg-slate-50",
+      report: "bg-rose-50",
+      user_group: "bg-indigo-50",
+    };
+    return colorMap[type] || "bg-slate-50";
+  };
+
+  const getPriorityBadge = (priority) => {
+    const priorityMap = {
+      low: { color: "bg-slate-100 text-slate-600", label: "Low" },
+      normal: { color: "bg-blue-100 text-blue-600", label: "Normal" },
+      high: { color: "bg-amber-100 text-amber-600", label: "High" },
+      urgent: { color: "bg-rose-100 text-rose-600", label: "Urgent" },
+    };
+    return priorityMap[priority] || priorityMap.normal;
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    await onDelete(notification.id);
+    setIsDeleting(false);
+  };
+
+  const handleCardClick = () => {
+    if (notification.link) {
+      window.location.href = notification.link;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      whileHover={{ y: -4 }}
+      className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer ${
+        notification.isRead
+          ? "bg-white border-slate-200"
+          : "bg-gradient-to-r from-violet-50/80 to-purple-50/80 border-violet-200 shadow-md"
+      } hover:shadow-xl`}
+      onClick={handleCardClick}
+    >
+      <div className="flex gap-5 p-6">
+        {/* Icon */}
+        <div className="relative shrink-0">
+          <div
+            className={`flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${
+              getBg(notification.type) || "bg-violet-100"
+            }`}
+          >
+            {getIcon(notification.type)}
+          </div>
+          {!notification.isRead && (
+            <div className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-rose-500 animate-pulse"></div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2
+                className={`text-lg font-semibold ${
+                  notification.isRead ? "text-slate-600" : "text-slate-800"
+                }`}
+              >
+                {notification.title || "Notification"}
+              </h2>
+              {!notification.isRead && (
+                <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white uppercase">
+                  New
+                </span>
+              )}
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${getPriorityBadge(notification.priority).color}`}
+              >
+                {getPriorityBadge(notification.priority).label}
+              </span>
+              {notification.type && (
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-medium">
+                  {notification.type.charAt(0).toUpperCase() +
+                    notification.type.slice(1)}
+                </span>
+              )}
+            </div>
+            <span className="whitespace-nowrap text-sm text-slate-400">
+              {getTimeAgo(notification.createdAt)}
+            </span>
+          </div>
+
+          <p
+            className={`mt-2 leading-relaxed ${
+              notification.isRead ? "text-slate-500" : "text-slate-600"
+            }`}
+          >
+            {notification.message}
+          </p>
+
+          {/* Actions */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {!notification.isRead && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMarkRead(notification.id);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 px-3 py-1.5 text-xs font-semibold text-violet-700 transition hover:bg-violet-200"
+              >
+                <HiOutlineCheck size={14} />
+                Mark as Read
+              </button>
+            )}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200"
+            >
+              {isExpanded ? "Show Less" : "Show More"}
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete();
+              }}
+              disabled={isDeleting}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-500 transition hover:bg-red-100 disabled:opacity-50"
+            >
+              {isDeleting ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent"></div>
+              ) : (
+                <HiOutlineTrash size={14} />
+              )}
+              Delete
+            </button>
+          </div>
+
+          {/* Expanded Content */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-4 overflow-hidden rounded-xl bg-slate-50 p-4"
+              >
+                <div className="space-y-2 text-sm text-slate-600">
+                  <p>
+                    <span className="font-semibold">ID:</span> {notification.id}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Type:</span>{" "}
+                    {notification.type}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Priority:</span>{" "}
+                    {notification.priority}
+                  </p>
+                  {notification.link && (
+                    <p>
+                      <span className="font-semibold">Link:</span>{" "}
+                      {notification.link}
+                    </p>
+                  )}
+                  <p>
+                    <span className="font-semibold">Created:</span>{" "}
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </p>
+                  {notification.metadata && (
+                    <p>
+                      <span className="font-semibold">Metadata:</span>{" "}
+                      {JSON.stringify(notification.metadata, null, 2)}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Read indicator line */}
+      {!notification.isRead && (
+        <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-violet-600 to-purple-600"></div>
+      )}
+    </motion.div>
+  );
+};
+
+// ========== EMPTY STATE ==========
+const EmptyState = ({ filter }) => (
+  <motion.div
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    className="rounded-3xl border-2 border-dashed border-slate-300 bg-white/50 py-20 text-center backdrop-blur-sm"
+  >
+    <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-violet-100">
+      <HiOutlineBell size={48} className="text-violet-400" />
+    </div>
+    <h2 className="text-2xl font-bold text-slate-700">
+      {filter === "unread"
+        ? "No Unread Notifications!"
+        : filter === "read"
+          ? "No Read Notifications!"
+          : "All Caught Up!"}
+    </h2>
+    <p className="mt-2 text-slate-500">
+      {filter === "unread"
+        ? "You've read all your notifications."
+        : filter === "read"
+          ? "You haven't read any notifications yet."
+          : "You have no notifications at the moment."}
+    </p>
+  </motion.div>
+);
 
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
@@ -61,179 +363,23 @@ const SkeletonLoader = () => (
   </div>
 );
 
-// ========== NOTIFICATION ITEM ==========
-const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const getIcon = (type) => {
-    const iconMap = {
-      user: <HiOutlineUser className="text-blue-500" size={20} />,
-      shop: (
-        <HiOutlineBuildingStorefront className="text-violet-500" size={20} />
-      ),
-      offer: <HiOutlineTag className="text-emerald-500" size={20} />,
-      category: <HiOutlineFolder className="text-amber-500" size={20} />,
-      order: <HiOutlineShoppingCart className="text-orange-500" size={20} />,
-      payment: <HiOutlineCreditCard className="text-green-500" size={20} />,
-      system: <HiOutlineCog className="text-slate-500" size={20} />,
-      report: <HiOutlineChartBar className="text-rose-500" size={20} />,
-      user_group: <HiOutlineUserGroup className="text-indigo-500" size={20} />,
-    };
-    return (
-      iconMap[type] || <HiOutlineBell className="text-slate-400" size={20} />
-    );
-  };
-
-  const getBgColor = (type) => {
-    const colorMap = {
-      user: "bg-blue-50",
-      shop: "bg-violet-50",
-      offer: "bg-emerald-50",
-      category: "bg-amber-50",
-      order: "bg-orange-50",
-      payment: "bg-green-50",
-      system: "bg-slate-50",
-      report: "bg-rose-50",
-      user_group: "bg-indigo-50",
-    };
-    return colorMap[type] || "bg-slate-50";
-  };
-
-  const getPriorityBadge = (priority) => {
-    const priorityMap = {
-      low: { color: "bg-slate-100 text-slate-600", label: "Low" },
-      normal: { color: "bg-blue-100 text-blue-600", label: "Normal" },
-      high: { color: "bg-amber-100 text-amber-600", label: "High" },
-      urgent: { color: "bg-rose-100 text-rose-600", label: "Urgent" },
-    };
-    return priorityMap[priority] || priorityMap.normal;
-  };
-
-  const handleClick = () => {
-    if (!notification.isRead) {
-      onMarkRead(notification.id);
-    }
-    if (notification.link) {
-      // Navigate to the link
-      window.location.href = notification.link;
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={handleClick}
-      className={`relative bg-white rounded-2xl border transition-all duration-300 cursor-pointer ${
-        notification.isRead
-          ? "border-slate-200 opacity-80"
-          : "border-violet-200 bg-gradient-to-r from-violet-50/50 to-purple-50/50 shadow-md shadow-violet-100"
-      } ${isHovered ? "shadow-lg scale-[1.01]" : ""}`}
-    >
-      <div className="p-4 sm:p-5">
-        <div className="flex items-start gap-4">
-          {/* Icon */}
-          <div
-            className={`flex-shrink-0 h-12 w-12 rounded-2xl ${getBgColor(notification.type)} flex items-center justify-center`}
-          >
-            {getIcon(notification.type)}
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h4
-                    className={`text-sm font-semibold ${notification.isRead ? "text-slate-600" : "text-slate-900"}`}
-                  >
-                    {notification.title}
-                  </h4>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${getPriorityBadge(notification.priority).color}`}
-                  >
-                    {getPriorityBadge(notification.priority).label}
-                  </span>
-                  {notification.type && (
-                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-medium">
-                      {notification.type.charAt(0).toUpperCase() +
-                        notification.type.slice(1)}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1 text-sm text-slate-600">
-                  {notification.message}
-                </p>
-                <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
-                  <span className="flex items-center gap-1">
-                    <HiOutlineClock size={12} />
-                    {getTimeAgo(notification.createdAt)}
-                  </span>
-                  {notification.isRead && (
-                    <span className="flex items-center gap-1 text-emerald-500">
-                      <HiOutlineCheckCircle size={12} />
-                      Read
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex-shrink-0 flex items-center gap-1">
-            {!notification.isRead && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMarkRead(notification.id);
-                }}
-                className="p-2 rounded-xl text-violet-600 hover:bg-violet-100 transition-colors"
-                title="Mark as read"
-              >
-                <HiOutlineCheck size={18} />
-              </button>
-            )}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(notification.id);
-              }}
-              className="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition-colors"
-              title="Delete notification"
-            >
-              <HiOutlineTrash size={18} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {!notification.isRead && (
-        <div className="absolute top-4 right-4">
-          <span className="flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
-          </span>
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
 // ========== MAIN COMPONENT ==========
 export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all"); // all, unread, read
-  const [selectedType, setSelectedType] = useState("all");
   const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch notifications
+  const pollingInterval = useRef(null);
+  const isFirstRender = useRef(true);
+
+  // ===============================
+  // Fetch Notifications
+  // ===============================
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
@@ -242,26 +388,27 @@ export default function AdminNotifications() {
         limit: 100,
       };
 
-      if (filter === "unread") params.read = "false";
-      if (filter === "read") params.read = "true";
+      if (activeFilter === "unread") params.read = "false";
+      if (activeFilter === "read") params.read = "true";
       if (selectedType !== "all") params.type = selectedType;
 
-      const response = await getAdminNotifications(params);
-      setNotifications(response.notifications || []);
-
-      // Also fetch unread count
-      const countResponse = await getAdminUnreadCount();
-      setUnreadCount(countResponse.count || 0);
+      const [notifData, countData] = await Promise.all([
+        getAdminNotifications(params),
+        getAdminUnreadCount(),
+      ]);
+      setNotifications(notifData.notifications || []);
+      setUnreadCount(countData.count || 0);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       toast.error("Failed to load notifications");
     } finally {
       setLoading(false);
     }
-  }, [filter, selectedType]);
+  }, [activeFilter, selectedType]);
 
-  const isFirstRender = useRef(true);
-
+  // ===============================
+  // Initial Load - Runs Once
+  // ===============================
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -269,7 +416,11 @@ export default function AdminNotifications() {
     }
   }, []);
 
+  // ===============================
+  // Handle Filter Changes with Debounce
+  // ===============================
   useEffect(() => {
+    // Skip the first render (already handled above)
     if (isFirstRender.current) return;
 
     const timer = setTimeout(() => {
@@ -277,25 +428,47 @@ export default function AdminNotifications() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [filter, selectedType, fetchNotifications]);
+  }, [activeFilter, selectedType, fetchNotifications]);
 
-  // Mark as read
-  const handleMarkAsRead = async (notificationId) => {
+  // ===============================
+  // Auto-Refresh Polling
+  // ===============================
+  useEffect(() => {
+    // Clear any existing interval
+    if (pollingInterval.current) {
+      clearInterval(pollingInterval.current);
+    }
+
+    // Set up polling every 30 seconds
+    pollingInterval.current = setInterval(() => {
+      fetchNotifications();
+    }, 30000);
+
+    return () => {
+      if (pollingInterval.current) {
+        clearInterval(pollingInterval.current);
+      }
+    };
+  }, [fetchNotifications]);
+
+  // ===============================
+  // Handlers
+  // ===============================
+  const handleMarkRead = async (id) => {
     try {
-      await markAdminNotificationAsRead(notificationId);
+      await markAdminNotificationAsRead(id);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n)),
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
-      toast.success("Notification marked as read");
+      toast.success("Marked as read");
     } catch (error) {
       console.error("Error marking as read:", error);
       toast.error("Failed to mark as read");
     }
   };
 
-  // Mark all as read
-  const handleMarkAllAsRead = async () => {
+  const handleMarkAllRead = async () => {
     try {
       await markAllAdminNotificationsAsRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
@@ -307,12 +480,11 @@ export default function AdminNotifications() {
     }
   };
 
-  // Delete notification
-  const handleDelete = async (notificationId) => {
+  const handleDelete = async (id) => {
     try {
-      await deleteAdminNotification(notificationId);
-      const deleted = notifications.find((n) => n.id === notificationId);
-      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      await deleteAdminNotification(id);
+      const deleted = notifications.find((n) => n.id === id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
       if (deleted && !deleted.isRead) {
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }
@@ -323,269 +495,286 @@ export default function AdminNotifications() {
     }
   };
 
-  // Delete all notifications
-  const handleDeleteAll = async () => {
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    try {
+      for (const id of selectedIds) {
+        await deleteAdminNotification(id);
+      }
+      setNotifications((prev) =>
+        prev.filter((n) => !selectedIds.includes(n.id)),
+      );
+      setSelectedIds([]);
+      setSelectAll(false);
+      toast.success(`${selectedIds.length} notifications deleted`);
+    } catch (error) {
+      console.error("Error deleting selected:", error);
+      toast.error("Failed to delete selected notifications");
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (notifications.length === 0) return;
     if (!window.confirm("Are you sure you want to delete all notifications?")) {
       return;
     }
-
     try {
       await deleteAllAdminNotifications();
       setNotifications([]);
       setUnreadCount(0);
-      toast.success("All notifications deleted");
+      toast.success("All notifications cleared");
     } catch (error) {
-      console.error("Error deleting all notifications:", error);
-      toast.error("Failed to delete all notifications");
+      console.error("Error clearing notifications:", error);
+      toast.error("Failed to clear notifications");
     }
   };
 
-  // Manual refresh
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredNotifications.map((n) => n.id));
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleToggleSelect = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    );
+  };
+
   const handleRefresh = () => {
     fetchNotifications();
     toast.success("Refreshed notifications");
   };
 
-  // Get unique notification types for filter
-  const notificationTypes = [
-    "all",
-    ...new Set(notifications.map((n) => n.type)),
-  ];
-
-  // Filter notifications
+  // ===============================
+  // Filters
+  // ===============================
   const filteredNotifications = notifications.filter((n) => {
-    if (filter === "unread") return !n.isRead;
-    if (filter === "read") return n.isRead;
+    if (activeFilter === "unread") return !n.isRead;
+    if (activeFilter === "read") return n.isRead;
     return true;
   });
 
   const unreadNotifications = notifications.filter((n) => !n.isRead);
+  const readNotifications = notifications.filter((n) => n.isRead);
+
+  // Get unique notification types
+  const notificationTypes = [
+    "all",
+    ...new Set(notifications.map((n) => n.type).filter(Boolean)),
+  ];
+
+  const counts = {
+    total: notifications.length,
+    unread: unreadNotifications.length,
+    read: readNotifications.length,
+  };
+
+  // ===============================
+  // Loading State - Use a separate variable to track initial load
+  // ===============================
+  const isInitialLoading = loading && notifications.length === 0;
+
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-6xl">
+          <SkeletonLoader />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-6xl">
-        {/* Header */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+        {/* ========== HEADER ========== */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+          className="mb-8"
         >
-          <div className="flex items-center gap-4">
-            <Link to="/admin/dashboard">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="rounded-xl border-2 border-slate-200 bg-white p-2.5 text-slate-600 transition hover:bg-slate-50"
-              >
-                <HiOutlineArrowLeft size={20} />
-              </motion.button>
-            </Link>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-3">
-                Notifications
-                {unreadCount > 0 && (
-                  <span className="text-sm bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-medium">
-                    {unreadCount} unread
-                  </span>
-                )}
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                {unreadCount > 0
-                  ? `You have ${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}`
-                  : "All caught up! No unread notifications"}
-              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/admin/dashboard"
+                  className="rounded-full bg-white p-2 shadow-sm transition hover:shadow-md"
+                >
+                  <HiOutlineArrowLeft size={20} className="text-slate-600" />
+                </Link>
+                <div>
+                  <h1 className="text-3xl font-black text-slate-900">
+                    Admin Notifications
+                  </h1>
+                  <p className="mt-1 text-slate-500">
+                    Stay updated with platform activities
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-            >
-              <HiOutlineFilter size={16} />
-              Filters
-            </button>
-            <button
-              onClick={handleMarkAllAsRead}
-              disabled={unreadCount === 0}
-              className={`inline-flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${
-                unreadCount > 0
-                  ? "border-violet-300 bg-white text-violet-700 hover:bg-violet-50"
-                  : "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
-              }`}
-            >
-              <HiOutlineCheck size={16} />
-              Mark All Read
-            </button>
-            <button
-              onClick={handleDeleteAll}
-              disabled={notifications.length === 0}
-              className={`inline-flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition ${
-                notifications.length > 0
-                  ? "border-rose-300 bg-white text-rose-600 hover:bg-rose-50"
-                  : "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
-              }`}
-            >
-              <HiOutlineTrash size={16} />
-              Delete All
-            </button>
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
-            >
-              <HiOutlineRefresh
-                size={16}
-                className={loading ? "animate-spin" : ""}
-              />
-              Refresh
-            </button>
+            <div className="flex items-center gap-3">
+              <StatsBadge count={unreadCount} />
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:scale-105 disabled:opacity-50"
+              >
+                <HiOutlineRefresh
+                  size={16}
+                  className={`inline mr-1 ${loading ? "animate-spin" : ""}`}
+                />
+                Refresh
+              </button>
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleClearAll}
+                  className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 hover:scale-105"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
           </div>
         </motion.div>
 
-        {/* Filters */}
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mb-6 overflow-hidden"
-            >
-              <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">
-                      Status
-                    </label>
-                    <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
-                      <button
-                        onClick={() => setFilter("all")}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-                          filter === "all"
-                            ? "bg-white text-violet-600 shadow-sm"
-                            : "text-slate-600 hover:text-violet-600"
-                        }`}
-                      >
-                        All ({notifications.length})
-                      </button>
-                      <button
-                        onClick={() => setFilter("unread")}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-                          filter === "unread"
-                            ? "bg-white text-violet-600 shadow-sm"
-                            : "text-slate-600 hover:text-violet-600"
-                        }`}
-                      >
-                        Unread ({unreadNotifications.length})
-                      </button>
-                      <button
-                        onClick={() => setFilter("read")}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-                          filter === "read"
-                            ? "bg-white text-violet-600 shadow-sm"
-                            : "text-slate-600 hover:text-violet-600"
-                        }`}
-                      >
-                        Read
-                      </button>
-                    </div>
-                  </div>
-
-                  {notificationTypes.length > 1 && (
-                    <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">
-                        Type
-                      </label>
-                      <select
-                        value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value)}
-                        className="rounded-xl border-0 bg-slate-100 px-4 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-violet-500"
-                      >
-                        {notificationTypes.map((type) => (
-                          <option key={type} value={type}>
-                            {type === "all"
-                              ? "All Types"
-                              : type.charAt(0).toUpperCase() + type.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Notifications List */}
-        {loading ? (
-          <SkeletonLoader />
-        ) : filteredNotifications.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 bg-white rounded-3xl border border-slate-200"
-          >
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-violet-50">
-              <HiOutlineBell size={48} className="text-violet-400" />
-            </div>
-            <h3 className="mt-4 text-xl font-bold text-slate-800">
-              No notifications
-            </h3>
-            <p className="mt-2 text-sm text-slate-500">
-              {filter === "unread"
-                ? "You have no unread notifications"
-                : filter === "read"
-                  ? "You have no read notifications"
-                  : "You're all caught up!"}
-            </p>
-            {filter !== "all" && (
-              <button
-                onClick={() => setFilter("all")}
-                className="mt-4 text-sm font-medium text-violet-600 hover:text-violet-700"
-              >
-                View all notifications
-              </button>
-            )}
-          </motion.div>
-        ) : (
+        {/* ========== FILTERS & ACTIONS ========== */}
+        {notifications.length > 0 && (
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="space-y-3"
+            transition={{ delay: 0.1 }}
+            className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           >
-            <AnimatePresence>
-              {filteredNotifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onMarkRead={handleMarkAsRead}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </AnimatePresence>
+            <div className="flex flex-wrap items-center gap-3">
+              <FilterButtons
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
+                counts={counts}
+              />
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+              >
+                <HiOutlineFilter size={16} className="inline mr-1" />
+                {showFilters ? "Hide Filters" : "Show Filters"}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllRead}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 px-3 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-200"
+                >
+                  <HiOutlineCheckCircle size={16} />
+                  Mark All Read
+                </button>
+              )}
+              {selectedIds.length > 0 && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-red-100 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-200"
+                >
+                  <HiOutlineTrash size={16} />
+                  Delete Selected ({selectedIds.length})
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
 
-        {/* Footer Stats */}
-        {notifications.length > 0 && (
+        {/* ========== TYPE FILTER ========== */}
+        {showFilters && notificationTypes.length > 1 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-6 text-center text-xs text-slate-400"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-4 overflow-hidden"
           >
-            Showing {filteredNotifications.length} of {notifications.length}{" "}
-            notifications
-            {unreadCount > 0 && ` • ${unreadCount} unread`}
+            <div className="rounded-xl bg-white p-4 shadow-sm border border-slate-200">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-slate-600">
+                  Filter by Type:
+                </label>
+                <TypeFilter
+                  selectedType={selectedType}
+                  setSelectedType={setSelectedType}
+                  types={notificationTypes}
+                />
+              </div>
+            </div>
           </motion.div>
+        )}
+
+        {/* ========== NOTIFICATIONS LIST ========== */}
+        {notifications.length > 0 ? (
+          <>
+            {/* Select All */}
+            {filteredNotifications.length > 1 && (
+              <div className="mb-4 flex items-center gap-2 rounded-xl bg-white p-3 shadow-sm border border-slate-200">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                />
+                <label className="text-sm font-medium text-slate-600">
+                  Select All
+                </label>
+                <span className="text-xs text-slate-400 ml-2">
+                  ({filteredNotifications.length} notifications)
+                </span>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <AnimatePresence>
+                {filteredNotifications.map((notification) => (
+                  <div key={notification.id} className="relative">
+                    {selectedIds.length > 0 && (
+                      <div className="absolute -left-10 top-1/2 -translate-y-1/2">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(notification.id)}
+                          onChange={() => handleToggleSelect(notification.id)}
+                          className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                        />
+                      </div>
+                    )}
+                    <NotificationCard
+                      notification={notification}
+                      onMarkRead={handleMarkRead}
+                      onDelete={handleDelete}
+                    />
+                  </div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Footer */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-6 text-center"
+            >
+              <p className="text-sm text-slate-400">
+                Showing {filteredNotifications.length} of {notifications.length}{" "}
+                notifications
+                {unreadCount > 0 && ` • ${unreadCount} unread`}
+              </p>
+            </motion.div>
+          </>
+        ) : (
+          <EmptyState filter={activeFilter} />
         )}
       </div>
     </motion.div>
