@@ -13,7 +13,7 @@ import {
   HiOutlineTag,
   HiOutlineXMark,
   HiOutlinePlus,
-  HiOutlinePencil,
+  HiOutlinePencil, // ✅ Keep this!
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -106,7 +106,6 @@ const CustomerCategories = () => {
   // ✅ FIX: Use this effect ONLY to fetch content when category changes
   useEffect(() => {
     if (selectedCategory) {
-      // ✅ ESLint disable comment to silence the warning for this specific line
       // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCategoryContent(selectedCategory.id);
     }
@@ -260,7 +259,7 @@ const CustomerCategories = () => {
               </p>
             </div>
 
-            {/* ✅ ADDED: Actions Section (Only Add Button - NO Edit here!) */}
+            {/* ✅ FIXED: ONLY Add Category button here (NO Edit button!) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 to="/customer/offers"
@@ -270,7 +269,6 @@ const CustomerCategories = () => {
                 <HiOutlineArrowRight size={16} className="sm:w-5 sm:h-5" />
               </Link>
 
-              {/* ✅ ADDED: Add Category Button */}
               <Link
                 to="/admin/categories/add"
                 className="inline-flex items-center gap-1 sm:gap-2 rounded-xl border-2 border-violet-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-violet-700 transition hover:bg-violet-50 hover:border-violet-300"
@@ -614,7 +612,7 @@ const CustomerCategories = () => {
                   )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
                 />
 
-                {/* ✅ ADDED: Edit Icon per category card */}
+                {/* ✅ FIXED: Edit Icon links to the specific category ID! */}
                 <div className="absolute top-2 right-2 z-10">
                   <Link
                     to={`/admin/categories/edit/${category.id}`}
