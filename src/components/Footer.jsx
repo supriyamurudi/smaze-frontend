@@ -29,10 +29,6 @@ const Footer = () => {
     navigate(`/offers?category=${encodeURIComponent(category)}`);
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
   return (
     <footer className="bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950 text-slate-300">
       {/* Newsletter Section */}
@@ -248,7 +244,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links - FIXED with proper navigation */}
+          {/* Quick Links - Using Link only */}
           <div className="text-center sm:text-left">
             <h3
               className="
@@ -263,106 +259,52 @@ const Footer = () => {
 
             <ul className="space-y-2.5 sm:space-y-3 md:space-y-4">
               <li>
-                <button
-                  onClick={() => handleNavigation("/")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Home
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleNavigation("/offers")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/offers"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Offers
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleNavigation("/categories")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/categories"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Categories
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleNavigation("/customer/shops")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/customer/shops"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Shops
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleNavigation("/about")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/about"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   About Us
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleNavigation("/contact")}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-pink-400
-                    transition
-                    bg-transparent
-                    border-none
-                    cursor-pointer
-                    w-full text-left
-                    sm:w-auto
-                  "
+                <Link
+                  to="/contact"
+                  className="text-sm sm:text-base hover:text-pink-400 transition"
                 >
                   Contact
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -494,31 +436,16 @@ const Footer = () => {
           </p>
 
           <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm flex-wrap justify-center">
-            <button
-              onClick={() => handleNavigation("/privacy-policy")}
-              className="
-                hover:text-pink-400
-                transition
-                bg-transparent
-                border-none
-                cursor-pointer
-              "
+            <Link
+              to="/privacy-policy"
+              className="hover:text-pink-400 transition"
             >
               Privacy Policy
-            </button>
+            </Link>
 
-            <button
-              onClick={() => handleNavigation("/terms")}
-              className="
-                hover:text-purple-400
-                transition
-                bg-transparent
-                border-none
-                cursor-pointer
-              "
-            >
+            <Link to="/terms" className="hover:text-purple-400 transition">
               Terms & Conditions
-            </button>
+            </Link>
           </div>
         </div>
       </div>
