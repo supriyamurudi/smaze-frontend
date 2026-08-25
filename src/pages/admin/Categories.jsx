@@ -12,6 +12,7 @@ import {
   HiOutlineClock,
   HiOutlineTag,
   HiOutlineXMark,
+  HiOutlinePlus, // ✅ ADDED THIS
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -265,13 +266,24 @@ const CustomerCategories = () => {
                   : "Discover amazing offers from your favourite categories"}
               </p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* ✅ ADDED: Actions Section */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 to="/customer/offers"
                 className="inline-flex items-center gap-1 sm:gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white transition hover:scale-105 hover:shadow-lg"
               >
                 Browse All Offers
                 <HiOutlineArrowRight size={16} className="sm:w-5 sm:h-5" />
+              </Link>
+
+              {/* ✅ ADDED: Add Category Button */}
+              <Link
+                to="/admin/categories/add"
+                className="inline-flex items-center gap-1 sm:gap-2 rounded-xl border-2 border-violet-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-violet-700 transition hover:bg-violet-50 hover:border-violet-300"
+              >
+                <HiOutlinePlus size={16} className="sm:w-5 sm:h-5" />
+                Add Category
               </Link>
             </div>
           </div>
