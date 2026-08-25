@@ -1,80 +1,13 @@
 // frontend/src/pages/Contact.jsx
-import { useState } from "react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 import {
   FaPhoneAlt,
   FaEnvelope,
   FaMapMarkerAlt,
   FaClock,
-  FaPaperPlane,
 } from "react-icons/fa";
 
-import { sendContactMessage } from "../services/contactService";
-
 export default function Contact() {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error for this field
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
-  };
-
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validate()) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await sendContactMessage(formData);
-
-      if (response.success) {
-        toast.success("Message sent successfully! We'll get back to you soon.");
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-      }
-    } catch (error) {
-      console.error("Contact form error:", error);
-      toast.error(error.response?.data?.message || "Failed to send message");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="bg-white">
       {/* Hero */}
@@ -111,141 +44,29 @@ export default function Contact() {
 
       {/* Contact Section */}
       <section className="py-12 sm:py-16 md:py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid lg:grid-cols-5 gap-6 sm:gap-8 md:gap-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
             {/* Contact Cards */}
-            <div className="lg:col-span-2 space-y-4 sm:space-y-5 md:space-y-6">
-              <InfoCard
-                icon={<FaPhoneAlt />}
-                title="Phone"
-                text="+91 9876543210"
-              />
-              <InfoCard
-                icon={<FaEnvelope />}
-                title="Email"
-                text="support@smaze.in"
-              />
-              <InfoCard
-                icon={<FaMapMarkerAlt />}
-                title="Address"
-                text="Belagavi, Karnataka, India"
-              />
-              <InfoCard
-                icon={<FaClock />}
-                title="Business Hours"
-                text="Mon - Sat : 9:00 AM - 6:00 PM"
-              />
-            </div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-violet-100 p-6 sm:p-8 md:p-10"
-            >
-              <h2 className="text-2xl sm:text-3xl font-black">
-                Send Us A Message
-              </h2>
-              <p className="text-gray-500 mt-2 sm:mt-3 text-sm sm:text-base">
-                Fill out the form below and we'll get back to you.
-              </p>
-
-              <form
-                onSubmit={handleSubmit}
-                className="mt-6 sm:mt-8 space-y-4 sm:space-y-5 md:space-y-6"
-              >
-                <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
-                  <div>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Full Name"
-                      className={`w-full border rounded-xl sm:rounded-2xl px-4 sm:px-5 h-12 sm:h-14 outline-none focus:ring-2 focus:ring-violet-500 text-sm sm:text-base ${
-                        errors.name ? "border-red-500" : "border-gray-200"
-                      }`}
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Email Address"
-                      className={`w-full border rounded-xl sm:rounded-2xl px-4 sm:px-5 h-12 sm:h-14 outline-none focus:ring-2 focus:ring-violet-500 text-sm sm:text-base ${
-                        errors.email ? "border-red-500" : "border-gray-200"
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    placeholder="Subject"
-                    className={`w-full border rounded-xl sm:rounded-2xl px-4 sm:px-5 h-12 sm:h-14 outline-none focus:ring-2 focus:ring-violet-500 text-sm sm:text-base ${
-                      errors.subject ? "border-red-500" : "border-gray-200"
-                    }`}
-                  />
-                  {errors.subject && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.subject}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows="5"
-                    placeholder="Your Message..."
-                    className={`w-full border rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-4 resize-none outline-none focus:ring-2 focus:ring-violet-500 text-sm sm:text-base ${
-                      errors.message ? "border-red-500" : "border-gray-200"
-                    }`}
-                  ></textarea>
-                  {errors.message && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.message}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white font-bold flex items-center justify-center gap-2 sm:gap-3 hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-                >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <FaPaperPlane />
-                      Send Message
-                    </>
-                  )}
-                </button>
-              </form>
-            </motion.div>
+            <InfoCard
+              icon={<FaPhoneAlt />}
+              title="Phone"
+              text="+91 9876543210"
+            />
+            <InfoCard
+              icon={<FaEnvelope />}
+              title="Email"
+              text="support@smaze.in"
+            />
+            <InfoCard
+              icon={<FaMapMarkerAlt />}
+              title="Address"
+              text="Belagavi, Karnataka, India"
+            />
+            <InfoCard
+              icon={<FaClock />}
+              title="Business Hours"
+              text="Mon - Sat : 9:00 AM - 6:00 PM"
+            />
           </div>
         </div>
       </section>
