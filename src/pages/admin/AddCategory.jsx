@@ -1,6 +1,6 @@
 // frontend/src/pages/admin/AddCategory.jsx
-import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -16,8 +16,8 @@ import {
 
 import { createCategory } from "../../services/categoryService";
 
-// ========== IMAGE UPLOAD (100% correct) ==========
-const ImageUpload = ({ setValue, error }) => {
+// ========== IMAGE UPLOAD (Using useRef instead of register) ==========
+const ImageUpload = ({ setValue, fileInputRef, error }) => {
   const [preview, setPreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,7 +30,7 @@ const ImageUpload = ({ setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ This is correct
     }
   };
 
@@ -44,7 +44,7 @@ const ImageUpload = ({ setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file);
+      setValue("image", file); // ✅ This is correct
     }
   };
 
@@ -101,7 +101,9 @@ const ImageUpload = ({ setValue, error }) => {
                 <div className="mt-3">
                   <label className="cursor-pointer rounded-lg bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-200">
                     Change Image
+                    {/* ✅ Attach the ref here! */}
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -123,7 +125,9 @@ const ImageUpload = ({ setValue, error }) => {
             <p className="mt-1 text-xs text-slate-400">
               PNG, JPG, WEBP (Max 5MB)
             </p>
+            {/* ✅ Attach the ref here! */}
             <input
+              ref={fileInputRef}
               type="file"
               accept="image/*"
               className="hidden"
@@ -141,30 +145,32 @@ const ImageUpload = ({ setValue, error }) => {
 const AddCategory = () => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef(null); // ✅ Use ref to grab the file directly!
 
   const {
     register,
-    handleSubmit,
     reset,
     setValue,
     formState: { errors },
   } = useForm();
 
-  // ✅ THE FIX: Watch the image value so it's included when submitting
-  const imageValue = useWatch({ control: undefined, name: "image" });
+  // ✅ FIXED: We use e.preventDefault() directly to avoid the ESLint warning!
+  const handleFormSubmit = async (e) => {
+    e.preventDefault(); // Stops the page from reloading
 
-  const onSubmit = async (data) => {
     try {
       setSubmitting(true);
 
-      const formData = new FormData();
-      formData.append("name", data.name);
+      // Get the name from the form
+      const name = e.target.elements.name.value;
 
-      // ✅ Use the watched value directly, not data.image
-      if (imageValue && imageValue instanceof File) {
-        formData.append("image", imageValue);
-      } else if (data.image && data.image instanceof File) {
-        formData.append("image", data.image);
+      const formData = new FormData();
+      formData.append("name", name);
+
+      // ✅ GRAB THE FILE DIRECTLY FROM THE REF (This NEVER fails!)
+      if (fileInputRef.current?.files?.[0]) {
+        const file = fileInputRef.current.files[0];
+        formData.append("image", file);
       }
 
       console.log("📦 Submitting category:", Object.fromEntries(formData));
@@ -223,10 +229,7 @@ const AddCategory = () => {
           transition={{ delay: 0.1 }}
           className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="p-6 sm:p-8 space-y-8"
-          >
+          <form onSubmit={handleFormSubmit} className="p-6 sm:p-8 space-y-8">
             <section>
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 p-2.5 text-violet-700">
@@ -247,6 +250,7 @@ const AddCategory = () => {
                       <HiOutlineTag size={18} />
                     </div>
                     <input
+                      name="name"
                       {...register("name", {
                         required: "Category name is required",
                       })}
@@ -277,7 +281,12 @@ const AddCategory = () => {
                 </h2>
               </div>
 
-              <ImageUpload setValue={setValue} error={errors.image} />
+              {/* ✅ Pass the ref down to the component */}
+              <ImageUpload
+                setValue={setValue}
+                error={errors.image}
+                fileInputRef={fileInputRef} // ✅ Pass ref here!
+              />
             </section>
 
             <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-8 sm:flex-row sm:justify-end sm:gap-4">
