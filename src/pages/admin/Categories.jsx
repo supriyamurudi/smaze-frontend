@@ -1,5 +1,5 @@
 // src/pages/customer/Categories.jsx
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -13,12 +13,13 @@ import {
   HiOutlineTag,
   HiOutlineXMark,
   HiOutlinePlus,
-  HiOutlinePencil, // ✅ Keep this!
+  HiOutlinePencil,
+  HiOutlineTrash,
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
 
-import { getCategories } from "../../services/categoryService";
+import { getCategories, deleteCategory } from "../../services/categoryService";
 import { getShopsByCategory } from "../../services/shopService";
 import { getOffersByCategory } from "../../services/offerService";
 
@@ -68,17 +69,18 @@ const CustomerCategories = () => {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   // Category content state
   const [shops, setShops] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loadingContent, setLoadingContent] = useState(false);
 
-  // ✅ FIX: Extract categoryParam from URL directly
+  // Extract categoryParam from URL directly
   const params = new URLSearchParams(location.search);
   const categoryParam = params.get("category");
 
-  // ✅ FIX: Derive selectedCategory directly (No useEffect needed!)
+  // Derive selectedCategory directly
   const selectedCategory = categories.find(
     (c) =>
       c.id === categoryParam ||
@@ -86,30 +88,6 @@ const CustomerCategories = () => {
       c.name.toLowerCase() === categoryParam?.toLowerCase(),
   );
   const showContent = !!selectedCategory;
-
-  // ✅ FIXED: Define fetchCategoryContent BEFORE useEffect using useCallback
-  const fetchCategoryContent = useCallback(async (categoryId) => {
-    try {
-      setLoadingContent(true);
-      const shopsResponse = await getShopsByCategory(categoryId);
-      setShops(shopsResponse.data || []);
-      const offersResponse = await getOffersByCategory(categoryId);
-      setOffers(offersResponse.data || []);
-    } catch (error) {
-      console.error("Error fetching category content:", error);
-      toast.error("Failed to load category content");
-    } finally {
-      setLoadingContent(false);
-    }
-  }, []);
-
-  // ✅ FIX: Use this effect ONLY to fetch content when category changes
-  useEffect(() => {
-    if (selectedCategory) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchCategoryContent(selectedCategory.id);
-    }
-  }, [selectedCategory?.id, fetchCategoryContent]);
 
   // Fetch categories
   useEffect(() => {
@@ -140,17 +118,98 @@ const CustomerCategories = () => {
     };
   }, []);
 
-  const handleCategoryClick = (category) => {
-    setShops([]);
-    setOffers([]);
+  // ✅ FIXED: Load content when category is selected via URL (only on initial load)
+  useEffect(() => {
+    // Only run this effect when we have a selected category and no content loaded yet
+    // This handles direct URL navigation
+    if (
+      !selectedCategory ||
+      shops.length > 0 ||
+      offers.length > 0 ||
+      loadingContent
+    ) {
+      return;
+    }
+
+    const fetchContent = async () => {
+      try {
+        setLoadingContent(true);
+        const [shopsResponse, offersResponse] = await Promise.all([
+          getShopsByCategory(selectedCategory.id),
+          getOffersByCategory(selectedCategory.id),
+        ]);
+        setShops(shopsResponse.data || []);
+        setOffers(offersResponse.data || []);
+      } catch (error) {
+        console.error("Error fetching category content:", error);
+        toast.error("Failed to load category content");
+      } finally {
+        setLoadingContent(false);
+      }
+    };
+
+    fetchContent();
+  }, [selectedCategory, shops.length, offers.length, loadingContent]);
+
+  // ========== HANDLE CATEGORY CLICK ==========
+  const handleCategoryClick = async (category) => {
+    // Navigate first
     navigate(
       `/customer/categories?category=${encodeURIComponent(category.name)}`,
     );
+
+    // Then fetch data
+    try {
+      setLoadingContent(true);
+      setShops([]);
+      setOffers([]);
+
+      const [shopsResponse, offersResponse] = await Promise.all([
+        getShopsByCategory(category.id),
+        getOffersByCategory(category.id),
+      ]);
+
+      setShops(shopsResponse.data || []);
+      setOffers(offersResponse.data || []);
+    } catch (error) {
+      console.error("Error fetching category content:", error);
+      toast.error("Failed to load category content");
+      setShops([]);
+      setOffers([]);
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  // ========== DELETE CATEGORY ==========
+  const handleDeleteCategory = async (categoryId, categoryName, e) => {
+    e.stopPropagation();
+
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${categoryName}"? This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    setDeletingId(categoryId);
+    try {
+      await deleteCategory(categoryId);
+      toast.success(`"${categoryName}" deleted successfully!`);
+      setCategories(categories.filter((c) => c.id !== categoryId));
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error.response?.data?.message || "Failed to delete category");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleCloseContent = () => {
     setShops([]);
     setOffers([]);
+    setLoadingContent(false);
     navigate("/customer/categories");
   };
 
@@ -259,7 +318,6 @@ const CustomerCategories = () => {
               </p>
             </div>
 
-            {/* ✅ FIXED: ONLY Add Category button here (NO Edit button!) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 to="/customer/offers"
@@ -579,22 +637,26 @@ const CustomerCategories = () => {
                   </div>
                 )}
 
-                {shops.length === 0 && offers.length === 0 && (
-                  <div className="text-center py-8 sm:py-12 bg-white rounded-xl sm:rounded-2xl">
-                    <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">🔍</div>
-                    <h3 className="text-base sm:text-lg font-semibold text-slate-800">
-                      No results found
-                    </h3>
-                    <p className="text-sm sm:text-base text-slate-500 mt-1">
-                      No shops or offers available in this category yet
-                    </p>
-                  </div>
-                )}
+                {shops.length === 0 &&
+                  offers.length === 0 &&
+                  !loadingContent && (
+                    <div className="text-center py-8 sm:py-12 bg-white rounded-xl sm:rounded-2xl">
+                      <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">
+                        🔍
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800">
+                        No results found
+                      </h3>
+                      <p className="text-sm sm:text-base text-slate-500 mt-1">
+                        No shops or offers available in this category yet
+                      </p>
+                    </div>
+                  )}
               </>
             )}
           </motion.div>
         ) : (
-          // Categories Grid View - Mobile Responsive
+          // Categories Grid View with Edit & Delete options
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {filteredCategories.map((category, index) => (
               <motion.div
@@ -612,15 +674,33 @@ const CustomerCategories = () => {
                   )} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
                 />
 
-                {/* ✅ FIXED: Edit Icon links to the specific category ID! */}
-                <div className="absolute top-2 right-2 z-10">
+                {/* ===== ACTION BUTTONS (Edit & Delete) ===== */}
+                <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                  {/* Edit Button */}
                   <Link
                     to={`/admin/categories/edit/${category.id}`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md text-violet-600 hover:bg-violet-50"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md text-violet-600 hover:bg-violet-50 transition-colors"
                     onClick={(e) => e.stopPropagation()}
+                    title="Edit Category"
                   >
                     <HiOutlinePencil size={14} />
                   </Link>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={(e) =>
+                      handleDeleteCategory(category.id, category.name, e)
+                    }
+                    disabled={deletingId === category.id}
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50"
+                    title="Delete Category"
+                  >
+                    {deletingId === category.id ? (
+                      <div className="h-3 w-3 animate-spin rounded-full border-2 border-rose-600 border-t-transparent"></div>
+                    ) : (
+                      <HiOutlineTrash size={14} />
+                    )}
+                  </button>
                 </div>
 
                 <div className="relative mx-auto flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 shadow-inner transition-transform duration-300 group-hover:scale-110">
