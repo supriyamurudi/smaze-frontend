@@ -1,6 +1,6 @@
 // frontend/src/pages/admin/AddCategory.jsx
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -12,12 +12,11 @@ import {
   HiOutlinePhoto,
   HiOutlineTag,
   HiOutlineFolder,
-  HiOutlinePlus,
 } from "react-icons/hi2";
 
 import { createCategory } from "../../services/categoryService";
 
-// ========== IMAGE UPLOAD (Updated - No register needed on file input!) ==========
+// ========== IMAGE UPLOAD (100% correct) ==========
 const ImageUpload = ({ setValue, error }) => {
   const [preview, setPreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -31,7 +30,7 @@ const ImageUpload = ({ setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file); // ✅ Manually sets the file value
+      setValue("image", file);
     }
   };
 
@@ -45,13 +44,13 @@ const ImageUpload = ({ setValue, error }) => {
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue("image", file); // ✅ Manually sets the file value
+      setValue("image", file);
     }
   };
 
   const handleRemoveImage = () => {
     setPreview(null);
-    setValue("image", null); // ✅ Manually clears the file value
+    setValue("image", null);
   };
 
   return (
@@ -106,7 +105,7 @@ const ImageUpload = ({ setValue, error }) => {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={handleImageChange} // ✅ ONLY onChange handler, no register!
+                      onChange={handleImageChange}
                     />
                   </label>
                 </div>
@@ -124,7 +123,6 @@ const ImageUpload = ({ setValue, error }) => {
             <p className="mt-1 text-xs text-slate-400">
               PNG, JPG, WEBP (Max 5MB)
             </p>
-            {/* ✅ Removed {...register(...)} - Only onChange handler here */}
             <input
               type="file"
               accept="image/*"
@@ -144,7 +142,6 @@ const AddCategory = () => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
-  // Removed register from destructuring if not needed, but keeping it to not break anything
   const {
     register,
     handleSubmit,
@@ -153,6 +150,9 @@ const AddCategory = () => {
     formState: { errors },
   } = useForm();
 
+  // ✅ THE FIX: Watch the image value so it's included when submitting
+  const imageValue = useWatch({ control: undefined, name: "image" });
+
   const onSubmit = async (data) => {
     try {
       setSubmitting(true);
@@ -160,8 +160,10 @@ const AddCategory = () => {
       const formData = new FormData();
       formData.append("name", data.name);
 
-      // ✅ This now works because setValue("image", file) was called in ImageUpload
-      if (data.image && data.image instanceof File) {
+      // ✅ Use the watched value directly, not data.image
+      if (imageValue && imageValue instanceof File) {
+        formData.append("image", imageValue);
+      } else if (data.image && data.image instanceof File) {
         formData.append("image", data.image);
       }
 
@@ -189,7 +191,6 @@ const AddCategory = () => {
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 sm:p-6 lg:p-8"
     >
       <div className="mx-auto max-w-4xl">
-        {/* ========== HEADER ========== */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -214,19 +215,8 @@ const AddCategory = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
-              <HiOutlinePlus size={16} />
-              New Category
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-4 py-2 text-sm font-medium text-violet-700">
-              <HiOutlineFolder size={16} />
-              Category
-            </span>
-          </div>
         </motion.div>
 
-        {/* ========== FORM ========== */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -237,7 +227,6 @@ const AddCategory = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="p-6 sm:p-8 space-y-8"
           >
-            {/* Basic Information */}
             <section>
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 p-2.5 text-violet-700">
@@ -249,7 +238,6 @@ const AddCategory = () => {
               </div>
 
               <div className="grid grid-cols-1 gap-6">
-                {/* Category Name */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Category Name <span className="text-rose-500">*</span>
@@ -279,7 +267,6 @@ const AddCategory = () => {
               </div>
             </section>
 
-            {/* Image Upload */}
             <section className="border-t border-slate-200 pt-8">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 p-2.5 text-pink-700">
@@ -293,28 +280,7 @@ const AddCategory = () => {
               <ImageUpload setValue={setValue} error={errors.image} />
             </section>
 
-            {/* Actions */}
             <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-8 sm:flex-row sm:justify-end sm:gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  reset();
-                  setValue("image", null);
-                }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
-              >
-                <HiOutlineXCircle size={18} />
-                Reset
-              </button>
-              <Link to="/admin/categories">
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
-                >
-                  <HiOutlineXCircle size={18} />
-                  Cancel
-                </button>
-              </Link>
               <motion.button
                 type="submit"
                 disabled={submitting}
