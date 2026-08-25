@@ -167,6 +167,15 @@ const AdminNavbar = () => {
 
   // ========== HANDLE NOTIFICATION CLICK ==========
   const handleNotificationClick = (notification) => {
+    if (!notification.isRead) {
+      markAdminNotificationAsRead(notification.id).catch(console.error);
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notification.id ? { ...n, isRead: true } : n,
+        ),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    }
     if (notification.link) {
       navigate(notification.link);
       setIsNotificationsOpen(false);
@@ -194,14 +203,12 @@ const AdminNavbar = () => {
       fetchRecentNotifications();
       fetchUnreadCount();
 
-      // Set up polling every 30 seconds
       pollingInterval.current = setInterval(() => {
         fetchRecentNotifications();
       }, 30000);
     }
 
     return () => {
-      // Clean up polling on unmount
       if (pollingInterval.current) {
         clearInterval(pollingInterval.current);
       }
@@ -236,7 +243,6 @@ const AdminNavbar = () => {
 
   // ========== HANDLE LOGOUT ==========
   const handleLogout = () => {
-    // Clear polling on logout
     if (pollingInterval.current) {
       clearInterval(pollingInterval.current);
     }

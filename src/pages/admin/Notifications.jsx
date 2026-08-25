@@ -110,7 +110,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
   };
 
   const handleClick = () => {
-    if (!notification.read) {
+    if (!notification.isRead) {
       onMarkRead(notification.id);
     }
     if (notification.link) {
@@ -129,7 +129,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
       className={`relative bg-white rounded-2xl border transition-all duration-300 cursor-pointer ${
-        notification.read
+        notification.isRead
           ? "border-slate-200 opacity-80"
           : "border-violet-200 bg-gradient-to-r from-violet-50/50 to-purple-50/50 shadow-md shadow-violet-100"
       } ${isHovered ? "shadow-lg scale-[1.01]" : ""}`}
@@ -149,7 +149,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4
-                    className={`text-sm font-semibold ${notification.read ? "text-slate-600" : "text-slate-900"}`}
+                    className={`text-sm font-semibold ${notification.isRead ? "text-slate-600" : "text-slate-900"}`}
                   >
                     {notification.title}
                   </h4>
@@ -173,7 +173,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
                     <HiOutlineClock size={12} />
                     {getTimeAgo(notification.createdAt)}
                   </span>
-                  {notification.read && (
+                  {notification.isRead && (
                     <span className="flex items-center gap-1 text-emerald-500">
                       <HiOutlineCheckCircle size={12} />
                       Read
@@ -186,7 +186,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
 
           {/* Actions */}
           <div className="flex-shrink-0 flex items-center gap-1">
-            {!notification.read && (
+            {!notification.isRead && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -212,7 +212,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete }) => {
         </div>
       </div>
 
-      {!notification.read && (
+      {!notification.isRead && (
         <div className="absolute top-4 right-4">
           <span className="flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
@@ -233,7 +233,7 @@ export default function AdminNotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
 
-  // ✅ FIXED: Fetch notifications without causing the warning
+  // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
@@ -260,7 +260,6 @@ export default function AdminNotifications() {
     }
   }, [filter, selectedType]);
 
-  // ✅ FIXED: Use a ref to track if this is the first render
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -268,14 +267,11 @@ export default function AdminNotifications() {
       isFirstRender.current = false;
       fetchNotifications();
     }
-  }, []); // Empty dependency array - only runs once on mount
+  }, []);
 
-  // ✅ FIXED: Handle filter changes with a separate effect
   useEffect(() => {
-    // Skip the first render (already handled above)
     if (isFirstRender.current) return;
 
-    // Debounce the fetch to avoid too many requests
     const timer = setTimeout(() => {
       fetchNotifications();
     }, 300);
@@ -288,7 +284,7 @@ export default function AdminNotifications() {
     try {
       await markAdminNotificationAsRead(notificationId);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
+        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n)),
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
       toast.success("Notification marked as read");
@@ -302,7 +298,7 @@ export default function AdminNotifications() {
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAdminNotificationsAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
       toast.success("All notifications marked as read");
     } catch (error) {
@@ -317,7 +313,7 @@ export default function AdminNotifications() {
       await deleteAdminNotification(notificationId);
       const deleted = notifications.find((n) => n.id === notificationId);
       setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
-      if (deleted && !deleted.read) {
+      if (deleted && !deleted.isRead) {
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }
       toast.success("Notification deleted");
@@ -358,12 +354,12 @@ export default function AdminNotifications() {
 
   // Filter notifications
   const filteredNotifications = notifications.filter((n) => {
-    if (filter === "unread") return !n.read;
-    if (filter === "read") return n.read;
+    if (filter === "unread") return !n.isRead;
+    if (filter === "read") return n.isRead;
     return true;
   });
 
-  const unreadNotifications = notifications.filter((n) => !n.read);
+  const unreadNotifications = notifications.filter((n) => !n.isRead);
 
   return (
     <motion.div
