@@ -4,7 +4,7 @@ import axios from "axios";
 // ✅ Get the API URL with fallback
 // Vite injects env variables at build time - use import.meta.env
 const API_URL =
-  import.meta.env.VITE_API_URL ||
+  import.meta.env.production.VITE_API_URL ||
   "https://smaze-backend-production.up.railway.app/api";
 
 console.log("🔧 API URL configured:", API_URL); // This will help debug
