@@ -29,6 +29,10 @@ const Footer = () => {
     navigate(`/offers?category=${encodeURIComponent(category)}`);
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <footer className="bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950 text-slate-300">
       {/* Newsletter Section */}
@@ -244,7 +248,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links - FIXED with proper navigation */}
           <div className="text-center sm:text-left">
             <h3
               className="
@@ -259,76 +263,106 @@ const Footer = () => {
 
             <ul className="space-y-2.5 sm:space-y-3 md:space-y-4">
               <li>
-                <Link
-                  to="/"
+                <button
+                  onClick={() => handleNavigation("/")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   Home
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  to="/offers"
+                <button
+                  onClick={() => handleNavigation("/offers")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   Offers
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  to="/categories"
+                <button
+                  onClick={() => handleNavigation("/categories")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   Categories
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  to="/customer/shops"
+                <button
+                  onClick={() => handleNavigation("/customer/shops")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   Shops
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  to="/about"
+                <button
+                  onClick={() => handleNavigation("/about")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   About Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  to="/contact"
+                <button
+                  onClick={() => handleNavigation("/contact")}
                   className="
                     text-sm sm:text-base
                     hover:text-pink-400
                     transition
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    w-full text-left
+                    sm:w-auto
                   "
                 >
                   Contact
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -460,25 +494,31 @@ const Footer = () => {
           </p>
 
           <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm flex-wrap justify-center">
-            <Link
-              to="/privacy-policy"
+            <button
+              onClick={() => handleNavigation("/privacy-policy")}
               className="
                 hover:text-pink-400
                 transition
+                bg-transparent
+                border-none
+                cursor-pointer
               "
             >
               Privacy Policy
-            </Link>
+            </button>
 
-            <Link
-              to="/terms"
+            <button
+              onClick={() => handleNavigation("/terms")}
               className="
                 hover:text-purple-400
                 transition
+                bg-transparent
+                border-none
+                cursor-pointer
               "
             >
               Terms & Conditions
-            </Link>
+            </button>
           </div>
         </div>
       </div>
