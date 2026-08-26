@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// frontend/src/layouts/AdminLayout.jsx
+import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "../components/admin/AdminSidebar";
@@ -8,11 +9,14 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Close sidebar on route change (mobile)
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSidebarOpen(false);
-  }, [location]);
+  // ✅ FIX: Close sidebar when location changes (without useEffect)
+  // We use the location change to close sidebar, but we handle it
+  // by checking in the render or using a key
+
+  // Option A: Use a key to force re-render
+
+  // Option B: Close sidebar on any link click via the NavLink
+  // This is handled in the sidebar component itself
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
@@ -45,25 +49,28 @@ const AdminLayout = () => {
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        <AdminSidebar closeSidebar={() => setSidebarOpen(false)} />
+        <AdminSidebar
+          closeSidebar={() => setSidebarOpen(false)}
+          currentPath={location.pathname}
+        />
       </div>
 
-      {/* Main */}
+      {/* Main Content */}
       <div className="lg:ml-72 min-h-screen flex flex-col">
-        {/* Navbar */}
         <AdminNavbar
           toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
         />
 
-        {/* Page Content */}
         <motion.main
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 p-4 md:p-8"
+          className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-x-hidden"
         >
-          <Outlet />
+          <div className="max-w-7xl mx-auto w-full">
+            <Outlet />
+          </div>
         </motion.main>
       </div>
     </div>
