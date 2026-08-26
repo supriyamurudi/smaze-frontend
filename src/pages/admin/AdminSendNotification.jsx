@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   HiOutlineUsers,
   HiOutlineUser,
-  HiOutlineMailOpen, // ✅ FIXED: Use HiOutlineMailOpen instead
+  HiOutlineEnvelope, // ✅ CORRECT - Mail icon
   HiOutlineCheckCircle,
 } from "react-icons/hi2";
 import api from "../../api/api";
@@ -108,8 +108,7 @@ const AdminSendNotification = () => {
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3">
           <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-lg shadow-violet-200">
-            <HiOutlineMailOpen size={20} className="sm:size-6" />{" "}
-            {/* ✅ FIXED */}
+            <HiOutlineEnvelope size={20} className="sm:size-6" />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-800">
@@ -299,7 +298,7 @@ const AdminSendNotification = () => {
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              <HiOutlineMailOpen size={18} /> {/* ✅ FIXED */}
+              <HiOutlineEnvelope size={18} />
               Send Notification
             </span>
           )}
