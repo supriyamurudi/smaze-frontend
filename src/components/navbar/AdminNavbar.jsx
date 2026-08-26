@@ -19,6 +19,7 @@ import {
   Award,
   LayoutGrid,
   Check,
+  Send, // ✅ ADDED
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProfile } from "../../services/adminService";
@@ -485,7 +486,7 @@ const AdminNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Profile Dropdown */}
+              {/* Profile Dropdown - UPDATED with Send Notification */}
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -602,6 +603,23 @@ const AdminNavbar = () => {
                           </div>
                         </Link>
 
+                        {/* ✅ NEW: Send Notification Menu Item */}
+                        <Link
+                          to="/admin/send-notification"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-all group"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <div className="h-8 w-8 rounded-xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                            <Send size={16} className="text-emerald-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium">Send Notification</p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                              Send alerts to shop owners
+                            </p>
+                          </div>
+                        </Link>
+
                         <Link
                           to="/admin/settings"
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-all group"
@@ -697,6 +715,16 @@ const AdminNavbar = () => {
                 ))}
 
                 <div className="border-t border-slate-100 mt-3 pt-3 space-y-0.5">
+                  {/* ✅ NEW: Send Notification in Mobile Menu */}
+                  <Link
+                    to="/admin/send-notification"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:text-violet-700 hover:bg-violet-50/50 transition-all"
+                  >
+                    <Send size={18} className="text-emerald-500" />
+                    <span>Send Notification</span>
+                  </Link>
+
                   <Link
                     to="/admin/settings"
                     onClick={() => setIsMobileMenuOpen(false)}
