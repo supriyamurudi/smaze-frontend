@@ -79,6 +79,8 @@ import CategoryDetails from "../pages/admin/CategoryDetails";
 import AdminReports from "../pages/admin/Reports";
 import AdminSettings from "../pages/admin/Settings";
 
+import AdminSendNotification from "../pages/admin/AdminSendNotification";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -217,6 +219,8 @@ const AppRoutes = () => {
 
           <Route path="reports" element={<AdminReports />} />
           <Route path="settings" element={<AdminSettings />} />
+
+          <Route path="send-notification" element={<AdminSendNotification />} />
         </Route>
 
         {/* ================= 404 ================= */}
