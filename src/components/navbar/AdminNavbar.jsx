@@ -284,35 +284,23 @@ const AdminNavbar = () => {
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
-            {/* Logo - Mobile Optimized */}
+            {/* Logo */}
             <Link
               to="/admin/dashboard"
               className="flex items-center gap-2 sm:gap-3 group relative flex-shrink-0"
             >
-              <motion.div
-                whileHover={{ rotate: -5, scale: 1.05 }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-purple-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                <div className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 text-white shadow-lg shadow-violet-200">
-                  <Sparkles size={16} className="sm:size-5 animate-pulse" />
-                </div>
-              </motion.div>
-              <div className="hidden sm:block">
-                <span className="text-lg sm:text-xl font-black bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent">
-                  Smaze
-                </span>
-                <span className="ml-1 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-violet-400">
-                  Admin
-                </span>
+              <div className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 text-white shadow-lg shadow-violet-200">
+                <Sparkles size={16} className="sm:size-5 animate-pulse" />
               </div>
-              {/* Mobile Logo Text */}
-              <span className="sm:hidden text-base font-bold text-violet-700">
+              <span className="text-lg sm:text-xl font-bold text-violet-700 hidden sm:block">
+                Smaze
+              </span>
+              <span className="text-base font-bold text-violet-700 sm:hidden">
                 Smaze
               </span>
             </Link>
 
-            {/* Desktop Navigation - Hidden on Mobile */}
+            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-0.5 overflow-x-auto">
               {navLinks.map((link) => (
                 <NavLink
@@ -341,11 +329,6 @@ const AdminNavbar = () => {
                         <motion.div
                           layoutId="activeTab"
                           className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full"
-                          transition={{
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 30,
-                          }}
                         />
                       )}
                     </>
@@ -354,13 +337,11 @@ const AdminNavbar = () => {
               ))}
             </div>
 
-            {/* Right Section - Mobile Optimized */}
+            {/* Right Section */}
             <div className="flex items-center gap-1 sm:gap-2">
               {/* Notifications */}
               <div className="relative" ref={notificationsRef}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={() => {
                     setIsNotificationsOpen(!isNotificationsOpen);
                     if (!isNotificationsOpen) {
@@ -371,15 +352,11 @@ const AdminNavbar = () => {
                 >
                   <Bell size={18} className="sm:size-5" />
                   {unreadCount > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-0.5 -right-0.5 h-4 w-4 sm:h-4.5 sm:w-4.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[8px] sm:text-[9px] font-bold text-white flex items-center justify-center shadow-lg shadow-rose-200"
-                    >
+                    <span className="absolute -top-0.5 -right-0.5 h-4 w-4 sm:h-4.5 sm:w-4.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-[8px] sm:text-[9px] font-bold text-white flex items-center justify-center shadow-lg shadow-rose-200">
                       {unreadCount > 99 ? "99+" : unreadCount}
-                    </motion.span>
+                    </span>
                   )}
-                </motion.button>
+                </button>
 
                 <AnimatePresence>
                   {isNotificationsOpen && (
@@ -388,14 +365,16 @@ const AdminNavbar = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-[320px] sm:w-80 lg:w-96 max-h-[400px] sm:max-h-[500px] overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
+                      className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 md:w-96 max-w-[400px] max-h-[400px] sm:max-h-[500px] overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
+                      style={{ right: "0", left: "auto" }}
                     >
+                      {/* Header */}
                       <div className="sticky top-0 z-10 bg-white p-3 sm:p-4 border-b border-slate-100 flex items-center justify-between">
-                        <div>
+                        <div className="min-w-0">
                           <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
                             Notifications
                             {unreadCount > 0 && (
-                              <span className="text-xs bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium">
+                              <span className="text-xs bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium flex-shrink-0">
                                 {unreadCount} new
                               </span>
                             )}
@@ -404,18 +383,18 @@ const AdminNavbar = () => {
                             {notifications.length} notifications
                           </p>
                         </div>
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                           {unreadCount > 0 && (
                             <button
                               onClick={handleMarkAllAsRead}
-                              className="text-[10px] sm:text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors"
+                              className="text-[10px] sm:text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors whitespace-nowrap"
                             >
                               Mark all read
                             </button>
                           )}
                           <Link
                             to="/admin/notifications"
-                            className="text-[10px] sm:text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors"
+                            className="text-[10px] sm:text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors whitespace-nowrap"
                             onClick={() => setIsNotificationsOpen(false)}
                           >
                             View All
@@ -423,6 +402,7 @@ const AdminNavbar = () => {
                         </div>
                       </div>
 
+                      {/* Notifications List */}
                       <div className="p-2 space-y-1">
                         {loadingNotifications ? (
                           <div className="flex items-center justify-center py-8">
@@ -463,7 +443,7 @@ const AdminNavbar = () => {
                                     <div className="flex-shrink-0 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 rounded-lg sm:rounded-xl bg-white shadow-sm flex items-center justify-center">
                                       {getNotificationIcon(notification.type)}
                                     </div>
-                                    <p className="text-xs sm:text-sm font-semibold text-slate-800 flex-1 line-clamp-1">
+                                    <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
                                       {notification.title}
                                     </p>
                                     {notification.priority === "high" && (
@@ -472,7 +452,7 @@ const AdminNavbar = () => {
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 line-clamp-2 ml-8 sm:ml-9 lg:ml-10">
+                                  <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 line-clamp-2 ml-8 sm:ml-9 lg:ml-10 break-words">
                                     {notification.message}
                                   </p>
                                   <p className="text-[8px] sm:text-[9px] lg:text-[10px] text-slate-400 mt-0.5 ml-8 sm:ml-9 lg:ml-10">
@@ -505,11 +485,9 @@ const AdminNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Profile Dropdown - Mobile Optimized */}
+              {/* Profile Dropdown */}
               <div className="relative" ref={profileRef}>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl px-1.5 sm:px-2 lg:px-3 py-1 sm:py-1.5 lg:py-2 hover:bg-violet-50 transition-all group"
                 >
@@ -527,7 +505,7 @@ const AdminNavbar = () => {
                     )}
                     <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-500 border-2 border-white"></div>
                   </div>
-                  <div className="hidden lg:block text-left">
+                  <div className="hidden lg:block text-left min-w-0">
                     <p className="text-sm font-bold text-slate-700 truncate max-w-[100px]">
                       {loadingProfile
                         ? "Loading..."
@@ -543,7 +521,7 @@ const AdminNavbar = () => {
                       isProfileOpen ? "rotate-180" : ""
                     }`}
                   />
-                </motion.button>
+                </button>
 
                 <AnimatePresence>
                   {isProfileOpen && (
@@ -667,19 +645,17 @@ const AdminNavbar = () => {
               </div>
 
               {/* Mobile Menu Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="lg:hidden h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg text-slate-600 hover:bg-violet-50 hover:text-violet-600 transition-all"
               >
                 {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </motion.button>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu - Improved */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
