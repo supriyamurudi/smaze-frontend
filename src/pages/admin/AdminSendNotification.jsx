@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   HiOutlineUsers,
   HiOutlineUser,
-  HiOutlineMail,
+  HiOutlineMailOpen, // ✅ FIXED: Use HiOutlineMailOpen instead
   HiOutlineCheckCircle,
 } from "react-icons/hi2";
 import api from "../../api/api";
@@ -19,10 +19,8 @@ const AdminSendNotification = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingUsers, setFetchingUsers] = useState(false);
 
-  // ✅ Use ref to prevent unnecessary fetches
   const hasFetched = useRef(false);
 
-  // ✅ Define fetch function with useCallback
   const fetchShopOwners = useCallback(async () => {
     setFetchingUsers(true);
     try {
@@ -38,14 +36,12 @@ const AdminSendNotification = () => {
     }
   }, []);
 
-  // ✅ FIX: Use a flag to prevent unnecessary calls
   useEffect(() => {
     if (recipientType === "single" && !hasFetched.current) {
       hasFetched.current = true;
       fetchShopOwners();
     }
 
-    // Reset flag when switching away from single
     return () => {
       if (recipientType !== "single") {
         hasFetched.current = false;
@@ -112,7 +108,8 @@ const AdminSendNotification = () => {
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3">
           <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-lg shadow-violet-200">
-            <HiOutlineMail size={20} className="sm:size-6" />
+            <HiOutlineMailOpen size={20} className="sm:size-6" />{" "}
+            {/* ✅ FIXED */}
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-800">
@@ -302,7 +299,7 @@ const AdminSendNotification = () => {
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              <HiOutlineMail size={18} />
+              <HiOutlineMailOpen size={18} /> {/* ✅ FIXED */}
               Send Notification
             </span>
           )}
