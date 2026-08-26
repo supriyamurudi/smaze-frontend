@@ -365,7 +365,7 @@ const AdminNavbar = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 md:w-96 max-w-[400px] max-h-[400px] sm:max-h-[500px] overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
+                      className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 md:w-96 max-w-[300px] max-h-[400px] sm:max-h-[500px] overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
                       style={{ right: "1", left: "auto" }}
                     >
                       {/* Header */}
