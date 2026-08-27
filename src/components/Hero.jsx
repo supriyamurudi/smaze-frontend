@@ -28,17 +28,16 @@ export default function Hero() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await getHomeStats(); // returns { success, data: { ... } }
+        const statsData = await getHomeStats(); // Returns { totalShops, totalCustomers, totalOffers }
 
-        // ✅ FIX: Read directly from response.data (NOT response.data?.data)
+        // ✅ FIX: Read directly from statsData (NOT response.data?.data)
         setStats({
-          totalShops: response.data?.totalShops || 0,
-          totalCustomers: response.data?.totalCustomers || 0,
-          totalOffers: response.data?.totalOffers || 0,
+          totalShops: statsData.totalShops || 0,
+          totalCustomers: statsData.totalCustomers || 0,
+          totalOffers: statsData.totalOffers || 0,
         });
       } catch (error) {
         console.error("Error fetching stats:", error);
-        // ✅ Remove fake numbers, just show 0
         setStats({
           totalShops: 0,
           totalCustomers: 0,
