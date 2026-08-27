@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 // ✅ CORRECT PATH FOR YOUR PROJECT STRUCTURE!
 import ShopNavbar from "../components/navbar/ShopNavbar";
 // ✅ ADD THIS IMPORT
-import ShopBottomNav from "../components/navbar/BottomNav";
+import ShopBottomNav from "../components/navbar/ShopBottomNav";
 import { getMyShop } from "../services/shopService";
 import toast from "react-hot-toast";
 
