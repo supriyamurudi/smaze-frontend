@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 
 // ✅ CORRECT PATH FOR YOUR PROJECT STRUCTURE!
 import ShopNavbar from "../components/navbar/ShopNavbar";
+// ✅ ADD THIS IMPORT
+import ShopBottomNav from "../components/navbar/BottomNav";
 import { getMyShop } from "../services/shopService";
 import toast from "react-hot-toast";
 
@@ -105,7 +107,8 @@ const ShopLayout = () => {
       <ShopNavbar />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      {/* ✅ ADDED pb-24 so content doesn't hide behind the footer */}
+      <main className="flex-1 p-4 md:p-6 lg:p-8 pb-24">
         {loading ? (
           <ContentSkeleton />
         ) : (
@@ -119,6 +122,9 @@ const ShopLayout = () => {
           </motion.div>
         )}
       </main>
+
+      {/* ✅ ADD THE FOOTER HERE */}
+      <ShopBottomNav />
     </div>
   );
 };
