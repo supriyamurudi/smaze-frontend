@@ -28,7 +28,9 @@ export default function Hero() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await getHomeStats();
+        const response = await getHomeStats(); // returns { success, data: { ... } }
+
+        // ✅ FIX: Read directly from response.data (NOT response.data?.data)
         setStats({
           totalShops: response.data?.totalShops || 0,
           totalCustomers: response.data?.totalCustomers || 0,
@@ -36,10 +38,11 @@ export default function Hero() {
         });
       } catch (error) {
         console.error("Error fetching stats:", error);
+        // ✅ Remove fake numbers, just show 0
         setStats({
-          totalShops: 500,
-          totalCustomers: 10000,
-          totalOffers: 2000,
+          totalShops: 0,
+          totalCustomers: 0,
+          totalOffers: 0,
         });
       } finally {
         setLoading(false);
