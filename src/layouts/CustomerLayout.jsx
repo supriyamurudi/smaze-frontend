@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineArrowUp } from "react-icons/hi2";
 
 import CustomerNavbar from "../components/navbar/CustomerNavbar";
+// ✅ ADD THIS IMPORT
+import CustomerBottomNav from "../components/navbar/CustomerBottomNav";
 import { getUnreadCount } from "../services/notificationService";
 
 // Page transition variants
@@ -121,7 +123,8 @@ const CustomerLayout = () => {
       )}
 
       {/* Main Content */}
-      <main className={`flex-1 ${isHomePage ? "pt-2" : "pt-4"} pb-20`}>
+      {/* ✅ Added pb-24 to prevent content being hidden behind footer */}
+      <main className={`flex-1 ${isHomePage ? "pt-2" : "pt-4"} pb-24`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -151,6 +154,9 @@ const CustomerLayout = () => {
           </motion.button>
         )}
       </AnimatePresence>
+
+      {/* ✅ ADD THE FOOTER HERE */}
+      <CustomerBottomNav />
 
       {/* Decorative gradient orbs - positioned fixed for performance */}
       <div className="fixed -top-40 -right-40 w-80 h-80 bg-violet-200/20 rounded-full blur-3xl pointer-events-none"></div>
