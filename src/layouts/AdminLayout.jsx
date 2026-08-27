@@ -4,19 +4,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import AdminNavbar from "../components/navbar/AdminNavbar";
+// ✅ ADD THIS IMPORT
+import AdminBottomNav from "../components/navbar/AdminBottomNav";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-
-  // ✅ FIX: Close sidebar when location changes (without useEffect)
-  // We use the location change to close sidebar, but we handle it
-  // by checking in the render or using a key
-
-  // Option A: Use a key to force re-render
-
-  // Option B: Close sidebar on any link click via the NavLink
-  // This is handled in the sidebar component itself
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
@@ -73,6 +66,9 @@ const AdminLayout = () => {
           </div>
         </motion.main>
       </div>
+
+      {/* ✅ ADD THE BOTTOM NAV HERE (Only shows on mobile) */}
+      <AdminBottomNav />
     </div>
   );
 };
