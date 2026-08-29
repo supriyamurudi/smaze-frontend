@@ -6,7 +6,6 @@ import {
   FaFacebookF,
   FaInstagram,
   FaMapMarkerAlt,
-  FaPhoneAlt,
   FaEnvelope,
   FaArrowRight,
 } from "react-icons/fa";
@@ -332,7 +331,7 @@ const Footer = () => {
                 </p>
               </div>
 
-              <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
+              {/* <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
                 <FaPhoneAlt
                   className="
                     text-purple-500
@@ -340,14 +339,14 @@ const Footer = () => {
                     text-sm sm:text-base
                     flex-shrink-0
                   "
-                />
-                {/* <a
+                /> */}
+              {/* <a
                   href="tel:+91XXXXXXXXX"
                   className="text-sm sm:text-base hover:text-purple-400 transition"
                 >
                   +91 XXXXX XXXXX
                 </a> */}
-              </div>
+              {/* </div> */}
 
               <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
                 <FaEnvelope
