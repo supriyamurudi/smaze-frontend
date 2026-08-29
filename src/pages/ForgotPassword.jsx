@@ -13,6 +13,33 @@ import {
 import toast from "react-hot-toast";
 import { resetPassword } from "../services/authService";
 
+// ===============================
+// STRONG PASSWORD VALIDATION (Same as Login & Signup)
+// ===============================
+const validatePassword = (password) => {
+  // Minimum 8 characters
+  if (password.length < 8)
+    return "Password must be at least 8 characters long.";
+
+  // At least one uppercase letter
+  if (!/[A-Z]/.test(password))
+    return "Password must contain at least one uppercase letter.";
+
+  // At least one lowercase letter
+  if (!/[a-z]/.test(password))
+    return "Password must contain at least one lowercase letter.";
+
+  // At least one number
+  if (!/[0-9]/.test(password))
+    return "Password must contain at least one number.";
+
+  // At least one special character
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
+    return "Password must contain at least one special character.";
+
+  return "";
+};
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -32,23 +59,6 @@ const ForgotPassword = () => {
     }));
   };
 
-  const validatePassword = (password) => {
-    const errors = [];
-    if (password.length < 8) {
-      errors.push("At least 8 characters");
-    }
-    if (!/[A-Z]/.test(password)) {
-      errors.push("One uppercase letter");
-    }
-    if (!/[a-z]/.test(password)) {
-      errors.push("One lowercase letter");
-    }
-    if (!/[0-9]/.test(password)) {
-      errors.push("One number");
-    }
-    return errors;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,9 +74,10 @@ const ForgotPassword = () => {
       return;
     }
 
-    const passwordErrors = validatePassword(newPassword);
-    if (passwordErrors.length > 0) {
-      toast.error(`Password must contain: ${passwordErrors.join(", ")}`);
+    // ✅ Use the SAME strong password validation
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      toast.error(passwordError);
       return;
     }
 
@@ -176,6 +187,7 @@ const ForgotPassword = () => {
                 </button>
               </div>
 
+              {/* Password Requirements List (Consistent) */}
               {formData.newPassword && (
                 <div className="mt-2 sm:mt-3 space-y-1 text-xs">
                   <p className="text-slate-600 font-medium">
@@ -229,6 +241,20 @@ const ForgotPassword = () => {
                         {/[0-9]/.test(formData.newPassword) ? "✅" : "□"}
                       </span>
                       One number
+                    </li>
+                    <li
+                      className={`flex items-center gap-2 text-xs ${
+                        /[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword)
+                          ? "text-green-500"
+                          : "text-slate-400"
+                      }`}
+                    >
+                      <span className="text-sm">
+                        {/[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword)
+                          ? "✅"
+                          : "□"}
+                      </span>
+                      One special character
                     </li>
                   </ul>
                 </div>
