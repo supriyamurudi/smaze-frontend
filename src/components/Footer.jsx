@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FaFacebookF,
   FaInstagram,
   FaMapMarkerAlt,
   FaEnvelope,
@@ -196,7 +195,7 @@ const Footer = () => {
             </p>
 
             <div className="flex gap-3 sm:gap-4 mt-6 sm:mt-8 justify-center sm:justify-start">
-              <a
+              {/* <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -214,7 +213,7 @@ const Footer = () => {
                 "
               >
                 <FaFacebookF />
-              </a>
+              </a> */}
 
               <a
                 href="https://www.instagram.com/smaze.in?igsi=M2kyZWt2bTM3em9q"
