@@ -12,3 +12,9 @@ export const getWebsiteFeedback = async () => {
   const response = await api.get("/feedback/admin");
   return response.data;
 };
+
+// ✅ NEW: Get public feedback (No login required)
+export const getPublicFeedback = async () => {
+  const response = await api.get("/feedback/public");
+  return response.data;
+};
