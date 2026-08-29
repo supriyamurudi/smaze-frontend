@@ -12,9 +12,16 @@ import {
   HiOutlineCheck,
   HiOutlineCog6Tooth,
   HiOutlineSparkles,
+  HiOutlineLockClosed,
+  HiOutlineEye,
+  HiOutlineEyeSlash,
 } from "react-icons/hi2";
 
-import { getSettings, updateSettings } from "../../services/settingsService";
+import {
+  getSettings,
+  updateSettings,
+  updatePassword,
+} from "../../services/settingsService";
 
 const categories = ["Food", "Fashion", "Electronics", "Salon", "Fitness"];
 
@@ -88,6 +95,15 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Password state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -133,6 +149,47 @@ const Settings = () => {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    setPasswordData((previous) => ({
+      ...previous,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSavePassword = async () => {
+    if (passwordData.currentPassword === "") {
+      toast.error("Please enter your current password");
+      return;
+    }
+    if (passwordData.newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    try {
+      setSavingPassword(true);
+      await updatePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+      toast.success("Password updated successfully");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      console.error("Update password error:", error);
+      toast.error(error.response?.data?.message || "Failed to update password");
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
@@ -151,7 +208,7 @@ const Settings = () => {
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* ========== HEADER (Mobile-first, less bulky) ========== */}
+        {/* ========== HEADER ========== */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -257,7 +314,7 @@ const Settings = () => {
               </div>
             </section>
 
-            {/* ===== NOTIFICATIONS SECTION (With Custom Toggles) ===== */}
+            {/* ===== NOTIFICATIONS SECTION ===== */}
             <section className="pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 mb-4">
                 <HiOutlineBell className="text-violet-600" size={22} />
@@ -304,6 +361,90 @@ const Settings = () => {
               </div>
             </section>
 
+            {/* ===== SECURITY / PASSWORD SECTION ===== */}
+            <section className="pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <HiOutlineLockClosed className="text-violet-600" size={22} />
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Security
+                </h2>
+              </div>
+              <p className="text-sm text-slate-500 mb-4">
+                Update your password regularly
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Current Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordChange}
+                      placeholder="Enter current password"
+                      className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 pr-12 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? (
+                        <HiOutlineEyeSlash size={20} />
+                      ) : (
+                        <HiOutlineEye size={20} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Minimum 8 characters"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Confirm new password"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+                <button
+                  onClick={handleSavePassword}
+                  disabled={savingPassword}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {savingPassword ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <HiOutlineLockClosed size={18} />
+                      Change Password
+                    </>
+                  )}
+                </button>
+              </div>
+            </section>
+
             {/* ===== SAVE BUTTON ===== */}
             <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:justify-end">
               <button
@@ -347,6 +488,7 @@ const Settings = () => {
                   <li>• Update your location for personalized offers</li>
                   <li>• Choose categories you're interested in</li>
                   <li>• Manage notification preferences</li>
+                  <li>• Keep your password strong and unique</li>
                 </ul>
               </div>
             </div>
