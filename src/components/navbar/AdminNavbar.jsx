@@ -19,7 +19,8 @@ import {
   Award,
   LayoutGrid,
   Check,
-  Send, // ✅ ADDED
+  Send,
+  MessageSquare, // ✅ ADD THIS IMPORT
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProfile } from "../../services/adminService";
@@ -486,7 +487,7 @@ const AdminNavbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Profile Dropdown - UPDATED with Send Notification */}
+              {/* Profile Dropdown - UPDATED with Send Notification & Feedback */}
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -620,6 +621,26 @@ const AdminNavbar = () => {
                           </div>
                         </Link>
 
+                        {/* ✅ NEW: Feedback Menu Item */}
+                        <Link
+                          to="/admin/feedback"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-all group"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <div className="h-8 w-8 rounded-xl bg-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                            <MessageSquare
+                              size={16}
+                              className="text-amber-500"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium">Feedback</p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                              View customer feedback
+                            </p>
+                          </div>
+                        </Link>
+
                         <Link
                           to="/admin/settings"
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-violet-50 hover:text-violet-700 transition-all group"
@@ -723,6 +744,16 @@ const AdminNavbar = () => {
                   >
                     <Send size={18} className="text-emerald-500" />
                     <span>Send Notification</span>
+                  </Link>
+
+                  {/* ✅ NEW: Feedback in Mobile Menu */}
+                  <Link
+                    to="/admin/feedback"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:text-violet-700 hover:bg-violet-50/50 transition-all"
+                  >
+                    <MessageSquare size={18} className="text-amber-500" />
+                    <span>Feedback</span>
                   </Link>
 
                   <Link
