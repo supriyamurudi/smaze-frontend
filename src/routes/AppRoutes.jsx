@@ -39,6 +39,7 @@ import Profile from "../pages/customer/Profile";
 import Settings from "../pages/customer/Settings";
 import EditProfile from "../pages/customer/EditProfile";
 import CustomerShopDetails from "../pages/customer/ShopDetails";
+import CustomerFeedback from "../pages/customer/Feedback";
 
 // ================= SHOP =================
 
@@ -82,7 +83,7 @@ import AdminSettings from "../pages/admin/Settings";
 import AdminSendNotification from "../pages/admin/AdminSendNotification";
 
 // ✅ ADD THIS - Feedback Pages
-import CustomerFeedback from "../pages/customer/Feedback";
+
 import AdminFeedback from "../pages/admin/Feedback";
 
 const AppRoutes = () => {
