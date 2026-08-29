@@ -7,7 +7,7 @@ export const getOffers = async () => {
   return response.data;
 };
 
-// Get offer by ID
+// Get offer by ID (Public & Shop Owner)
 export const getOfferById = async (id) => {
   const response = await api.get(`/offers/${id}`);
   return response.data;
@@ -53,8 +53,9 @@ export const addOfferView = async (id) => {
   return response.data;
 };
 
+// ✅ FIXED: Use standard offer ID endpoint (no "my" prefix needed!)
 export const getMyOfferById = async (id) => {
-  const response = await api.get(`/offers/my/${id}`);
+  const response = await api.get(`/offers/${id}`); // ✅ Now it calls the same endpoint
   return response.data;
 };
 
