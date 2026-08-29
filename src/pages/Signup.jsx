@@ -13,16 +13,52 @@ import {
   HiOutlineKey,
   HiOutlineArrowLeft,
   HiOutlineShieldCheck,
+  HiOutlinePhone,
 } from "react-icons/hi2";
 
 import { registerUser } from "../services/authService";
 
 // ===============================
-// EMAIL VALIDATION FUNCTION
+// STRICT EMAIL VALIDATION
 // ===============================
 const validateEmail = (email) => {
   const emailRegex = /^[A-Za-z][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   return emailRegex.test(email);
+};
+
+// ===============================
+// STRONG PASSWORD VALIDATION
+// ===============================
+const validatePassword = (password) => {
+  // Minimum 8 characters
+  if (password.length < 8)
+    return "Password must be at least 8 characters long.";
+
+  // At least one uppercase letter
+  if (!/[A-Z]/.test(password))
+    return "Password must contain at least one uppercase letter.";
+
+  // At least one lowercase letter
+  if (!/[a-z]/.test(password))
+    return "Password must contain at least one lowercase letter.";
+
+  // At least one number
+  if (!/[0-9]/.test(password))
+    return "Password must contain at least one number.";
+
+  // At least one special character
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
+    return "Password must contain at least one special character.";
+
+  return "";
+};
+
+// ===============================
+// PHONE NUMBER VALIDATION (10 digits)
+// ===============================
+const validatePhone = (phone) => {
+  const phoneRegex = /^[6-9]\d{9}$/; // Indian mobile: starts with 6-9, exactly 10 digits
+  return phoneRegex.test(phone);
 };
 
 const Signup = () => {
@@ -34,6 +70,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    phone: "",
     role: "CUSTOMER",
     shopName: "",
     adminSecret: "",
@@ -83,6 +120,35 @@ const Signup = () => {
     }
   };
 
+  const handlePhoneBlur = () => {
+    if (formData.phone && !validatePhone(formData.phone)) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: "Phone number must be exactly 10 digits and start with 6-9.",
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        phone: "",
+      }));
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    const passwordMsg = validatePassword(formData.password);
+    if (formData.password && passwordMsg) {
+      setErrors((prev) => ({
+        ...prev,
+        password: passwordMsg,
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        password: "",
+      }));
+    }
+  };
+
   const validate = () => {
     const newErrors = {};
 
@@ -97,10 +163,18 @@ const Signup = () => {
         "Email must start with a letter and contain @ and a valid domain (e.g., john@example.com)";
     }
 
+    // Strong Password Check
+    const passwordMsg = validatePassword(formData.password);
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must contain minimum 6 characters";
+    } else if (passwordMsg) {
+      newErrors.password = passwordMsg;
+    }
+
+    // Phone Check (Optional but validated if present)
+    if (formData.phone && !validatePhone(formData.phone)) {
+      newErrors.phone =
+        "Phone number must be exactly 10 digits and start with 6-9.";
     }
 
     if (formData.role === "SHOP_OWNER") {
@@ -133,6 +207,7 @@ const Signup = () => {
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
+        phone: formData.phone.trim(),
         role: formData.role,
         ...(formData.role === "SHOP_OWNER" && {
           shopName: formData.shopName.trim(),
@@ -275,14 +350,29 @@ const Signup = () => {
             />
 
             <InputField
+              icon={<HiOutlinePhone />}
+              label="Phone Number (Optional)"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              onBlur={handlePhoneBlur}
+              placeholder="10-digit mobile number"
+              error={errors.phone}
+              helperText="Phone number must be exactly 10 digits and start with 6-9"
+            />
+
+            <InputField
               icon={<HiOutlineLockClosed />}
               label="Password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Create password (min 6 characters)"
+              onBlur={handlePasswordBlur}
+              placeholder="Create strong password"
               error={errors.password}
+              helperText="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character"
               showPassword={showPassword}
               setShowPassword={setShowPassword}
             />
