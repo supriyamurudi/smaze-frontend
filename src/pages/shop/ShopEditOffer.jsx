@@ -1,3 +1,4 @@
+// frontend/src/pages/shop/ShopEditOffer.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -174,48 +175,46 @@ export default function ShopEditOffer() {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header (Mobile Friendly) */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => navigate("/shop/my-offers")}
-                  className="rounded-full bg-white p-2 shadow-sm transition hover:shadow-md hover:scale-105"
-                >
-                  <HiOutlineArrowLeft size={20} className="text-slate-600" />
-                </button>
-                <div>
-                  <h1 className="text-4xl font-black text-slate-900">
-                    Edit Offer
-                  </h1>
-                  <p className="mt-1 text-slate-500">
-                    Update your offer details
-                  </p>
-                </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/shop/my-offers")}
+                className="rounded-full bg-white p-2 shadow-sm transition hover:shadow-md hover:scale-105"
+              >
+                <HiOutlineArrowLeft size={20} className="text-slate-600" />
+              </button>
+              <div>
+                <h1 className="text-2xl sm:text-4xl font-black text-slate-900">
+                  Edit Offer
+                </h1>
+                <p className="mt-1 text-sm sm:text-base text-slate-500">
+                  Update your offer details
+                </p>
               </div>
             </div>
-            <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
-              <HiOutlineTag className="inline mr-1" size={16} />
+            <span className="rounded-full bg-amber-100 px-4 py-2 text-xs sm:text-sm font-semibold text-amber-700">
+              <HiOutlineTag className="inline mr-1" size={14} />
               Edit Mode
             </span>
           </div>
         </motion.div>
 
-        {/* Form */}
+        {/* Form (Responsive) */}
         <motion.form
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
           onSubmit={handleSubmit}
-          className="overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm"
+          className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white border border-slate-200 shadow-sm"
         >
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-5 sm:p-8 space-y-5 sm:space-y-6">
             {/* Title */}
             <FormField label="Offer Title" required icon={HiOutlineTag}>
               <Input
@@ -245,7 +244,7 @@ export default function ShopEditOffer() {
             </FormField>
 
             {/* Discount & Category */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
               <FormField
                 label="Discount (%)"
                 required
@@ -282,13 +281,13 @@ export default function ShopEditOffer() {
 
             {/* Image */}
             <FormField label="Offer Image" icon={HiOutlinePhoto}>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 {preview && (
                   <div className="relative">
                     <img
                       src={preview}
                       alt="Offer"
-                      className="h-28 w-28 rounded-xl border border-slate-200 object-cover"
+                      className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl border border-slate-200 object-cover"
                     />
                     <button
                       type="button"
@@ -299,8 +298,8 @@ export default function ShopEditOffer() {
                     </button>
                   </div>
                 )}
-                <label className="flex cursor-pointer items-center gap-2 rounded-xl bg-violet-50 px-5 py-3 font-medium text-violet-700 transition hover:bg-violet-100">
-                  <HiOutlinePhoto size={22} />
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl bg-violet-50 px-5 py-3 text-sm sm:text-base font-medium text-violet-700 transition hover:bg-violet-100">
+                  <HiOutlinePhoto size={20} />
                   {preview ? "Change Image" : "Upload Image"}
                   <input
                     type="file"
@@ -313,12 +312,12 @@ export default function ShopEditOffer() {
               </div>
             </FormField>
 
-            {/* Actions */}
-            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4 pt-6 border-t border-slate-200">
+            {/* Actions (Mobile Friendly) */}
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4 pt-5 sm:pt-6 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => navigate("/shop/my-offers")}
-                className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 hover:scale-[1.02]"
+                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50 hover:scale-[1.02]"
               >
                 <HiOutlineXCircle size={18} />
                 Cancel
@@ -326,7 +325,7 @@ export default function ShopEditOffer() {
               <button
                 type="submit"
                 disabled={saving}
-                className={`flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white transition ${
+                className={`flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white transition ${
                   saving
                     ? "bg-slate-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-violet-200 hover:scale-[1.02] hover:shadow-xl"
