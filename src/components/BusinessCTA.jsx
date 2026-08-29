@@ -19,20 +19,22 @@ const BusinessCTA = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await getHomeStats();
-        if (response.success) {
-          setStats({
-            totalShops: response.data?.totalShops || 0,
-            totalCustomers: response.data?.totalCustomers || 0,
-            totalOffers: response.data?.totalOffers || 0,
-          });
-        }
+        // ✅ getHomeStats() now returns ONLY { totalShops, totalCustomers, totalOffers }
+        const statsData = await getHomeStats();
+
+        // ✅ No double .data, no checking response.success
+        setStats({
+          totalShops: statsData.totalShops || 0,
+          totalCustomers: statsData.totalCustomers || 0,
+          totalOffers: statsData.totalOffers || 0,
+        });
       } catch (error) {
         console.error("Error fetching stats:", error);
+        // ✅ Keep actual zeros, not fake numbers
         setStats({
-          totalShops: 500,
-          totalCustomers: 10000,
-          totalOffers: 2000,
+          totalShops: 0,
+          totalCustomers: 0,
+          totalOffers: 0,
         });
       } finally {
         setLoading(false);
