@@ -21,6 +21,7 @@ import {
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 
 import { getShopById } from "../../services/shopService";
+import ShopRating from "../../components/ShopRating"; // ✅ ADD THIS IMPORT
 
 // ========== SKELETON LOADER ==========
 const SkeletonLoader = () => (
@@ -408,6 +409,11 @@ const ShopDetails = () => {
               )}
             </div>
           </div>
+        </div>
+
+        {/* ✅ ADD SHOP RATING SECTION HERE */}
+        <div className="mt-12">
+          <ShopRating shopId={shop.id} />
         </div>
       </div>
     </div>
