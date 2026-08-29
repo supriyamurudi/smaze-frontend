@@ -54,6 +54,7 @@ import Analytics from "../pages/shop/Analytics";
 import ShopProfile from "../pages/shop/Profile";
 import ShopSettings from "../pages/shop/Settings";
 import ShopNotifications from "../pages/shop/ShopNotifications";
+import ShopRatings from "../pages/shop/Ratings";
 
 // ================= ADMIN =================
 
@@ -190,6 +191,8 @@ const AppRoutes = () => {
           <Route path="/shop/settings" element={<ShopSettings />} />
 
           <Route path="/shop/notifications" element={<ShopNotifications />} />
+
+          <Route path="/shop/ratings" element={<ShopRatings />} />
         </Route>
 
         {/* ================= ADMIN ================= */}

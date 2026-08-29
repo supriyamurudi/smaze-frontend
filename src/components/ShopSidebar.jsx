@@ -19,6 +19,7 @@ import {
   HiOutlineBuildingStorefront,
   HiOutlineBell,
   HiXMark,
+  HiOutlineStar,
 } from "react-icons/hi2";
 
 // ========== MENU ITEMS ==========
@@ -31,6 +32,11 @@ const getMenuItems = (hasShop) => {
     { name: "Notifications", path: "/shop/notifications", icon: HiOutlineBell },
     { name: "Profile", path: "/shop/profile", icon: HiOutlineUser },
     { name: "Settings", path: "/shop/settings", icon: HiOutlineCog6Tooth }, // ✅ Settings is here
+    {
+      name: "My Ratings",
+      path: "/shop/ratings",
+      icon: HiOutlineStar,
+    },
   ];
 
   const createShopItems = [
