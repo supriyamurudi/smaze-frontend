@@ -81,6 +81,10 @@ import AdminSettings from "../pages/admin/Settings";
 
 import AdminSendNotification from "../pages/admin/AdminSendNotification";
 
+// ✅ ADD THIS - Feedback Pages
+import CustomerFeedback from "../pages/customer/Feedback";
+import AdminFeedback from "../pages/admin/Feedback";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -146,6 +150,8 @@ const AppRoutes = () => {
           <Route path="/customer/settings" element={<Settings />} />
 
           <Route path="/customer/shops/:id" element={<CustomerShopDetails />} />
+
+          <Route path="/customer/feedback" element={<CustomerFeedback />} />
         </Route>
 
         {/* ================= SHOP ================= */}
@@ -221,6 +227,8 @@ const AppRoutes = () => {
           <Route path="settings" element={<AdminSettings />} />
 
           <Route path="send-notification" element={<AdminSendNotification />} />
+
+          <Route path="feedback" element={<AdminFeedback />} />
         </Route>
 
         {/* ================= 404 ================= */}
