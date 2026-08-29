@@ -341,12 +341,12 @@ const Footer = () => {
                     flex-shrink-0
                   "
                 />
-                <a
+                {/* <a
                   href="tel:+91XXXXXXXXX"
                   className="text-sm sm:text-base hover:text-purple-400 transition"
                 >
                   +91 XXXXX XXXXX
-                </a>
+                </a> */}
               </div>
 
               <div className="flex gap-3 sm:gap-4 justify-center sm:justify-start">
