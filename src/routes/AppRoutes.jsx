@@ -38,6 +38,7 @@ import Notifications from "../pages/customer/Notifications";
 import Profile from "../pages/customer/Profile";
 import Settings from "../pages/customer/Settings";
 import EditProfile from "../pages/customer/EditProfile";
+import Shops from "../pages/customer/Shops";
 import CustomerShopDetails from "../pages/customer/ShopDetails";
 import CustomerFeedback from "../pages/customer/Feedback";
 
@@ -149,6 +150,8 @@ const AppRoutes = () => {
           <Route path="/customer/edit-profile" element={<EditProfile />} />
 
           <Route path="/customer/settings" element={<Settings />} />
+
+          <Route path="/customer/shops" element={<Shops />} />
 
           <Route path="/customer/shops/:id" element={<CustomerShopDetails />} />
 
