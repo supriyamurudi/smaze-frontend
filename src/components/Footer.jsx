@@ -223,7 +223,7 @@ const Footer = () => {
               </a>
 
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/smaze.in?igsi=M2kyZWt2bTM3em9q"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
