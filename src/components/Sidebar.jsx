@@ -12,6 +12,7 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineXMark,
   HiBars3,
+  HiOutlineChatBubbleLeftRight, // ✅ ADD THIS IMPORT
 } from "react-icons/hi2";
 
 const menuItems = [
@@ -44,6 +45,12 @@ const menuItems = [
     name: "Settings",
     path: "/customer/settings",
     icon: HiOutlineCog6Tooth,
+  },
+  // ✅ ADD THIS NEW ITEM
+  {
+    name: "Feedback",
+    path: "/customer/feedback",
+    icon: HiOutlineChatBubbleLeftRight,
   },
 ];
 
