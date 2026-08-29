@@ -18,3 +18,9 @@ export const getMyShopRating = async (shopId) => {
   const response = await api.get(`/ratings/my/${shopId}`);
   return response.data;
 };
+
+// ✅ NEW: Get all ratings for the shop owner's own shop
+export const getMyShopRatings = async () => {
+  const response = await api.get("/ratings/my-shop");
+  return response.data;
+};
