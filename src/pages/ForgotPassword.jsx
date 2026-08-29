@@ -14,29 +14,19 @@ import toast from "react-hot-toast";
 import { resetPassword } from "../services/authService";
 
 // ===============================
-// STRONG PASSWORD VALIDATION (Same as Login & Signup)
+// STRONG PASSWORD VALIDATION
 // ===============================
 const validatePassword = (password) => {
-  // Minimum 8 characters
   if (password.length < 8)
     return "Password must be at least 8 characters long.";
-
-  // At least one uppercase letter
   if (!/[A-Z]/.test(password))
     return "Password must contain at least one uppercase letter.";
-
-  // At least one lowercase letter
   if (!/[a-z]/.test(password))
     return "Password must contain at least one lowercase letter.";
-
-  // At least one number
   if (!/[0-9]/.test(password))
     return "Password must contain at least one number.";
-
-  // At least one special character
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
     return "Password must contain at least one special character.";
-
   return "";
 };
 
@@ -74,7 +64,6 @@ const ForgotPassword = () => {
       return;
     }
 
-    // ✅ Use the SAME strong password validation
     const passwordError = validatePassword(newPassword);
     if (passwordError) {
       toast.error(passwordError);
@@ -187,7 +176,7 @@ const ForgotPassword = () => {
                 </button>
               </div>
 
-              {/* Password Requirements List (Consistent) */}
+              {/* Password Requirements List */}
               {formData.newPassword && (
                 <div className="mt-2 sm:mt-3 space-y-1 text-xs">
                   <p className="text-slate-600 font-medium">
