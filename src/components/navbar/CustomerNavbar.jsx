@@ -19,6 +19,7 @@ import {
   HiOutlineGift,
   HiOutlineXCircle,
   HiOutlineUser,
+  HiOutlineChatBubbleLeftRight, // ✅ 1. ADD THIS IMPORT
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -65,6 +66,12 @@ const CustomerNavbar = () => {
       title: "Alerts",
       path: "/customer/notifications",
       icon: <HiOutlineBell size={20} />,
+    },
+    // ✅ 2. ADD THIS NEW ITEM
+    {
+      title: "Feedback",
+      path: "/customer/feedback",
+      icon: <HiOutlineChatBubbleLeftRight size={20} />,
     },
   ];
 
@@ -545,6 +552,16 @@ const CustomerNavbar = () => {
               >
                 <HiOutlineCog6Tooth size={18} />
                 Settings
+              </Link>
+
+              {/* ✅ 3. ADD THIS FEEDBACK LINK IN THE MOBILE MENU */}
+              <Link
+                to="/customer/feedback"
+                onClick={() => setMobileMenu(false)}
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
+              >
+                <HiOutlineChatBubbleLeftRight size={18} />
+                Feedback
               </Link>
 
               <button
