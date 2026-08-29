@@ -1,469 +1,358 @@
 // frontend/src/pages/shop/Settings.jsx
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+
 import toast from "react-hot-toast";
+
 import {
-  HiOutlineXMark,
-  HiOutlineBuildingStorefront,
-  HiOutlinePhone,
   HiOutlineMapPin,
-  HiOutlineGlobeAlt,
-  HiOutlineEnvelope,
-  HiOutlineCog6Tooth,
-  HiOutlineShieldCheck,
   HiOutlineBell,
-  HiOutlinePaintBrush,
-  HiOutlineCheckCircle,
+  HiOutlineTag,
+  HiOutlineCheck,
+  HiOutlineCog6Tooth,
+  HiOutlineSparkles,
 } from "react-icons/hi2";
 
+import { getSettings, updateSettings } from "../../services/settingsService";
+
+const categories = ["Food", "Fashion", "Electronics", "Salon", "Fitness"];
+
+// ========== SKELETON LOADER (Mobile-Optimized) ==========
+const SkeletonLoader = () => (
+  <div className="space-y-6">
+    <div className="h-8 w-40 bg-slate-200 rounded animate-pulse"></div>
+    <div className="mt-2 h-5 w-64 bg-slate-200 rounded animate-pulse"></div>
+
+    <div className="bg-white rounded-2xl shadow-sm border p-5 sm:p-8 space-y-8">
+      <div>
+        <div className="h-5 w-24 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-4 h-11 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="mt-4 h-24 bg-slate-200 rounded-xl animate-pulse"></div>
+      </div>
+      <div>
+        <div className="h-5 w-48 bg-slate-200 rounded animate-pulse"></div>
+        <div className="flex flex-wrap gap-3 mt-4">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="h-10 w-20 bg-slate-200 rounded-full animate-pulse"
+            ></div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="h-5 w-32 bg-slate-200 rounded animate-pulse"></div>
+        <div className="mt-4 space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="h-6 w-11 bg-slate-200 rounded-full animate-pulse"></div>
+              <div className="h-5 w-40 bg-slate-200 rounded animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ========== CUSTOM TOGGLE SWITCH (Better Mobile UX) ==========
+const ToggleSwitch = ({ checked, onChange }) => (
+  <button
+    type="button"
+    onClick={onChange}
+    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 ${
+      checked ? "bg-violet-600" : "bg-slate-300"
+    }`}
+  >
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+        checked ? "translate-x-6" : "translate-x-1"
+      }`}
+    />
+  </button>
+);
+
+// ========== MAIN COMPONENT ==========
 const Settings = () => {
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("general");
   const [settings, setSettings] = useState({
-    shopName: "Beauty Salon",
-    email: "beauty@smaze.com",
-    phone: "8656787656",
-    address: "123 Main Street, New York, NY 10001",
-    website: "https://beautysalon.example.com",
-    businessHours: {
-      monday: "9:00 AM - 9:00 PM",
-      tuesday: "9:00 AM - 9:00 PM",
-      wednesday: "9:00 AM - 9:00 PM",
-      thursday: "9:00 AM - 9:00 PM",
-      friday: "9:00 AM - 10:00 PM",
-      saturday: "10:00 AM - 10:00 PM",
-      sunday: "10:00 AM - 8:00 PM",
-    },
-    notifications: {
-      email: true,
-      sms: false,
-      push: true,
-    },
-    theme: "light",
+    city: "",
+    address: "",
+    notifyOffers: true,
+    notifyExpiry: true,
+    notifyShopUpdates: false,
+    preferredCategories: [],
   });
 
-  const tabs = [
-    { id: "general", label: "General", icon: HiOutlineCog6Tooth },
-    { id: "business", label: "Business", icon: HiOutlineBuildingStorefront },
-    { id: "notifications", label: "Notifications", icon: HiOutlineBell },
-    { id: "appearance", label: "Appearance", icon: HiOutlinePaintBrush },
-    { id: "security", label: "Security", icon: HiOutlineShieldCheck },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await getSettings();
+        setSettings(response.settings);
+      } catch (error) {
+        console.error("Load settings error:", error);
+        toast.error(error.response?.data?.message || "Failed to load settings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setSettings((prev) => ({
-        ...prev,
-        notifications: {
-          ...prev.notifications,
-          [name]: checked,
-        },
-      }));
-    } else if (name.includes(".")) {
-      const [parent, child] = name.split(".");
-      setSettings((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value,
-        },
-      }));
-    } else {
-      setSettings((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setSettings((previous) => ({
+      ...previous,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const toggleCategory = (category) => {
+    setSettings((previous) => ({
+      ...previous,
+      preferredCategories: previous.preferredCategories.includes(category)
+        ? previous.preferredCategories.filter((item) => item !== category)
+        : [...previous.preferredCategories, category],
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      await updateSettings(settings);
+      toast.success("Settings updated successfully");
+    } catch (error) {
+      console.error("Update settings error:", error);
+      toast.error(error.response?.data?.message || "Failed to update settings");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success("Settings saved successfully!");
-    } catch {
-      toast.error("Failed to save settings");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <SkeletonLoader />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="mx-auto max-w-4xl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 pb-20"
     >
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
-          Settings
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Manage your shop preferences and configuration
-        </p>
-      </div>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* ========== HEADER (Mobile-first, less bulky) ========== */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-6 sm:mb-8"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+                Settings
+              </h1>
+              <p className="mt-1 text-sm sm:text-base text-slate-500">
+                Manage your preferences and notifications
+              </p>
+            </div>
+            <div className="hidden sm:flex rounded-full bg-violet-100 px-4 py-2 text-sm font-semibold text-violet-700">
+              <HiOutlineCog6Tooth className="inline mr-1" size={16} />
+              Preferences
+            </div>
+          </div>
+        </motion.div>
 
-      {/* Tabs */}
-      <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200 pb-2">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
-                isActive
-                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-200"
-                  : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
-              }`}
-            >
-              <Icon size={18} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Settings Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* General Settings */}
-        {activeTab === "general" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
-          >
-            <h2 className="text-lg font-semibold text-slate-800">
-              General Settings
-            </h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Update your shop's basic information
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Shop Name
-                </label>
-                <div className="relative">
-                  <HiOutlineBuildingStorefront
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={18}
-                  />
+        {/* ========== SETTINGS CARD ========== */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-xl border border-slate-100"
+        >
+          <div className="p-4 sm:p-8 space-y-8">
+            {/* ===== LOCATION SECTION ===== */}
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <HiOutlineMapPin className="text-violet-600" size={22} />
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Location
+                </h2>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    City
+                  </label>
                   <input
                     type="text"
-                    name="shopName"
-                    value={settings.shopName}
+                    name="city"
+                    value={settings.city || ""}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    placeholder="Enter shop name"
+                    placeholder="Enter your city"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <HiOutlineEnvelope
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={18}
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={settings.email}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    placeholder="Enter email address"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <HiOutlinePhone
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={18}
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={settings.phone}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    placeholder="Enter phone number"
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Business Settings */}
-        {activeTab === "business" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
-          >
-            <h2 className="text-lg font-semibold text-slate-800">
-              Business Information
-            </h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Update your business details and location
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Address
-                </label>
-                <div className="relative">
-                  <HiOutlineMapPin
-                    className="absolute left-3 top-3 text-slate-400"
-                    size={18}
-                  />
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Address
+                  </label>
                   <textarea
                     name="address"
-                    value={settings.address}
+                    value={settings.address || ""}
                     onChange={handleChange}
-                    rows="2"
-                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    placeholder="Enter shop address"
+                    rows="3"
+                    placeholder="Enter your full address"
+                    className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-slate-800 shadow-sm outline-none ring-1 ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500 resize-none"
                   />
                 </div>
               </div>
+            </section>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Website
-                </label>
-                <div className="relative">
-                  <HiOutlineGlobeAlt
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={18}
-                  />
-                  <input
-                    type="url"
-                    name="website"
-                    value={settings.website}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 px-10 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    placeholder="Enter website URL"
-                  />
-                </div>
+            {/* ===== CATEGORIES SECTION ===== */}
+            <section className="pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <HiOutlineTag className="text-violet-600" size={22} />
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Preferred Categories
+                </h2>
               </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Business Hours
-                </label>
-                <div className="space-y-2">
-                  {Object.entries(settings.businessHours).map(
-                    ([day, hours]) => (
-                      <div key={day} className="flex items-center gap-3">
-                        <span className="w-24 text-sm capitalize text-slate-600">
-                          {day}:
-                        </span>
-                        <input
-                          type="text"
-                          name={`businessHours.${day}`}
-                          value={hours}
-                          onChange={handleChange}
-                          className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
-                          placeholder="e.g., 9:00 AM - 9:00 PM"
-                        />
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Notification Settings */}
-        {activeTab === "notifications" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
-          >
-            <h2 className="text-lg font-semibold text-slate-800">
-              Notification Preferences
-            </h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Choose how you want to receive notifications
-            </p>
-
-            <div className="space-y-3">
-              {Object.entries(settings.notifications).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 p-4"
-                >
-                  <div>
-                    <h4 className="font-medium text-slate-800 capitalize">
-                      {key} Notifications
-                    </h4>
-                    <p className="text-xs text-slate-500">
-                      Receive updates via {key}
-                    </p>
-                  </div>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input
-                      type="checkbox"
-                      name={key}
-                      checked={value}
-                      onChange={handleChange}
-                      className="peer sr-only"
-                    />
-                    <div className="h-6 w-11 rounded-full bg-slate-300 peer-checked:bg-violet-600 peer-focus:ring-2 peer-focus:ring-violet-200"></div>
-                    <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span>
-                  </label>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Appearance Settings */}
-        {activeTab === "appearance" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
-          >
-            <h2 className="text-lg font-semibold text-slate-800">Appearance</h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Customize your shop's appearance
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Theme
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {["light", "dark", "system"].map((theme) => (
+              <p className="text-sm text-slate-500 mb-4">
+                Select categories you're interested in
+              </p>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {categories.map((category) => {
+                  const isSelected =
+                    settings.preferredCategories.includes(category);
+                  return (
                     <button
-                      key={theme}
+                      key={category}
                       type="button"
-                      onClick={() =>
-                        setSettings((prev) => ({ ...prev, theme }))
-                      }
-                      className={`rounded-xl border-2 p-4 text-center transition-all ${
-                        settings.theme === theme
-                          ? "border-violet-500 bg-violet-50"
-                          : "border-slate-200 hover:border-violet-300"
+                      onClick={() => toggleCategory(category)}
+                      className={`group relative px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                        isSelected
+                          ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md hover:shadow-lg"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                       }`}
                     >
-                      <span className="text-sm font-medium capitalize text-slate-700">
-                        {theme}
+                      <span className="flex items-center gap-2 text-sm">
+                        {category}
+                        {isSelected && (
+                          <HiOutlineCheck size={16} className="text-white" />
+                        )}
                       </span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* ===== NOTIFICATIONS SECTION (With Custom Toggles) ===== */}
+            <section className="pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <HiOutlineBell className="text-violet-600" size={22} />
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Notifications
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {[
+                  {
+                    id: "notifyOffers",
+                    label: "New offers nearby",
+                    checked: settings.notifyOffers,
+                  },
+                  {
+                    id: "notifyExpiry",
+                    label: "Offer expiry reminders",
+                    checked: settings.notifyExpiry,
+                  },
+                  {
+                    id: "notifyShopUpdates",
+                    label: "Shop updates and announcements",
+                    checked: settings.notifyShopUpdates,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-4 rounded-xl p-3 transition hover:bg-slate-50"
+                  >
+                    <span className="text-sm sm:text-base text-slate-700 font-medium">
+                      {item.label}
+                    </span>
+                    <ToggleSwitch
+                      checked={item.checked}
+                      onChange={() =>
+                        setSettings({
+                          ...settings,
+                          [item.id]: !item.checked,
+                        })
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ===== SAVE BUTTON ===== */}
+            <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:justify-end">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-8 py-3.5 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <HiOutlineCheck size={18} />
+                    Save Settings
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ========== TIPS CARD ========== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6"
+        >
+          <div className="rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 p-4 sm:p-5 border border-violet-100">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-violet-200 p-2 text-violet-600">
+                <HiOutlineSparkles size={18} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-800 text-sm sm:text-base">
+                  Settings Tips
+                </h3>
+                <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-slate-600">
+                  <li>• Update your location for personalized offers</li>
+                  <li>• Choose categories you're interested in</li>
+                  <li>• Manage notification preferences</li>
+                </ul>
               </div>
             </div>
-          </motion.div>
-        )}
-
-        {/* Security Settings */}
-        {activeTab === "security" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-xl"
-          >
-            <h2 className="text-lg font-semibold text-slate-800">Security</h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Manage your account security settings
-            </p>
-
-            <div className="space-y-4">
-              <div className="rounded-xl border border-slate-200 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-slate-800">
-                      Change Password
-                    </h4>
-                    <p className="text-xs text-slate-500">
-                      Update your password regularly
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
-                  >
-                    Change
-                  </button>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-slate-800">
-                      Two-Factor Authentication
-                    </h4>
-                    <p className="text-xs text-slate-500">
-                      Add an extra layer of security
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-                  >
-                    Enable
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-violet-200 disabled:opacity-50"
-          >
-            {loading ? (
-              <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <HiOutlineCheckCircle size={18} />
-                Save Settings
-              </>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-6 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-          >
-            <HiOutlineXMark size={18} />
-            Cancel
-          </button>
-        </div>
-      </form>
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
