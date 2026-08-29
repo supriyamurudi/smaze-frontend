@@ -19,7 +19,8 @@ import {
   HiOutlineGift,
   HiOutlineXCircle,
   HiOutlineUser,
-  HiOutlineChatBubbleLeftRight, // ✅ 1. ADD THIS IMPORT
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineBuildingStorefront, // ✅ ADD THIS for Shops
 } from "react-icons/hi2";
 
 import toast from "react-hot-toast";
@@ -58,7 +59,12 @@ const CustomerNavbar = () => {
       icon: <HiOutlineGift size={20} />,
     },
     {
-      title: "Saved",
+      title: "Shops", // ✅ ADD THIS
+      path: "/customer/shops",
+      icon: <HiOutlineBuildingStorefront size={20} />,
+    },
+    {
+      title: "Saved Offers",
       path: "/customer/saved-offers",
       icon: <HiOutlineHeart size={20} />,
     },
@@ -67,9 +73,8 @@ const CustomerNavbar = () => {
       path: "/customer/notifications",
       icon: <HiOutlineBell size={20} />,
     },
-    // ✅ 2. ADD THIS NEW ITEM
     {
-      title: "Feedback",
+      title: "Feedback", // ✅ Added ONCE
       path: "/customer/feedback",
       icon: <HiOutlineChatBubbleLeftRight size={20} />,
     },
@@ -194,9 +199,7 @@ const CustomerNavbar = () => {
     );
 
     navigate(
-      `${
-        isCategory ? "/customer/categories" : "/customer/offers"
-      }?search=${encodeURIComponent(query)}`,
+      `${isCategory ? "/customer/categories" : "/customer/offers"}?search=${encodeURIComponent(query)}`,
     );
 
     closeSearch();
@@ -232,14 +235,12 @@ const CustomerNavbar = () => {
               to="/customer/dashboard"
               className="flex items-center gap-2 shrink-0"
             >
-              {/* Clean, standalone image */}
               <img
                 src={smazeLogo}
                 alt="Smaze Logo"
                 className="h-10 w-10 object-contain"
               />
 
-              {/* Modern text with bold S and purple maze */}
               <h1 className="text-xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
                 <span className="text-purple-600">S</span>
                 <span className="text-gray-900">maze</span>
@@ -291,25 +292,10 @@ const CustomerNavbar = () => {
                 <AnimatePresence>
                   {searchOpen && (
                     <motion.div
-                      initial={{
-                        opacity: 0,
-                        y: 10,
-                        scale: 0.95,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                      }}
-                      exit={{
-                        opacity: 0,
-                        y: 10,
-                        scale: 0.95,
-                      }}
-                      transition={{
-                        type: "spring",
-                        damping: 25,
-                      }}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ type: "spring", damping: 25 }}
                       className="fixed left-3 right-3 top-20 sm:absolute sm:left-auto sm:right-0 sm:top-12 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[60]"
                     >
                       <form onSubmit={handleSearch} className="p-4">
@@ -402,18 +388,9 @@ const CustomerNavbar = () => {
                 <AnimatePresence>
                   {profileOpen && (
                     <motion.div
-                      initial={{
-                        opacity: 0,
-                        y: 10,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      exit={{
-                        opacity: 0,
-                        y: 10,
-                      }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
                       className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2"
                     >
                       <Link
@@ -468,10 +445,7 @@ const CustomerNavbar = () => {
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             exit={{ x: -300 }}
-            transition={{
-              type: "spring",
-              damping: 30,
-            }}
+            transition={{ type: "spring", damping: 30 }}
             className="fixed top-0 left-0 z-50 h-dvh w-72 max-w-[85vw] bg-white shadow-2xl lg:hidden"
           >
             {/* Menu Header */}
@@ -552,16 +526,6 @@ const CustomerNavbar = () => {
               >
                 <HiOutlineCog6Tooth size={18} />
                 Settings
-              </Link>
-
-              {/* ✅ 3. ADD THIS FEEDBACK LINK IN THE MOBILE MENU */}
-              <Link
-                to="/customer/feedback"
-                onClick={() => setMobileMenu(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-600 hover:bg-violet-50"
-              >
-                <HiOutlineChatBubbleLeftRight size={18} />
-                Feedback
               </Link>
 
               <button
