@@ -6,10 +6,13 @@ import {
   HiOutlineChatBubbleLeftRight,
   HiOutlinePaperAirplane,
 } from "react-icons/hi2";
+import { FaStar } from "react-icons/fa";
 import { submitWebsiteFeedback } from "../services/feedbackService";
 
 const WebsiteFeedback = () => {
   const [message, setMessage] = useState("");
+  const [rating, setRating] = useState(5); // Default to 5 stars
+  const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -22,9 +25,10 @@ const WebsiteFeedback = () => {
 
     try {
       setLoading(true);
-      await submitWebsiteFeedback(message);
+      await submitWebsiteFeedback(message, rating);
       toast.success("Thank you for your feedback!");
       setMessage("");
+      setRating(5);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to submit feedback");
     } finally {
@@ -43,10 +47,46 @@ const WebsiteFeedback = () => {
         <h2 className="text-xl font-bold text-slate-800">Website Feedback</h2>
       </div>
       <p className="text-sm text-slate-500 mb-4">
-        Tell us how we can improve the website. Your feedback goes directly to
-        our team.
+        Rate your experience and tell us how we can improve. Your feedback goes
+        directly to our team.
       </p>
 
+      {/* ⭐ STAR RATING SECTION */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Rate our website:
+        </label>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => setRating(star)}
+              onMouseEnter={() => setHoverRating(star)}
+              onMouseLeave={() => setHoverRating(0)}
+              className="p-1 transition-transform hover:scale-125"
+            >
+              <FaStar
+                size={28}
+                className={
+                  (hoverRating || rating) >= star
+                    ? "text-yellow-400"
+                    : "text-slate-300"
+                }
+              />
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-slate-500 mt-1">
+          {rating === 5 && "Excellent! ⭐⭐⭐⭐⭐"}
+          {rating === 4 && "Very Good! ⭐⭐⭐⭐"}
+          {rating === 3 && "Good! ⭐⭐⭐"}
+          {rating === 2 && "Fair! ⭐⭐"}
+          {rating === 1 && "Poor! ⭐"}
+        </p>
+      </div>
+
+      {/* TEXT AREA */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           value={message}

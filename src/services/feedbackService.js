@@ -1,9 +1,9 @@
 // frontend/src/services/feedbackService.js
 import api from "../api/api";
 
-// ✅ Submit website feedback
-export const submitWebsiteFeedback = async (message) => {
-  const response = await api.post("/feedback", { message });
+// ✅ Submit website feedback (with rating)
+export const submitWebsiteFeedback = async (message, rating = 5) => {
+  const response = await api.post("/feedback", { message, rating });
   return response.data;
 };
 

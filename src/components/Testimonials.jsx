@@ -15,12 +15,10 @@ const Testimonials = () => {
         const displayData = response.feedback.map((item) => ({
           id: item.id,
           name: item.user?.name || "Anonymous User",
-          role: "Smaze User", // Default role
-          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            item.user?.name || "A",
-          )}&background=7c3aed&color=fff&size=128`,
+          role: "Smaze User",
+          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(item.user?.name || "A")}&background=7c3aed&color=fff&size=128`,
           review: item.message,
-          rating: 5, // Default to 5 stars for positive feedback
+          rating: item.rating || 5, // ✅ Use the actual rating
         }));
         setFeedback(displayData);
       } catch (error) {
