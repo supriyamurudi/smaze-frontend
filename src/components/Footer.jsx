@@ -1,6 +1,6 @@
 // frontend/src/components/Footer.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaFacebookF,
@@ -12,7 +12,6 @@ import {
 } from "react-icons/fa";
 
 const Footer = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -23,10 +22,6 @@ const Footer = () => {
       setEmail("");
       setTimeout(() => setIsSubscribed(false), 3000);
     }
-  };
-
-  const handleCategoryClick = (category) => {
-    navigate(`/offers?category=${encodeURIComponent(category)}`);
   };
 
   return (
@@ -306,44 +301,6 @@ const Footer = () => {
                   Contact
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Categories */}
-          <div className="text-center sm:text-left">
-            <h3
-              className="
-                text-lg sm:text-xl
-                font-bold
-                text-white
-                mb-4 sm:mb-5 md:mb-6
-              "
-            >
-              Categories
-            </h3>
-
-            <ul className="space-y-2.5 sm:space-y-3 md:space-y-4">
-              {[
-                "Fashion",
-                "Food",
-                "Electronics",
-                "Fitness",
-                "Beauty & Salon",
-                "Home & Furniture",
-              ].map((item) => (
-                <li
-                  key={item}
-                  onClick={() => handleCategoryClick(item)}
-                  className="
-                    text-sm sm:text-base
-                    hover:text-purple-400
-                    cursor-pointer
-                    transition
-                  "
-                >
-                  {item}
-                </li>
-              ))}
             </ul>
           </div>
 
