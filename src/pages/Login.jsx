@@ -21,33 +21,6 @@ const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// ===============================
-// STRONG PASSWORD VALIDATION
-// ===============================
-const validatePassword = (password) => {
-  // Minimum 8 characters
-  if (password.length < 8)
-    return "Password must be at least 8 characters long.";
-
-  // At least one uppercase letter
-  if (!/[A-Z]/.test(password))
-    return "Password must contain at least one uppercase letter.";
-
-  // At least one lowercase letter
-  if (!/[a-z]/.test(password))
-    return "Password must contain at least one lowercase letter.";
-
-  // At least one number
-  if (!/[0-9]/.test(password))
-    return "Password must contain at least one number.";
-
-  // At least one special character
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
-    return "Password must contain at least one special character.";
-
-  return "";
-};
-
 const Login = () => {
   const navigate = useNavigate();
 
@@ -55,7 +28,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  // ❌ Removed passwordError because we don't validate strength on login
 
   const [formData, setFormData] = useState({
     email: "",
@@ -73,7 +46,6 @@ const Login = () => {
 
     setError("");
     setEmailError("");
-    setPasswordError("");
   };
 
   const handleEmailBlur = () => {
@@ -86,15 +58,6 @@ const Login = () => {
     }
   };
 
-  const handlePasswordBlur = () => {
-    const passwordMsg = validatePassword(formData.password);
-    if (formData.password && passwordMsg) {
-      setPasswordError(passwordMsg);
-    } else {
-      setPasswordError("");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,13 +65,6 @@ const Login = () => {
       setEmailError(
         "Please enter a valid email address. Email must start with a letter and contain @ and a valid domain.",
       );
-      return;
-    }
-
-    // Check password strength
-    const passwordMsg = validatePassword(formData.password);
-    if (passwordMsg) {
-      setPasswordError(passwordMsg);
       return;
     }
 
@@ -300,12 +256,9 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  onBlur={handlePasswordBlur}
                   placeholder="Enter password"
                   required
-                  className={`w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border outline-none focus:ring-4 focus:ring-purple-100 text-sm sm:text-base ${
-                    passwordError ? "border-red-500" : ""
-                  }`}
+                  className="w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border outline-none focus:ring-4 focus:ring-purple-100 text-sm sm:text-base"
                 />
                 <button
                   type="button"
@@ -319,9 +272,6 @@ const Login = () => {
                   )}
                 </button>
               </div>
-              {passwordError && (
-                <p className="mt-1 text-xs text-red-500">{passwordError}</p>
-              )}
             </div>
 
             {/* REMEMBER ME & FORGOT PASSWORD */}
