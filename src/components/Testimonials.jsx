@@ -51,14 +51,14 @@ const Testimonials = () => {
           </p>
         </div>
 
-        {/* Cards Grid - Responsive */}
-        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Cards Container - ONE ROW with horizontal scroll */}
+        <div className="flex flex-nowrap gap-4 sm:gap-6 md:gap-8 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-transparent">
           {loading ? (
             // Loading Skeleton
             [...Array(3)].map((_, index) => (
               <div
                 key={index}
-                className="bg-white rounded-3xl p-8 border border-purple-100 shadow-sm"
+                className="flex-shrink-0 w-[300px] sm:w-[350px] md:w-[400px] bg-white rounded-3xl p-8 border border-purple-100 shadow-sm"
               >
                 <div className="w-14 h-14 bg-slate-200 rounded-2xl animate-pulse mb-6"></div>
                 <div className="h-4 bg-slate-200 rounded animate-pulse mb-4"></div>
@@ -73,7 +73,7 @@ const Testimonials = () => {
               </div>
             ))
           ) : feedback.length === 0 ? (
-            <div className="col-span-3 text-center py-16">
+            <div className="w-full text-center py-16">
               <p className="text-slate-500 text-lg">
                 No testimonials yet. Be the first to share your feedback!
               </p>
@@ -82,7 +82,7 @@ const Testimonials = () => {
             feedback.map((item) => (
               <div
                 key={item.id}
-                className="relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 border border-purple-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 sm:hover:-translate-y-3 transition-all duration-500 overflow-hidden"
+                className="relative flex-shrink-0 w-[300px] sm:w-[350px] md:w-[400px] bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 border border-purple-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 sm:hover:-translate-y-3 transition-all duration-500 overflow-hidden"
               >
                 {/* Background Decoration */}
                 <div className="absolute top-0 right-0 w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 bg-gradient-to-br from-purple-200 to-pink-200 rounded-bl-full opacity-40" />
