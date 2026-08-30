@@ -46,9 +46,17 @@ const ShopCard = ({ shop, onClick }) => {
     return shop.offers?.length || shop._count?.offers || 0;
   };
 
+  const getTotalRatings = () => {
+    return shop.totalRatings || shop._count?.ratings || 0;
+  };
+
   const getRating = () => {
-    // If there is a real rating, show it. Otherwise, show "New".
-    return shop.rating || shop.averageRating || "New";
+    // ✅ Check if there are actual ratings first
+    const totalRatings = getTotalRatings();
+    if (totalRatings > 0) {
+      return shop.rating || shop.averageRating || 0;
+    }
+    return "New"; // Show New if 0 ratings
   };
 
   const getLocation = () => {
@@ -106,9 +114,15 @@ const ShopCard = ({ shop, onClick }) => {
           <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-1">
             {shop.name || "Unnamed Shop"}
           </h3>
-          <div className="flex items-center gap-0.5 text-yellow-500 font-bold text-xs sm:text-sm flex-shrink-0">
+          <div className="flex items-center gap-1 text-yellow-500 font-bold text-xs sm:text-sm flex-shrink-0">
             <FaStar className="text-[10px] sm:text-xs" />
             <span>{getRating()}</span>
+            {/* ✅ Show total ratings count if > 0 */}
+            {getTotalRatings() > 0 && (
+              <span className="text-slate-400 font-normal text-[10px] sm:text-xs">
+                ({getTotalRatings()})
+              </span>
+            )}
           </div>
         </div>
 
