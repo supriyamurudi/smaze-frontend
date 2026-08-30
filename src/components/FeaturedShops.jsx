@@ -186,7 +186,7 @@ const FeaturedShops = () => {
   };
 
   const handleViewAll = () => {
-    navigate("/customer/shops");
+    navigate("/customer/login");
   };
 
   if (loading) {
