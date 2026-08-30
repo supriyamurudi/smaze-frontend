@@ -179,18 +179,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Statistics */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            <Stat number="500+" text="Businesses" />
-            <Stat number="10K+" text="Customers" />
-            <Stat number="2500+" text="Offers" />
-            <Stat number="4.9★" text="User Rating" />
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-12 sm:py-16 md:py-20 lg:py-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -255,16 +243,5 @@ function FeatureCard({ emoji, title, text }) {
         {text}
       </p>
     </motion.div>
-  );
-}
-
-function Stat({ number, text }) {
-  return (
-    <div className="text-center text-white">
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-black">{number}</h2>
-      <p className="mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-white/90">
-        {text}
-      </p>
-    </div>
   );
 }
