@@ -1,7 +1,7 @@
 // frontend/src/components/Hero.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaArrowRight,
   FaFire,
@@ -10,6 +10,8 @@ import {
   FaShoppingBag,
   FaStar,
   FaShieldAlt,
+  FaMobileAlt,
+  FaApple,
 } from "react-icons/fa";
 
 import { getHomeStats } from "../services/homeService";
@@ -23,14 +25,22 @@ export default function Hero() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [showAppModal, setShowAppModal] = useState(false);
+
+  // ✅ FIX: Detect browser directly during initial render (No useEffect, No ESLint error)
+  const [isIOS] = useState(() => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return (
+      /iphone|ipad|ipod/.test(userAgent) ||
+      (userAgent.includes("mac") && "ontouchend" in document)
+    );
+  });
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const statsData = await getHomeStats(); // Returns { totalShops, totalCustomers, totalOffers }
-
-        // ✅ FIX: Read directly from statsData (NOT response.data?.data)
+        const statsData = await getHomeStats();
         setStats({
           totalShops: statsData.totalShops || 0,
           totalCustomers: statsData.totalCustomers || 0,
@@ -38,11 +48,7 @@ export default function Hero() {
         });
       } catch (error) {
         console.error("Error fetching stats:", error);
-        setStats({
-          totalShops: 0,
-          totalCustomers: 0,
-          totalOffers: 0,
-        });
+        setStats({ totalShops: 0, totalCustomers: 0, totalOffers: 0 });
       } finally {
         setLoading(false);
       }
@@ -51,18 +57,22 @@ export default function Hero() {
     fetchStats();
   }, []);
 
-  const handleExplore = () => {
-    navigate("/offers");
-  };
+  const handleExplore = () => navigate("/offers");
+  const handleJoinBusiness = () => navigate("/signup");
 
-  const handleJoinBusiness = () => {
-    navigate("/signup");
+  const handleDownloadClick = () => {
+    if (isIOS) {
+      // iOS: Open a modal to instruct them to add to home screen
+      setShowAppModal(true);
+    } else {
+      // Android/Windows: Redirect to your APK or Play Store link
+      // Replace 'YOUR_ANDROID_LINK_HERE' with your actual store link
+      window.open("YOUR_ANDROID_LINK_HERE", "_blank");
+    }
   };
 
   const formatNumber = (num) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "K+";
-    }
+    if (num >= 1000) return (num / 1000).toFixed(1) + "K+";
     return num + "+";
   };
 
@@ -134,6 +144,15 @@ export default function Hero() {
                 className="w-full sm:w-auto px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl border-2 border-violet-200 bg-white text-violet-700 font-semibold hover:bg-violet-50 transition-all duration-300 text-sm"
               >
                 Join Business
+              </button>
+
+              {/* ✅ Download App Button */}
+              <button
+                onClick={handleDownloadClick}
+                className="w-full sm:w-auto px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 text-sm shadow-lg"
+              >
+                <FaMobileAlt className="text-xs sm:text-sm" />
+                Get App
               </button>
             </motion.div>
 
@@ -247,6 +266,65 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* ✅ App Installation Modal (For iPhone Users) */}
+      <AnimatePresence>
+        {showAppModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            onClick={() => setShowAppModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-r from-violet-600 to-pink-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg mb-4">
+                  <FaApple />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Install Smaze on iPhone
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Follow these simple steps to add Smaze to your home screen:
+                </p>
+                <ol className="text-left text-sm text-gray-700 space-y-3 mb-6 bg-gray-50 p-4 rounded-xl">
+                  <li>
+                    1. Tap the <strong>Share</strong> icon{" "}
+                    <span className="text-blue-500">
+                      (Square with arrow up)
+                    </span>{" "}
+                    in Safari.
+                  </li>
+                  <li>
+                    2. Scroll down and tap <strong>"Add to Home Screen"</strong>
+                    .
+                  </li>
+                  <li>
+                    3. Tap <strong>"Add"</strong> in the top right corner.
+                  </li>
+                  <li>
+                    4. Find the Smaze app icon on your home screen and start
+                    exploring!
+                  </li>
+                </ol>
+                <button
+                  onClick={() => setShowAppModal(false)}
+                  className="w-full py-3 bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white font-bold rounded-xl hover:scale-105 transition"
+                >
+                  Got it!
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
