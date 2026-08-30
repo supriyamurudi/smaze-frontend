@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FaMapMarkerAlt,
   FaStar,
   FaCheckCircle,
   FaArrowRight,
@@ -57,10 +56,6 @@ const ShopCard = ({ shop, onClick }) => {
       return shop.rating || shop.averageRating || 0;
     }
     return "New"; // Show New if 0 ratings
-  };
-
-  const getLocation = () => {
-    return shop.address?.split(",")[0] || shop.city || "Near You";
   };
 
   return (
@@ -129,11 +124,6 @@ const ShopCard = ({ shop, onClick }) => {
         <p className="text-xs sm:text-sm text-purple-600 font-semibold mt-0.5">
           {shop.category?.name || "Local Business"}
         </p>
-
-        <div className="flex items-center gap-1 sm:gap-1.5 mt-1.5 sm:mt-2 text-slate-500 text-xs sm:text-sm">
-          <FaMapMarkerAlt className="text-violet-500 flex-shrink-0 text-[10px] sm:text-xs" />
-          <span className="truncate text-xs sm:text-sm">{getLocation()}</span>
-        </div>
 
         <div className="mt-2 sm:mt-3 md:mt-4 flex justify-between items-center">
           <span className="text-[10px] sm:text-xs md:text-sm text-slate-500">
