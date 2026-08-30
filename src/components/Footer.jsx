@@ -386,22 +386,8 @@ const Footer = () => {
         >
           <p className="text-xs sm:text-sm text-slate-400 text-center">
             © {new Date().getFullYear()}
-            <span className="text-white font-semibold"> Smaze</span>. All rights
-            reserved.
+            <span className="text-white font-semibold"> Smaze</span>.
           </p>
-
-          <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm flex-wrap justify-center">
-            <Link
-              to="/privacy-policy"
-              className="hover:text-pink-400 transition"
-            >
-              Privacy Policy
-            </Link>
-
-            <Link to="/terms" className="hover:text-purple-400 transition">
-              Terms & Conditions
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
