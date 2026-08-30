@@ -47,7 +47,8 @@ const ShopCard = ({ shop, onClick }) => {
   };
 
   const getRating = () => {
-    return shop.rating || shop.averageRating || "4.5";
+    // If there is a real rating, show it. Otherwise, show "New".
+    return shop.rating || shop.averageRating || "New";
   };
 
   const getLocation = () => {
