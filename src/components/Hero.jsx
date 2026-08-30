@@ -25,9 +25,12 @@ export default function Hero() {
   });
 
   const [loading, setLoading] = useState(true);
-  const [showAppModal, setShowAppModal] = useState(false);
 
-  // ✅ FIX: Detect browser directly during initial render (No useEffect, No ESLint error)
+  // ✅ New States for PWA Installation
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallHelp, setShowInstallHelp] = useState(false); // Fallback modal
+
+  // ✅ Detect browser directly during initial render
   const [isIOS] = useState(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
     return (
@@ -55,19 +58,40 @@ export default function Hero() {
     };
 
     fetchStats();
+
+    // ✅ Listen for PWA install prompt (Android/Desktop Chrome)
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt,
+      );
+    };
   }, []);
 
   const handleExplore = () => navigate("/offers");
   const handleJoinBusiness = () => navigate("/signup");
 
-  const handleDownloadClick = () => {
+  const handleDownloadClick = async () => {
     if (isIOS) {
-      // iOS: Open a modal to instruct them to add to home screen
-      setShowAppModal(true);
+      setShowInstallHelp(true); // Show the iOS "Add to Home Screen" instructions
+    } else if (deferredPrompt) {
+      // ✅ Native Android PWA Install prompt
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        console.log("User accepted the install prompt");
+      }
+      setDeferredPrompt(null); // Reset so it can appear later
     } else {
-      // Android/Windows: Redirect to your APK or Play Store link
-      // Replace 'YOUR_ANDROID_LINK_HERE' with your actual store link
-      window.open("YOUR_ANDROID_LINK_HERE", "_blank");
+      // Fallback for browsers that don't support PWA yet
+      setShowInstallHelp(true);
     }
   };
 
@@ -267,15 +291,15 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ✅ App Installation Modal (For iPhone Users) */}
+      {/* ✅ Universal Install Help Modal (Works for iPhone & Android fallback) */}
       <AnimatePresence>
-        {showAppModal && (
+        {showInstallHelp && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setShowAppModal(false)}
+            onClick={() => setShowInstallHelp(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -286,36 +310,60 @@ export default function Hero() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-r from-violet-600 to-pink-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg mb-4">
-                  <FaApple />
+                  <FaApple className={isIOS ? "" : "hidden"} />
+                  <FaMobileAlt className={isIOS ? "hidden" : ""} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Install Smaze on iPhone
+                  {isIOS
+                    ? "Install Smaze on iPhone"
+                    : "Install Smaze on your device"}
                 </h3>
                 <p className="text-gray-600 text-sm mb-4">
                   Follow these simple steps to add Smaze to your home screen:
                 </p>
                 <ol className="text-left text-sm text-gray-700 space-y-3 mb-6 bg-gray-50 p-4 rounded-xl">
-                  <li>
-                    1. Tap the <strong>Share</strong> icon{" "}
-                    <span className="text-blue-500">
-                      (Square with arrow up)
-                    </span>{" "}
-                    in Safari.
-                  </li>
-                  <li>
-                    2. Scroll down and tap <strong>"Add to Home Screen"</strong>
-                    .
-                  </li>
-                  <li>
-                    3. Tap <strong>"Add"</strong> in the top right corner.
-                  </li>
-                  <li>
-                    4. Find the Smaze app icon on your home screen and start
-                    exploring!
-                  </li>
+                  {isIOS ? (
+                    <>
+                      <li>
+                        1. Tap the <strong>Share</strong> icon{" "}
+                        <span className="text-blue-500">
+                          (Square with arrow up)
+                        </span>{" "}
+                        in Safari.
+                      </li>
+                      <li>
+                        2. Scroll down and tap{" "}
+                        <strong>"Add to Home Screen"</strong>.
+                      </li>
+                      <li>
+                        3. Tap <strong>"Add"</strong> in the top right corner.
+                      </li>
+                      <li>
+                        4. Find the Smaze app icon on your home screen and start
+                        exploring!
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        1. Open your browser menu (three dots at the top right).
+                      </li>
+                      <li>
+                        2. Tap <strong>"Add to Home screen"</strong> or{" "}
+                        <strong>"Install App"</strong>.
+                      </li>
+                      <li>
+                        3. Confirm by tapping <strong>"Add"</strong>.
+                      </li>
+                      <li>
+                        4. Find the Smaze app icon on your home screen and start
+                        exploring!
+                      </li>
+                    </>
+                  )}
                 </ol>
                 <button
-                  onClick={() => setShowAppModal(false)}
+                  onClick={() => setShowInstallHelp(false)}
                   className="w-full py-3 bg-gradient-to-r from-violet-700 via-fuchsia-600 to-pink-500 text-white font-bold rounded-xl hover:scale-105 transition"
                 >
                   Got it!
