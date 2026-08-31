@@ -1,14 +1,19 @@
 /* Basic Service Worker for Smaze */
 self.addEventListener("install", () => {
   console.log("Service Worker installed");
+  self.skipWaiting(); // Activates the new SW immediately
 });
 
-self.addEventListener("activate", () => {
+self.addEventListener("activate", (event) => {
   console.log("Service Worker activated");
+  event.waitUntil(self.clients.claim()); // Ensures the SW controls all pages
 });
 
-// ✅ Removed 'event' because it wasn't being used
-self.addEventListener("fetch", () => {
-  // Basic caching for static assets (you can expand this later)
-  // If you want to use network caching later, you can add the event back.
+// Properly handle fetch requests (Crucial for installation)
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    }),
+  );
 });
