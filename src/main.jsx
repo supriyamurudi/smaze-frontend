@@ -9,16 +9,16 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>,
 );
 
-// ✅ Register Service Worker here
+// Register Service Worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js")
-      .then((registration) => {
-        console.log("Smaze Service Worker registered:", registration);
-      })
-      .catch((error) => {
-        console.log("Smaze Service Worker registration failed:", error);
-      });
+      .then((registration) =>
+        console.log("Smaze Service Worker registered:", registration),
+      )
+      .catch((error) =>
+        console.log("Smaze Service Worker registration failed:", error),
+      );
   });
 }
