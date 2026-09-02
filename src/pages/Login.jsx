@@ -15,8 +15,6 @@ import {
 // EMAIL VALIDATION FUNCTION (Strict)
 // ===============================
 const validateEmail = (email) => {
-  // Must start with letter, allow numbers, dots, underscores, percent, +, -
-  // Must have @ and a valid domain with at least 2 letters
   const emailRegex = /^[A-Za-z][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   return emailRegex.test(email);
 };
@@ -28,7 +26,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
-  // ❌ Removed passwordError because we don't validate strength on login
 
   const [formData, setFormData] = useState({
     email: "",
@@ -83,47 +80,56 @@ const Login = () => {
         throw new Error("Login failed. Invalid server response.");
       }
 
+      // ✅ Save to localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
+      // ✅ REQUEST PERSISTENT STORAGE (Prevents OS from clearing it in PWA)
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persist().then((persistent) => {
+          console.log("Persistent storage granted:", persistent);
+        });
+      }
+
+      // ✅ USE FULL PAGE RELOAD for PWA (Ensures RequireAuth sees the token)
       setTimeout(() => {
         if (user.role === "ADMIN") {
-          navigate("/admin/dashboard");
+          window.location.href = "/#/admin/dashboard";
           return;
         }
 
         if (user.role === "CUSTOMER") {
-          navigate("/customer/dashboard");
+          window.location.href = "/#/customer/dashboard";
           return;
         }
 
         if (user.role === "SHOP_OWNER") {
           if (!user.hasShop) {
-            navigate("/shop/create-shop");
+            window.location.href = "/#/shop/create-shop";
             return;
           }
 
           if (user.shopStatus === "pending") {
-            navigate("/shop/pending-approval");
+            window.location.href = "/#/shop/pending-approval";
             return;
           }
 
           if (user.shopStatus === "approved") {
-            navigate("/shop/dashboard");
+            window.location.href = "/#/shop/dashboard";
             return;
           }
 
           if (user.shopStatus === "rejected") {
             setError("Your shop has been rejected. Please contact support.");
-            navigate("/shop/create-shop");
+            window.location.href = "/#/shop/create-shop";
             return;
           }
 
-          navigate("/shop/dashboard");
+          window.location.href = "/#/shop/dashboard";
           return;
         }
 
-        navigate("/");
+        window.location.href = "/#/";
       }, 100);
     } catch (error) {
       const message =
