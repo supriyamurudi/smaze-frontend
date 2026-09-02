@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "leaflet/dist/leaflet.css";
+import "./MapFix"; // Only if this file exists!
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
@@ -9,16 +11,12 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>,
 );
 
-// Register Service Worker
-if ("serviceWorker" in navigator) {
+// Service Worker Registration (Register ONLY in production to avoid localhost errors)
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) =>
-        console.log("Smaze Service Worker registered:", registration),
-      )
-      .catch((error) =>
-        console.log("Smaze Service Worker registration failed:", error),
-      );
+      .register("/service-worker.js")
+      .then((reg) => console.log("Service Worker registered!", reg))
+      .catch((err) => console.log("Service Worker failed:", err));
   });
 }

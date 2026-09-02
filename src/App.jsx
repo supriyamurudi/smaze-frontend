@@ -1,13 +1,13 @@
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
 import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppRoutes />
       <Toaster position="top-right" />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
