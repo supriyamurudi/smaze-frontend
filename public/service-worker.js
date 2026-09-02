@@ -1,26 +1,11 @@
-/* Smaze Service Worker */
 const CACHE_NAME = "smaze-v1";
-const urlsToCache = ["/", "/index.html"];
 
-// Install Service Worker
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    }),
-  );
+// Install: Immediately activate the new service worker
+self.addEventListener("install", () => {
+  self.skipWaiting();
 });
 
-// Fetch assets
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    }),
-  );
-});
-
-// Activate Service Worker (Clean up old caches)
+// Activate: Delete old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,5 +17,27 @@ self.addEventListener("activate", (event) => {
         }),
       );
     }),
+  );
+  self.clients.claim();
+});
+
+// Fetch: Network First (Always try server, fallback to cache)
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, copy);
+        });
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          return cached || caches.match("/index.html");
+        });
+      }),
   );
 });
