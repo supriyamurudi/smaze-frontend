@@ -1,4 +1,4 @@
-const CACHE_NAME = "smaze-v1";
+const CACHE_NAME = "smaze-v2";
 
 // Install: Immediately activate the new service worker
 self.addEventListener("install", () => {
@@ -23,6 +23,10 @@ self.addEventListener("activate", (event) => {
 
 // Fetch: Network First (Always try server, fallback to cache)
 self.addEventListener("fetch", (event) => {
+  // ✅ CRITICAL: IGNORE ALL API CALLS - Never cache auth requests!
+  if (event.request.url.includes("/api/")) return;
+
+  // Only handle GET requests for static assets
   if (event.request.method !== "GET") return;
 
   event.respondWith(
