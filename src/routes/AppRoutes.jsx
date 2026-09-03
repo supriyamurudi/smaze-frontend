@@ -87,6 +87,9 @@ const RequireAuth = ({ allowedRoles, children }) => {
         const response = await checkAuth();
         const fetchedUser = response.user;
 
+        // Save user to localStorage just for UI display (name, role, etc.)
+        localStorage.setItem("user", JSON.stringify(fetchedUser));
+
         if (allowedRoles.includes(fetchedUser.role)) {
           setUser(fetchedUser);
         } else {
@@ -94,9 +97,20 @@ const RequireAuth = ({ allowedRoles, children }) => {
           window.location.href =
             "/#/" + fetchedUser.role.toLowerCase() + "/dashboard";
         }
-      } catch {
-        // Cookie invalid or expired -> Not logged in
-        window.location.href = "/#/login";
+      } catch (error) {
+        // ✅ ONLY redirect if we got a 401 (The cookie is truly missing)
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem("user");
+          window.location.href = "/#/login";
+        } else {
+          // ✅ If any other error (like network blip) - use saved user data
+          const savedUser = localStorage.getItem("user");
+          if (savedUser) {
+            setUser(JSON.parse(savedUser));
+          } else {
+            window.location.href = "/#/login";
+          }
+        }
       } finally {
         setIsLoading(false);
       }
