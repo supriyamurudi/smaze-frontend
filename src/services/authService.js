@@ -30,8 +30,7 @@ export const loginUser = async (credentials) => {
 export const logoutUser = async () => {
   try {
     const response = await api.post("/auth/logout");
-    // Only remove user data for UI, NOT token (cookie is cleared by server)
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); // Only remove user data for UI, NOT token
     return response.data;
   } catch (error) {
     throw {
