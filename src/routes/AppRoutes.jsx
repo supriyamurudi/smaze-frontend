@@ -93,7 +93,7 @@ const RequireAuth = ({ allowedRoles, children }) => {
         if (allowedRoles.includes(fetchedUser.role)) {
           setUser(fetchedUser);
         } else {
-          // Wrong role, redirect to their dashboard
+          // Wrong role, redirect to their dashboard (using window.location for full refresh)
           window.location.href =
             "/#/" + fetchedUser.role.toLowerCase() + "/dashboard";
         }
@@ -162,12 +162,13 @@ const PublicOnlyRoute = ({ children }) => {
   }
 
   // ✅ If user is logged in, send them straight to their dashboard!
+  // ⚠️ NO "#" here because Navigate is inside HashRouter
   if (user) {
     if (user.role === "ADMIN")
-      return <Navigate to="/#/admin/dashboard" replace />;
+      return <Navigate to="/admin/dashboard" replace />;
     if (user.role === "SHOP_OWNER")
-      return <Navigate to="/#/shop/dashboard" replace />;
-    return <Navigate to="/#/customer/dashboard" replace />;
+      return <Navigate to="/shop/dashboard" replace />;
+    return <Navigate to="/customer/dashboard" replace />;
   }
 
   // If not logged in, show the public page
