@@ -133,14 +133,63 @@ const RequireAuth = ({ allowedRoles, children }) => {
 };
 
 // ===============================
+// PUBLIC ONLY ROUTE (Redirects if logged in)
+// ===============================
+const PublicOnlyRoute = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const response = await checkAuth();
+        setUser(response.user);
+      } catch {
+        setUser(null); // Not logged in
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    verifySession();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
+  // ✅ If user is logged in, send them straight to their dashboard!
+  if (user) {
+    if (user.role === "ADMIN")
+      return <Navigate to="/#/admin/dashboard" replace />;
+    if (user.role === "SHOP_OWNER")
+      return <Navigate to="/#/shop/dashboard" replace />;
+    return <Navigate to="/#/customer/dashboard" replace />;
+  }
+
+  // If not logged in, show the public page
+  return children;
+};
+
+// ===============================
 // MAIN ROUTES
 // ===============================
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ================= PUBLIC ================= */}
+      {/* ================= PUBLIC (Only if NOT logged in) ================= */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <PublicOnlyRoute>
+              <Home />
+            </PublicOnlyRoute>
+          }
+        />
         <Route path="/categories" element={<Categories />} />
         <Route path="/offers" element={<PublicOffersList />} />
         <Route path="/offers/:id" element={<PublicOfferDetails />} />
