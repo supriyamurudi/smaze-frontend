@@ -74,14 +74,13 @@ const Login = () => {
         password: formData.password,
       });
 
-      const { user, token } = response;
+      const { user } = response; // ✅ No token in response anymore (Cookie handles it!)
 
-      if (!user || !token) {
+      if (!user) {
         throw new Error("Login failed. Invalid server response.");
       }
 
-      // ✅ Save to localStorage
-      localStorage.setItem("token", token);
+      // ✅ ONLY save user data for UI (No token!)
       localStorage.setItem("user", JSON.stringify(user));
 
       // ✅ REQUEST PERSISTENT STORAGE (Prevents OS from clearing it in PWA)
@@ -91,7 +90,7 @@ const Login = () => {
         });
       }
 
-      // ✅ USE FULL PAGE RELOAD for PWA (Ensures RequireAuth sees the token)
+      // ✅ USE FULL PAGE RELOAD to read the cookie and show the correct page
       setTimeout(() => {
         if (user.role === "ADMIN") {
           window.location.href = "/#/admin/dashboard";

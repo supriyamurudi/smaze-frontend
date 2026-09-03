@@ -5,12 +5,6 @@ import api from "../api/api";
 export const registerUser = async (userData) => {
   try {
     const response = await api.post("/auth/register", userData);
-
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-    }
-
     return response.data;
   } catch (error) {
     throw {
@@ -24,12 +18,6 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await api.post("/auth/login", credentials);
-
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-    }
-
     return response.data;
   } catch (error) {
     throw {
@@ -39,20 +27,42 @@ export const loginUser = async (credentials) => {
 };
 
 // ================= Logout =================
-export const logoutUser = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+export const logoutUser = async () => {
+  try {
+    const response = await api.post("/auth/logout");
+    // Only remove user data for UI, NOT token (cookie is cleared by server)
+    localStorage.removeItem("user");
+    return response.data;
+  } catch (error) {
+    throw {
+      message:
+        error.response?.data?.message || error.message || "Logout failed",
+    };
+  }
 };
 
-// ================= Current User =================
+// ================= Check Auth (Used for RequireAuth) =================
+export const checkAuth = async () => {
+  try {
+    const response = await api.get("/auth/check");
+    return response.data;
+  } catch (error) {
+    throw {
+      message:
+        error.response?.data?.message || error.message || "Not authenticated",
+    };
+  }
+};
+
+// ================= Current User (UI only) =================
 export const getCurrentUser = () => {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
 };
 
-// ================= Authentication =================
+// ================= Authentication (UI only) =================
 export const isAuthenticated = () => {
-  return !!localStorage.getItem("token");
+  return localStorage.getItem("user") !== null;
 };
 
 // ================= Get User Role =================

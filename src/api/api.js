@@ -13,15 +13,17 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 10000,
+
+  // ✅ CRITICAL: This tells the browser to automatically send HttpOnly Cookies
+  withCredentials: true,
 });
 
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // ✅ REMOVED: localStorage.getItem("token") and Authorization header
+    // The HttpOnly Cookie is now automatically sent by the browser.
+
     // ✅ Log the FULL URL being called
     console.log(
       `📤 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,

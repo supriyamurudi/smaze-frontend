@@ -1,4 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { checkAuth } from "../services/authService"; // ✅ IMPORT THIS
 
 // Layouts
 import MainLayout from "../layouts/MainLayout";
@@ -74,41 +76,45 @@ import AdminFeedback from "../pages/admin/Feedback";
 // ===============================
 // CENTRAL AUTH GUARD COMPONENT
 // ===============================
-// ===============================
-// CENTRAL AUTH GUARD COMPONENT
-// ===============================
 const RequireAuth = ({ allowedRoles, children }) => {
-  // Read directly from localStorage during render (No useEffect needed)
-  const token = localStorage.getItem("token");
-  const userString = localStorage.getItem("user");
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
-  // If no token or user, redirect immediately
-  if (!token || !userString) {
-    return <Navigate to="/login" replace />;
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        // ✅ Browser automatically sends the HttpOnly cookie with this request
+        const response = await checkAuth();
+        const fetchedUser = response.user;
+
+        if (allowedRoles.includes(fetchedUser.role)) {
+          setUser(fetchedUser);
+        } else {
+          // Wrong role, redirect to their dashboard
+          window.location.href =
+            "/#/" + fetchedUser.role.toLowerCase() + "/dashboard";
+        }
+      } catch {
+        // Cookie invalid or expired -> Not logged in
+        window.location.href = "/#/login";
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    verifySession();
+  }, [allowedRoles]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
-  // Safely parse the user data
-  let user;
-  try {
-    user = JSON.parse(userString);
-  } catch {
-    // If user data is corrupted, clear it and redirect
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
 
-  // Check if the user's role is allowed
-  if (!allowedRoles.includes(user.role)) {
-    // User is logged in but not allowed here. Send them to their own dashboard.
-    if (user.role === "ADMIN")
-      return <Navigate to="/admin/dashboard" replace />;
-    if (user.role === "SHOP_OWNER")
-      return <Navigate to="/shop/dashboard" replace />;
-    return <Navigate to="/customer/dashboard" replace />;
-  }
-
-  // If all checks pass, render the protected layout
   return children;
 };
 
