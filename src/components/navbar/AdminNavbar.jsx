@@ -9,7 +9,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  logoutUser,
   Menu,
   X,
   ChevronDown,
@@ -21,10 +20,11 @@ import {
   LayoutGrid,
   Check,
   Send,
-  MessageSquare, // ✅ ADD THIS IMPORT
+  MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProfile } from "../../services/adminService";
+import { logoutUser } from "../../services/authService"; // ✅ ADD THIS IMPORT
 import {
   getAdminNotifications,
   getAdminUnreadCount,
@@ -245,7 +245,6 @@ const AdminNavbar = () => {
   }, []);
 
   // ========== HANDLE LOGOUT ==========
-  // ========== HANDLE LOGOUT ==========
   const handleLogout = async () => {
     if (pollingInterval.current) {
       clearInterval(pollingInterval.current);
@@ -263,6 +262,7 @@ const AdminNavbar = () => {
       toast.error("Logout failed");
     }
   };
+
   // ========== GET INITIALS ==========
   const getInitials = (name) => {
     if (!name) return "A";
