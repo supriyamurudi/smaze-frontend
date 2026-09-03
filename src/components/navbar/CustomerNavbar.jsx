@@ -174,15 +174,24 @@ const CustomerNavbar = () => {
     setSearchQuery("");
   };
 
-  const handleLogout = () => {
-    logoutUser();
-
+  const handleLogout = async () => {
     setProfileOpen(false);
     setMobileMenu(false);
 
-    toast.success("Logged out successfully");
+    try {
+      // ✅ Call backend to clear the HttpOnly cookie
+      await logoutUser();
+      // ✅ Clear UI data
+      localStorage.removeItem("user");
 
-    navigate("/login", { replace: true });
+      toast.success("Logged out successfully");
+
+      // ✅ GO TO HOME PAGE (NOT LOGIN)
+      window.location.href = "/#/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed");
+    }
   };
 
   const handleSearch = (e) => {

@@ -9,6 +9,7 @@ import {
   FileText,
   Settings,
   LogOut,
+  logoutUser,
   Menu,
   X,
   ChevronDown,
@@ -244,14 +245,24 @@ const AdminNavbar = () => {
   }, []);
 
   // ========== HANDLE LOGOUT ==========
-  const handleLogout = () => {
+  // ========== HANDLE LOGOUT ==========
+  const handleLogout = async () => {
     if (pollingInterval.current) {
       clearInterval(pollingInterval.current);
     }
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+    try {
+      // ✅ Call backend to clear the HttpOnly cookie
+      await logoutUser();
+      // ✅ Clear UI data
+      localStorage.removeItem("user");
 
+      // ✅ GO TO HOME PAGE (NOT LOGIN)
+      window.location.href = "/#/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed");
+    }
+  };
   // ========== GET INITIALS ==========
   const getInitials = (name) => {
     if (!name) return "A";

@@ -1,6 +1,6 @@
 // frontend/src/components/navbar/ShopNavbar.jsx
 
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -30,7 +30,6 @@ import ShopSidebar from "../ShopSidebar";
 
 // ========== MAIN COMPONENT ==========
 const ShopNavbar = () => {
-  const navigate = useNavigate();
   const [shop, setShop] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -80,10 +79,21 @@ const ShopNavbar = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = () => {
-    logoutUser();
-    toast.success("Logged out successfully");
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    try {
+      // ✅ Call backend to clear the HttpOnly cookie
+      await logoutUser();
+      // ✅ Clear UI data
+      localStorage.removeItem("user");
+
+      toast.success("Logged out successfully");
+
+      // ✅ GO TO HOME PAGE (NOT LOGIN)
+      window.location.href = "/#/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed");
+    }
   };
 
   const getInitials = (name) => {
